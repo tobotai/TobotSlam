@@ -1,5 +1,5 @@
 # TobotSlam简介
-本软件是基于[上海瞳步智能科技](www.tobotai.com) Slam SDK 的Android应用程序，旨在帮助用户基于slam的快速开发和应用，主要包含以下功能。<br> 
+本软件是基于[上海瞳步智能科技](http://www.tobotai.com) Slam SDK 的Android应用程序，旨在帮助用户基于slam的快速开发和应用，主要包含以下功能。<br> 
 
 1、机器人的连接与断开；   
 2、地图显示：包括Slam地图、机器人位置、激光扫描数据、充电桩位置、虚拟墙(红色)、虚拟轨道(绿色)、规划路径、目标点、位置点等；  
@@ -11,7 +11,7 @@
 8、任务：包括新建任务、设置任务的执行次数或无限次、删除任务、执行任务等。  
 
 # 相关链接
-更多产品信息请参考 [上海瞳步智能科技](www.tobotai.com) 
+更多产品信息请参考 [上海瞳步智能科技](http://www.tobotai.com) 
 
 # 技术支持
 邮箱：support@tobotai.com
@@ -19,5 +19,5 @@
 # 联系我们
 电话：13371936025  
 邮箱：sales@tobotai.com  
-网址：www.tobotai.com  
+网址：http://www.tobotai.com  
 地址：上海市静安区海宁路899号长泰企业天地广场A座11楼  
