@@ -11,6 +11,12 @@
 8、任务：包括新建任务、设置任务的执行次数或无限次、删除任务、执行任务等；  
 9、多语言：支持中文简体、中文繁体、英语等语言。
 
+# 图片演示
+连接界面  
+![连接界面](https://github.com/tobotai/TobotSlam/blob/master/img/connect.png)  
+主界面  
+![主界面](https://github.com/tobotai/TobotSlam/blob/master/img/main.png)  
+
 # 相关链接
 更多产品信息请参考 [上海瞳步智能科技](http://www.tobotai.com) 
 
