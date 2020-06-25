@@ -17,6 +17,10 @@
 主界面  
 ![主界面](https://github.com/tobotai/TobotSlam/blob/master/img/main.png)  
 
+# SDK使用介绍
+SDK使用说明  
+![详情](https://github.com/tobotai/TobotSlam/blob/master/doc/%E7%9E%B3%E6%AD%A5%E5%BA%95%E7%9B%98%E5%AF%BC%E8%88%AAsdk-2.5.0%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3%E8%AF%B4%E6%98%8E.pdf)  
+
 # 相关链接
 更多产品信息请参考 [上海瞳步智能科技](http://www.tobotai.com) 
 
