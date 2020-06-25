@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_create_task"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/head_height"
+        android:layout_gravity="center"
+        android:drawableLeft="@drawable/ic_add"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:text="@string/tv_create_task"
+        android:textColor="@color/shape_cancel_bg_normal"
+        android:textSize="@dimen/tv_title" />
+
+    <View style="@style/view_line" />
+
+    <TextView
+        android:id="@+id/tv_task_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/tv_execute_task_tips"
+        android:textColor="@color/tv_warn_tips"
+        android:textSize="@dimen/tv_mode_tips"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_route"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/view_margin_left_right"
+        android:layout_marginRight="@dimen/view_margin_left_right"
+        android:overScrollMode="never" />
+</LinearLayout>

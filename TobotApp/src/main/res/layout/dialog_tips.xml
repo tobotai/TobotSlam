@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_dialog_bg"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/dialog_btn_margin_top">
+
+        <TextView
+            android:id="@+id/tv_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dialog_layout_margin_left"
+            android:layout_marginTop="@dimen/dialog_content_margin_top"
+            android:layout_marginRight="@dimen/dialog_layout_margin_left"
+            android:textColor="@color/tv_white"
+            android:textSize="@dimen/tv_content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dialog_btn_height"
+        android:background="@drawable/selector_btn_bottom_bg"
+        android:gravity="center"
+        android:text="@string/btn_known"
+        android:textColor="@color/tv_white"
+        android:textSize="@dimen/btn_tv_size" />
+</LinearLayout>

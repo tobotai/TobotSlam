@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tv_white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/head_height"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/tv_content"
+        android:textSize="@dimen/tv_content" />
+
+    <View style="@style/view_line" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:layout_marginBottom="@dimen/view_margin_top"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="@dimen/item_split_size"
+                    android:text="@string/tv_task_point_tips"
+                    android:textColor="@color/tv_content"
+                    android:textSize="@dimen/tv_content" />
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/wheelView_margin_top"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_implement_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_content"
+                        android:textSize="@dimen/tv_content" />
+
+                    <com.tobot.wheelview.WheelView
+                        android:id="@+id/wheel_view_count"
+                        android:layout_width="@dimen/wheelView_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dialog_btn_margin_top"
+                        android:background="@drawable/shape_popup_bg"
+                        app:dividerColor="@color/wheelView_dividerColor"
+                        app:gravity="center"
+                        app:textColorCenter="@color/wheelView_textColorCenter"
+                        app:textColorOut="@color/wheelView_textColorOut"
+                        app:textSize="@dimen/wheelView_textSize" />
+
+                    <TextView
+                        android:id="@+id/tv_loop_implement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dialog_btn_margin_top"
+                        android:drawableRight="@drawable/selector_switch"
+                        android:drawablePadding="@dimen/iv_drawable_padding"
+                        android:gravity="center_vertical"
+                        android:text="@string/tv_loop_implement"
+                        android:textColor="@color/tv_content"
+                        android:textSize="@dimen/tv_content" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/wheelView_margin_top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:text="@string/tv_loop_tips"
+                    android:textColor="@color/tv_warn_tips"
+                    android:textSize="@dimen/tv_mode_tips" />
+
+                <Button
+                    android:id="@+id/btn_start_implement"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_marginTop="@dimen/dialog_btn_margin_top"
+                    android:background="@drawable/selector_btn_task_confirm_bg"
+                    android:text="@string/btn_start_implement"
+                    android:textColor="@color/tv_white"
+                    android:textSize="@dimen/btn_tv_size" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

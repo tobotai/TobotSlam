@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="device_list">
+        <item>S/N</item>
+        <item>固件版本</item>
+        <item>系統版本</item>
+        <item>模式</item>
+        <item>SSID</item>
+        <item>IP</item>
+        <item>充電狀態</item>
+        <item>地圖大小</item>
+    </string-array>
+</resources>

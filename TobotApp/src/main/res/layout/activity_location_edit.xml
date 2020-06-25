@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_head" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_number"
+                style="@style/et_edit_style"
+                android:hint="@string/et_hint_edit_location_tips"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/et_name_china"
+                style="@style/et_edit_style"
+                android:hint="@string/et_hint_edit_location_china_tips"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/et_name_english"
+                style="@style/et_edit_style"
+                android:hint="@string/et_hint_edit_location_english_tips"
+                android:inputType="textUri|textMultiLine" />
+
+            <Button
+                android:id="@+id/btn_update_location"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:background="@drawable/selector_btn_bg"
+                android:gravity="center"
+                android:text="@string/btn_update_location"
+                android:textColor="@color/tv_white"
+                android:textSize="@dimen/btn_tv_size" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_config_ultrasonic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:drawableRight="@drawable/selector_switch"
+                        android:drawablePadding="@dimen/iv_drawable_padding"
+                        android:gravity="center_vertical"
+                        android:text="@string/tv_config_ultrasonic"
+                        android:textColor="@color/tv_content"
+                        android:textSize="@dimen/tv_content" />
+
+                    <Button
+                        android:id="@+id/btn_ultrasonic_area"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/btn_height"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/selector_btn_bg"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="@string/btn_ultrasonic_area"
+                        android:textColor="@color/tv_white"
+                        android:textSize="@dimen/btn_tv_size" />
+                </RelativeLayout>
+
+                <View style="@style/view_line" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:text="@string/name_edit_rule_no_ultrasonic_tips"
+                android:textColor="@color/tv_tips"
+                android:textSize="@dimen/tv_tips" />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                style="@style/btn_connect"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:layout_marginBottom="@dimen/view_margin_bottom"
+                android:text="@string/btn_confirm" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,113 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="tv_connect_tips">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tv_tips</item>
+        <item name="android:textSize">@dimen/tv_content</item>
+    </style>
+
+    <style name="btn_connect" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:layout_marginTop">@dimen/btn_connect_margin_top</item>
+        <item name="android:background">@drawable/selector_btn_oval_bg</item>
+        <item name="android:textColor">@color/tv_white</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+    </style>
+
+    <style name="view_line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/item_split_line_height</item>
+        <item name="android:background">@color/item_split_line</item>
+    </style>
+
+    <style name="btn_map_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:background">@drawable/selector_btn_stroke_bg</item>
+        <item name="android:textSize">@dimen/tv_tips</item>
+        <item name="android:textColor">@drawable/selector_tv_item</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="btn_location_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:background">@drawable/selector_btn_stroke_bg</item>
+        <item name="android:textSize">@dimen/tv_tips</item>
+        <item name="android:textColor">@drawable/selector_tv_location</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingLeft">@dimen/btn_padding_left_right</item>
+        <item name="android:paddingRight">@dimen/btn_padding_left_right</item>
+    </style>
+
+    <style name="btn_dialog" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+        <item name="android:textColor">@color/tv_white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="add_point_view_dialog_anim">
+        <item name="android:windowEnterAnimation">@anim/animate_dialog_add_point_view_in</item>
+        <item name="android:windowExitAnimation">@anim/animate_dialog_add_point_view_out</item>
+    </style>
+
+    <style name="et_dialog_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/et_height</item>
+        <item name="android:background">@drawable/shape_dialog_edit_bg</item>
+        <item name="android:textSize">@dimen/et_tv</item>
+        <item name="android:textColor">@color/tv_white</item>
+        <item name="android:textColorHint">@color/tv_white</item>
+        <item name="android:layout_marginLeft">@dimen/dialog_layout_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/dialog_layout_margin_left</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="et_edit_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/et_height</item>
+        <item name="android:background">@drawable/shape_edit_bg</item>
+        <item name="android:textSize">@dimen/et_tv</item>
+        <item name="android:textColor">@color/et_tv</item>
+        <item name="android:textColorHint">@color/et_hint</item>
+        <item name="android:layout_marginLeft">@dimen/view_margin_left_right</item>
+        <item name="android:layout_marginTop">@dimen/et_margin_top</item>
+        <item name="android:layout_marginRight">@dimen/view_margin_left_right</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="rb_map_operate">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/selector_btn_circle_bg</item>
+        <item name="android:textColor">@drawable/selector_tv_stop</item>
+        <item name="android:textSize">@dimen/tv_content</item>
+    </style>
+
+    <style name="rb_speed">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:drawableLeft">@drawable/selector_select</item>
+        <item name="android:drawablePadding">@dimen/rb_padding</item>
+        <item name="android:textSize">@dimen/tv_content</item>
+        <item name="android:textColor">@drawable/selector_tv_map_item</item>
+    </style>
+</resources>

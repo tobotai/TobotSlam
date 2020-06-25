@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/view_head"
+        layout="@layout/view_head" />
+
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/view_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_left_right"
+        android:layout_marginBottom="@dimen/view_margin_top">
+
+        <TextView
+            android:id="@+id/tv_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/selector_select"
+            android:drawablePadding="@dimen/rb_padding"
+            android:gravity="center_vertical"
+            android:text="@string/tv_select_all"
+            android:textColor="@drawable/selector_tv_map_item"
+            android:textSize="@dimen/tv_content" />
+
+        <Button
+            android:id="@+id/btn_confirm"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/selector_btn_task_confirm_bg"
+            android:enabled="false"
+            android:paddingLeft="60dp"
+            android:paddingRight="60dp"
+            android:text="@string/btn_confirm"
+            android:textColor="@color/tv_white"
+            android:textSize="@dimen/btn_tv_size" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_point"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rl_bottom"
+        android:layout_below="@id/view_head"
+        android:layout_marginLeft="@dimen/view_margin_left_right"
+        android:layout_marginRight="@dimen/view_margin_left_right"
+        android:overScrollMode="never" />
+</RelativeLayout>

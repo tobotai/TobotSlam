@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:kongqw="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_popup_bg"
+    android:orientation="vertical">
+
+    <com.tobot.map.module.main.action.RockerView
+        android:id="@+id/view_rocker"
+        android:layout_width="@dimen/rocker_view_size"
+        android:layout_height="@dimen/rocker_view_size"
+        android:layout_marginLeft="@dimen/popup_margin_left_right"
+        android:layout_marginTop="@dimen/popup_margin_left_right"
+        android:layout_marginRight="@dimen/popup_margin_left_right"
+        kongqw:areaBackground="@drawable/img_rocker_view_bg"
+        kongqw:rockerBackground="@color/rocker_bg"
+        kongqw:rockerRadius="@dimen/rocker_radius" />
+
+    <View
+        style="@style/view_line"
+        android:layout_marginTop="@dimen/popup_margin_left_right" />
+
+    <TextView
+        android:id="@+id/tv_go_charge"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_item_height"
+        android:background="@drawable/selector_item_bottom_bg"
+        android:gravity="center"
+        android:text="@string/tv_go_charge"
+        android:textColor="@color/tv_white"
+        android:textSize="@dimen/tv_content" />
+</LinearLayout>

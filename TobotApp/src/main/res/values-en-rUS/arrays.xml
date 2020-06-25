@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="device_list">
+        <item>S/N</item>
+        <item>firmware version</item>
+        <item>system version</item>
+        <item>mode</item>
+        <item>SSID</item>
+        <item>IP</item>
+        <item>charging state</item>
+        <item>map size</item>
+    </string-array>
+</resources>

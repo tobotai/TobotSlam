@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 地图的view宽高一定要全匹配，否则在地图点击时点击区域有误差-->
+    <com.tobot.slam.view.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:text="@string/tv_status_show"
+        android:textColor="@color/tv_pose_show"
+        android:textSize="@dimen/tv_mode_tips" />
+
+    <TextView
+        android:id="@+id/tv_pose_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_status"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:text="@string/tv_pose_show"
+        android:textColor="@color/tv_pose_show"
+        android:textSize="@dimen/tv_mode_tips" />
+
+    <TextView
+        android:id="@+id/tv_rssi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_status"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:layout_toLeftOf="@id/tv_pose_show"
+        android:textColor="@color/tv_rssi_tips"
+        android:textSize="@dimen/tv_mode_tips" />
+
+    <TextView
+        android:id="@+id/tv_plan_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/view_margin_top"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:textColor="@color/tv_pose_show"
+        android:textSize="@dimen/tv_mode_tips" />
+
+    <ImageView
+        android:id="@+id/iv_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:src="@drawable/ic_map_set" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_stop"
+            style="@style/rb_map_operate"
+            android:text="@string/tv_stop" />
+
+        <TextView
+            android:id="@+id/tv_task"
+            style="@style/rb_map_operate"
+            android:layout_marginTop="@dimen/view_margin_top"
+            android:text="@string/tv_task" />
+
+        <TextView
+            android:id="@+id/tv_navigate"
+            style="@style/rb_map_operate"
+            android:layout_marginTop="@dimen/view_margin_top"
+            android:text="@string/tv_navigate" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_map"
+            style="@style/rb_map_operate"
+            android:text="@string/tv_map" />
+
+        <TextView
+            android:id="@+id/tv_action"
+            style="@style/rb_map_operate"
+            android:layout_marginLeft="@dimen/iv_map_margin"
+            android:text="@string/tv_action" />
+
+        <TextView
+            android:id="@+id/tv_edit"
+            style="@style/rb_map_operate"
+            android:layout_marginLeft="@dimen/iv_map_margin"
+            android:text="@string/tv_edit" />
+    </LinearLayout>
+
+    <com.tobot.map.module.main.edit.EditLineView
+        android:id="@+id/view_edit_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:visibility="gone" />
+
+    <com.tobot.map.module.main.edit.AddLineView
+        android:id="@+id/view_add_line"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+</RelativeLayout>

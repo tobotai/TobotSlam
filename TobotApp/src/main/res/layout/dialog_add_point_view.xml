@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/shape_bg"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_location_item_height"
+        android:layout_marginLeft="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btn_add_current_point"
+            style="@style/btn_location_style"
+            android:layout_centerVertical="true"
+            android:text="@string/btn_add_current_point" />
+
+        <Button
+            android:id="@+id/btn_sort_point"
+            style="@style/btn_location_style"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/btn_sort_point"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <View
+        style="@style/view_line"
+        android:layout_marginLeft="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_point"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:overScrollMode="never" />
+</LinearLayout>
