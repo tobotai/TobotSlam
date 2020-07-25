@@ -27,7 +27,7 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2019/10/21
  */
-public class ConfigFragment extends BaseFragment implements BaseBar.OnProgressChangeListener, WifiConfigDialog.OnWifiListener {
+public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarChangeListener, WifiConfigDialog.OnWifiListener {
     private static final int MSG_REQUEST_SPEED = 1;
     private static final int MSG_SET_SPEED = 2;
     private static final int MSG_REQUEST_ROTATE_SPEED = 3;
@@ -60,6 +60,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnProgressCh
     private boolean isConfigApMode;
     private float mMaxSpeed = 0.7f;
     private float mMaxRotateSpeed = 2f;
+    private float mSpeed;
 
     public static ConfigFragment newInstance() {
         return new ConfigFragment();
@@ -72,8 +73,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnProgressCh
 
     @Override
     protected void init() {
-        sbSpeed.setOnProgressChangeListener(this);
-        sbRotateSpeed.setOnProgressChangeListener(this);
+        sbSpeed.setOnSeekBarChangeListener(this);
+        sbRotateSpeed.setOnSeekBarChangeListener(this);
         mMainHandler = new MainHandler(new WeakReference<>(this));
         setNavigateMode(MoveData.getInstance().getNavigateMode());
         setMotionMode(MoveData.getInstance().getMotionMode());
@@ -101,16 +102,22 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnProgressCh
     }
 
     @Override
+    public void onSeekBarStart(View view) {
+    }
+
+    @Override
     public void onProgressChange(View view, float progress) {
+        setSpeed(view, progress);
+    }
+
+    @Override
+    public void onSeekBarStop(View view, float progress) {
+        setSpeed(view, progress);
         if (view.getId() == R.id.sb_speed) {
-            float value = progress * mMaxSpeed;
-            tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, value));
-            setSpeed(value);
+            setSpeed(mSpeed);
             return;
         }
-        float value = progress * mMaxRotateSpeed;
-        tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
-        setRotateSpeed(value);
+        setRotateSpeed(mSpeed);
     }
 
     @Override
@@ -220,6 +227,17 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnProgressCh
                     break;
             }
         }
+    }
+
+    private void setSpeed(View view, float progress) {
+        if (view.getId() == R.id.sb_speed) {
+            mSpeed = progress * mMaxSpeed;
+            tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, mSpeed));
+            return;
+        }
+
+        mSpeed = progress * mMaxRotateSpeed;
+        tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, mSpeed));
     }
 
     private void setNavigateMode(int navigateMode) {

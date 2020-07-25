@@ -15,12 +15,13 @@ import butterknife.BindView;
  * @author houdeming
  * @date 2020/5/8
  */
-public class LowBatteryFragment extends BaseFragment implements BaseBar.OnProgressChangeListener {
+public class LowBatteryFragment extends BaseFragment implements BaseBar.OnSeekBarChangeListener {
     @BindView(R.id.tv_current_low_battery_tips)
     TextView tvCurrentLowBattery;
     @BindView(R.id.sb_battery)
     StripSeekBar sbBattery;
     private static final float MAX = 99.0f;
+    private int mBattery;
 
     public static LowBatteryFragment newInstance() {
         return new LowBatteryFragment();
@@ -33,7 +34,7 @@ public class LowBatteryFragment extends BaseFragment implements BaseBar.OnProgre
 
     @Override
     protected void init() {
-        sbBattery.setOnProgressChangeListener(this);
+        sbBattery.setOnSeekBarChangeListener(this);
         int battery = DataHelper.getInstance().getLowBattery();
         tvCurrentLowBattery.setText(getString(R.string.tv_current_low_battery_tips, battery));
         // 设置battery的进度
@@ -41,9 +42,22 @@ public class LowBatteryFragment extends BaseFragment implements BaseBar.OnProgre
     }
 
     @Override
+    public void onSeekBarStart(View view) {
+    }
+
+    @Override
     public void onProgressChange(View view, float progress) {
-        int battery = (int) (progress * MAX);
-        tvCurrentLowBattery.setText(getString(R.string.tv_current_low_battery_tips, battery));
-        DataHelper.getInstance().setLowBattery(battery);
+        setProgress(progress);
+    }
+
+    @Override
+    public void onSeekBarStop(View view, float progress) {
+        setProgress(progress);
+        DataHelper.getInstance().setLowBattery(mBattery);
+    }
+
+    private void setProgress(float progress) {
+        mBattery = (int) (progress * MAX);
+        tvCurrentLowBattery.setText(getString(R.string.tv_current_low_battery_tips, mBattery));
     }
 }
