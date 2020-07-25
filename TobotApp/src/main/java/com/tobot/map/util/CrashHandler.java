@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,7 +42,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        Log.i(TAG, "errorMsg=" + e.getMessage());
+        LogUtils.i("errorMsg=" + e.getMessage());
         exportExceptionToSDCard(e);
         e.printStackTrace();
         // 结束当前应用进程

@@ -47,6 +47,7 @@
     <string name="tv_build_map">create drawing</string>
     <string name="tv_virtual_wall">virtual wall</string>
     <string name="tv_virtual_track">virtual track</string>
+    <string name="tv_rubber">rubber</string>
     <string name="emergency_stop_tips">the emergency stop button is pressed. Please try again later</string>
     <string name="break_stop_tips">please release the brake button first</string>
     <string name="direct_charge_to_navigate_tips">please unplug the direct charging line first</string>
@@ -139,6 +140,10 @@
     <string name="tv_add_line">add</string>
     <string name="tv_remove_line">remove</string>
     <string name="tv_clear_line">clear</string>
+    <string name="tv_wipe_white">white</string>
+    <string name="tv_wipe_grey">grey</string>
+    <string name="tv_wipe_black">black</string>
+    <string name="tv_wipe_cancel">cancel</string>
     <string name="point_sort_success">sorting succeeded…</string>
     <string name="tv_config_wifi">set chassis WiFi (STA mode)</string>
     <string name="et_wifi_pwd_input">input WiFi password</string>

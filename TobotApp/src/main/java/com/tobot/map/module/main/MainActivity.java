@@ -30,6 +30,7 @@ import com.tobot.map.module.main.edit.AddLineView;
 import com.tobot.map.module.main.edit.EditLineView;
 import com.tobot.map.module.main.edit.EditPopupWindow;
 import com.tobot.map.module.main.edit.OnEditListener;
+import com.tobot.map.module.main.edit.RubberEditView;
 import com.tobot.map.module.main.map.AddPointViewDialog;
 import com.tobot.map.module.main.map.MapPopupWindow;
 import com.tobot.map.module.main.map.Navigate;
@@ -40,6 +41,7 @@ import com.tobot.map.util.LogUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnSlamExceptionListener;
 import com.tobot.slam.data.LocationBean;
+import com.tobot.slam.data.Rubber;
 import com.tobot.slam.view.MapView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -78,10 +80,10 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     ImageView ivSet;
     @BindView(R.id.tv_navigate)
     TextView tvNavigate;
-    @BindView(R.id.tv_plan_path)
-    TextView tvPlanPath;
     @BindView(R.id.view_edit_line)
     EditLineView editLineView;
+    @BindView(R.id.view_rubber_edit)
+    RubberEditView rubberEditView;
     @BindView(R.id.view_add_line)
     AddLineView addLineView;
     private static final int CODE_SET = 1;
@@ -96,7 +98,6 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     private int mEditType, mOption;
     private MapClickHandle mMapClickHandle;
     private boolean isHandleMove, isShowTips;
-    private StringBuilder mPlanBuilder = new StringBuilder();
     private Charge mCharge;
     private static final int LOW_BATTERY = 1;
     private int mLowBatteryStatus;
@@ -164,6 +165,10 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
         // 如果当前是编辑墙的话，不处理返回键
         if (editLineView.getVisibility() == View.VISIBLE) {
             removeEditLineView();
+            return;
+        }
+        if (rubberEditView.getVisibility() == View.VISIBLE) {
+            removeRubberView();
             return;
         }
         if (isClosePopupWindow()) {
@@ -267,18 +272,43 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
         mEditType = type;
         llControl.setVisibility(View.GONE);
         ivSet.setVisibility(View.GONE);
+        if (type == OnEditListener.TYPE_RUBBER) {
+            rubberEditView.init(this);
+            return;
+        }
         editLineView.init(type, addLineView, this);
     }
 
     @Override
     public void onEditOption(int option) {
         mOption = option;
-        if (option == OnEditListener.OPTION_CLOSE) {
-            removeEditLineView();
-            return;
-        }
-        if (option == OnEditListener.OPTION_CLEAR && mMapClickHandle != null) {
-            mMapClickHandle.clearLines(mEditType);
+        switch (option) {
+            case OnEditListener.OPTION_CLOSE:
+                if (editLineView.getVisibility() == View.VISIBLE) {
+                    removeEditLineView();
+                    return;
+                }
+                removeRubberView();
+                break;
+            case OnEditListener.OPTION_WIPE_WHITE:
+                mapView.setRubberMode(Rubber.RUBBER_WHITE);
+                break;
+            case OnEditListener.OPTION_WIPE_GREY:
+                mapView.setRubberMode(Rubber.RUBBER_GREY);
+                break;
+            case OnEditListener.OPTION_WIPE_BLACK:
+                mapView.setRubberMode(Rubber.RUBBER_BLACK);
+                break;
+            case OnEditListener.OPTION_WIPE_CANCEL:
+                mapView.closeRubber();
+                break;
+            case OnEditListener.OPTION_CLEAR:
+                if (mMapClickHandle != null) {
+                    mMapClickHandle.clearLines(mEditType);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -437,12 +467,6 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
         showToastTips(isSuccess ? getString(R.string.map_save_success_tips) : getString(R.string.map_save_fail_tips));
     }
 
-    public void setPlanFind(String keyWord) {
-        mPlanBuilder.append(keyWord);
-        mPlanBuilder.append("\n");
-        tvPlanPath.setText(mPlanBuilder.toString());
-    }
-
     public void setRssi(int rssiId) {
         // [-100, 0]，其中0到-50表示信号最好，-50到-70表示信号偏差，小于-70表示最差，有可能连接不上或者掉线
         if (isFinish) {
@@ -513,16 +537,14 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     }
 
     private void handleTvStopClick() {
-        // 清空路径内容
-//        if (mPlanBuilder.length() > 0) {
-//            mPlanBuilder.delete(0, mPlanBuilder.length());
-//            tvPlanPath.setText("");
-//        }
         if (mTask != null) {
             mTask.stop();
         }
         if (mNavigate != null) {
             mNavigate.stop();
+        }
+        if (mCharge != null) {
+            mCharge.stop();
         }
         if (mMapHelper != null) {
             mMapHelper.cancelAction();
@@ -543,6 +565,14 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     private void removeEditLineView() {
         mOption = OnEditListener.OPTION_CLOSE;
         editLineView.remove();
+        llControl.setVisibility(View.VISIBLE);
+        ivSet.setVisibility(View.VISIBLE);
+    }
+
+    private void removeRubberView() {
+        mOption = OnEditListener.OPTION_CLOSE;
+        rubberEditView.remove();
+        mapView.closeRubber();
         llControl.setVisibility(View.VISIBLE);
         ivSet.setVisibility(View.VISIBLE);
     }

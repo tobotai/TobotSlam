@@ -8,7 +8,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -106,7 +105,7 @@ public class NetworkUtils {
                     if (info != null) {
                         //"@Hyatt_WiFi" 获取的ssid是带双引号的
                         String name = info.getSSID();
-                        Log.i(TAG, "name=" + name);
+                        LogUtils.i("name=" + name);
                         if (!TextUtils.isEmpty(name)) {
                             return name.substring(1, name.length() - 1);
                         }
@@ -128,7 +127,7 @@ public class NetworkUtils {
                     WifiInfo info = manager.getConnectionInfo();
                     if (info != null) {
                         String macAddress = info.getMacAddress();
-                        Log.i(TAG, "macAddress=" + macAddress);
+                        LogUtils.i("macAddress=" + macAddress);
                         if (!TextUtils.isEmpty(macAddress)) {
                             macAddress = macAddress.toUpperCase(Locale.ENGLISH);
                         }

@@ -47,6 +47,7 @@
     <string name="tv_build_map">建图</string>
     <string name="tv_virtual_wall">虚拟墙</string>
     <string name="tv_virtual_track">虚拟轨道</string>
+    <string name="tv_rubber">橡皮擦</string>
     <string name="emergency_stop_tips">急停按钮被按，请稍后再试</string>
     <string name="break_stop_tips">请先松开刹车按钮</string>
     <string name="direct_charge_to_navigate_tips">请先拔掉直充线</string>
@@ -139,6 +140,10 @@
     <string name="tv_add_line">添加</string>
     <string name="tv_remove_line">移除</string>
     <string name="tv_clear_line">清空</string>
+    <string name="tv_wipe_white">擦白</string>
+    <string name="tv_wipe_grey">擦灰</string>
+    <string name="tv_wipe_black">擦黑</string>
+    <string name="tv_wipe_cancel">取消</string>
     <string name="point_sort_success">排序成功…</string>
     <string name="tv_config_wifi">设置底盘WiFi（STA模式）</string>
     <string name="et_wifi_pwd_input">请输入WiFi密码</string>

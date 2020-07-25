@@ -21,8 +21,7 @@ public class MainHandle extends Handler {
     public static final int MSG_RELOCATION = 5;
     public static final int MSG_CLEAN_MAP = 6;
     public static final int MSG_SAVE_MAP = 7;
-    public static final int MSG_PATH_FIND = 8;
-    public static final int MSG_GET_RSSI = 9;
+    public static final int MSG_GET_RSSI = 8;
     private MainActivity mMainActivity;
     private MapView mMapView;
 
@@ -60,9 +59,6 @@ public class MainHandle extends Handler {
                 break;
             case MSG_SAVE_MAP:
                 mMainActivity.saveMapResult((Boolean) msg.obj);
-                break;
-            case MSG_PATH_FIND:
-                mMainActivity.setPlanFind((String) msg.obj);
                 break;
             case MSG_GET_RSSI:
                 mMainActivity.setRssi((Integer) msg.obj);

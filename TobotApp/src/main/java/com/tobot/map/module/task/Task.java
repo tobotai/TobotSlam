@@ -29,6 +29,11 @@ public class Task extends AbsPathMonitor implements OnNavigateListener {
     }
 
     @Override
+    public void onNavigateStartTry() {
+        LogUtils.i("onNavigateStartTry()");
+    }
+
+    @Override
     public void onNavigateRemind() {
         LogUtils.i("onNavigateRemind()");
         showToast(mContext.getString(R.string.navigate_remind));
@@ -55,12 +60,12 @@ public class Task extends AbsPathMonitor implements OnNavigateListener {
     }
 
     @Override
-    public void pathFindSwitch() {
+    public void onObstacleTrigger() {
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
-    public void keepMove() {
+    public void onObstacleDisappear() {
         navigate();
     }
 

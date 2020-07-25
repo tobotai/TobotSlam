@@ -29,17 +29,23 @@ public class EditPopupWindow extends BasePopupWindow {
     public void initView(View view) {
         view.findViewById(R.id.tv_virtual_wall).setOnClickListener(this);
         view.findViewById(R.id.tv_virtual_track).setOnClickListener(this);
+        view.findViewById(R.id.tv_rubber).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.tv_virtual_wall) {
-            handleClick(OnEditListener.TYPE_VIRTUAL_WALL);
-            return;
-        }
-
-        if (v.getId() == R.id.tv_virtual_track) {
-            handleClick(OnEditListener.TYPE_VIRTUAL_TRACK);
+        switch (v.getId()) {
+            case R.id.tv_virtual_wall:
+                handleClick(OnEditListener.TYPE_VIRTUAL_WALL);
+                break;
+            case R.id.tv_virtual_track:
+                handleClick(OnEditListener.TYPE_VIRTUAL_TRACK);
+                break;
+            case R.id.tv_rubber:
+                handleClick(OnEditListener.TYPE_RUBBER);
+                break;
+            default:
+                break;
         }
     }
 

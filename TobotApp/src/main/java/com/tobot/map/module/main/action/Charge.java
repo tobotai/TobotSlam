@@ -48,17 +48,21 @@ public class Charge extends AbsPathMonitor implements OnChargeListener {
     }
 
     @Override
-    public void pathFindSwitch() {
+    public void onObstacleTrigger() {
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
-    public void keepMove() {
+    public void onObstacleDisappear() {
         goCharge();
     }
 
     public void goCharge() {
         startMonitor();
         SlamManager.getInstance().goHome(this);
+    }
+
+    public void stop() {
+        stopMonitor();
     }
 }

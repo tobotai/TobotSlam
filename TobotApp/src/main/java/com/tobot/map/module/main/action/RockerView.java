@@ -14,11 +14,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.tobot.map.R;
+import com.tobot.map.util.LogUtils;
 
 /**
  * 摇杆控件
@@ -112,7 +112,7 @@ public class RockerView extends View {
         // 获取自定义属性
         initAttribute(context, attrs);
         if (isInEditMode()) {
-            Log.i(TAG, "RockerView: isInEditMode");
+            LogUtils.i("RockerView: isInEditMode");
         }
         // 移动区域画笔
         mAreaBackgroundPaint = new Paint();
@@ -318,7 +318,7 @@ public class RockerView extends View {
 //        float min = regionRadius - rockerRadius;
         // 至少移动一个摇杆的半径的时候再回调
         float min = rockerRadius;
-        Log.i(TAG, "lenXY=" + lenXY + ",min=" + min + ",angle=" + angle);
+        LogUtils.i("lenXY=" + lenXY + ",min=" + min + ",angle=" + angle);
         if (lenXY >= min) {
             callBack(angle);
         }
