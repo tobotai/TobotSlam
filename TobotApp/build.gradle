@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
-apply from: 'and_res_guard.gradle'
 
 android {
     compileSdkVersion 26
@@ -8,10 +7,14 @@ android {
         applicationId "com.tobot.map"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 15
-        versionName "2.3.3"
+        versionCode 16
+        versionName "2.3.4"
         multiDexEnabled true // dex突破65535的限制
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
     }
     lintOptions {
         disable 'MissingTranslation'
@@ -68,5 +71,5 @@ dependencies {
     implementation 'q.rorbin:VerticalTabLayout:1.2.5'
     compile(name: 'TobotBar-1.1.3', ext: 'aar')
     compile(name: 'TobotWheelView-1.2.0', ext: 'aar')
-    implementation files('libs/TobotSlam-2.6.1.jar')
+    implementation files('libs/TobotSlam-2.6.5.jar')
 }

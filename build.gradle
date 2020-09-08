@@ -7,9 +7,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0-rc2'
-        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.17'
     }
 }
 
