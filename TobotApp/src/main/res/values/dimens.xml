@@ -63,4 +63,5 @@
     <dimen name="wheelView_textSize">20sp</dimen>
     <dimen name="wheelView_margin_top">4dp</dimen>
     <dimen name="tv_toast_size">12sp</dimen>
+    <dimen name="tv_line_space">6dp</dimen>
 </resources>

@@ -11,6 +11,7 @@
     <string name="tv_config">配置</string>
     <string name="tv_map_list">地圖列表</string>
     <string name="tv_low_battery">低電量</string>
+    <string name="tv_test">測試</string>
     <string name="tv_set_speed">導航速度</string>
     <string name="tv_current_speed_tips">最大運動速度%.2fM/S</string>
     <string name="tv_rotate_speed">旋轉角速度</string>
@@ -25,6 +26,7 @@
     <string name="avoid_obstacle_mode">避障模式</string>
     <string name="meet_obstacle_avoid">遇障繞行</string>
     <string name="meet_obstacle_suspend">遇障暫停</string>
+    <string name="tv_try_time_tips">導航嘗試時間 %1$d 分鐘</string>
     <string name="tv_unknown">未知</string>
     <string name="btn_map_load">加載</string>
     <string name="btn_map_delete">刪除</string>
@@ -41,6 +43,7 @@
     <string name="tv_action">動作</string>
     <string name="tv_go_charge">充電</string>
     <string name="tv_edit">編輯</string>
+    <string name="tv_reset_charge">重置充電樁</string>
     <string name="tv_relocation">重定位</string>
     <string name="tv_clean_map">清除地圖</string>
     <string name="tv_save_map">保存地圖</string>
@@ -157,6 +160,12 @@
     <string name="sta_config_success">連接與配置底盤相同的無線網絡</string>
     <string name="btn_known">我知道了</string>
     <string name="tv_current_low_battery_tips">最低電量%1$d</string>
+    <string name="et_rotate_speed_hint_tips">請輸入旋轉角度值（比如：10）</string>
+    <string name="tv_rotate_direction">旋轉方向</string>
+    <string name="to_left">向左</string>
+    <string name="to_right">向右</string>
+    <string name="btn_send">發送</string>
+    <string name="rotate_speed_empty_tips">旋轉角度值不能為空</string>
     <string name="tv_save_task">保存任務</string>
     <string name="et_hint_task_tips">請輸入任務名稱</string>
     <string name="tv_task_tips">溫馨提示：任務名稱代表所創建任務的標誌，不能重復！</string>
@@ -177,4 +186,10 @@
     <string name="btn_exit">退出應用（推薦）</string>
     <string name="connect_slam_success_tips">連接成功…</string>
     <string name="operate_error_tips">操作失敗，請先停止機器當前行為再操作…</string>
+    <string name="tv_reset_charge_title">重置充電樁</string>
+    <string name="tv_reset_charge_tips">步驟如下\n1、將充電樁移至新的位置\n2、將機器導航到充電樁上並處於充電狀態\n3、點擊“重置”\n4、將機器從充電樁導航出來，即重置成功</string>
+    <string name="btn_reset">重置</string>
+    <string name="reset_not_charge_tips">請先將機器移動至充電樁上</string>
+    <string name="reset_success_tips">重置成功…</string>
+    <string name="reset_fail_tips">重置失敗…</string>
 </resources>

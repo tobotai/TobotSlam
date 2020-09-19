@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/view_set_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_set_margin_left_right"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_speed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/et_height"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_edit_bg"
+            android:gravity="center"
+            android:hint="@string/et_rotate_speed_hint_tips"
+            android:inputType="number"
+            android:textColor="@color/et_tv"
+            android:textSize="@dimen/et_tv" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin_top"
+            android:text="@string/tv_rotate_direction"
+            android:textColor="@color/tv_content"
+            android:textSize="@dimen/tv_tips" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin_top"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_to_left"
+                style="@style/rb_speed"
+                android:checked="true"
+                android:text="@string/to_left" />
+
+            <RadioButton
+                android:id="@+id/rb_to_right"
+                style="@style/rb_speed"
+                android:layout_marginLeft="@dimen/rb_wall_margin"
+                android:text="@string/to_right" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btn_send"
+            style="@style/btn_connect"
+            android:text="@string/btn_send" />
+    </LinearLayout>
+</RelativeLayout>

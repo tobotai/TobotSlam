@@ -50,4 +50,6 @@ public class BaseConstant {
      * 无限循环的时候默认为0
      */
     public static final int LOOP_INFINITE = 0;
+    
+    public static final float TRY_TIME_MAX = 30.0f;
 }

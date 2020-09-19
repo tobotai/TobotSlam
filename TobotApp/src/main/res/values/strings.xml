@@ -12,6 +12,7 @@
     <string name="tv_config">配置</string>
     <string name="tv_map_list">地图列表</string>
     <string name="tv_low_battery">低电量</string>
+    <string name="tv_test">测试</string>
     <string name="tv_set_speed">导航速度</string>
     <string name="tv_current_speed_tips">最大运动速度%.2fM/S</string>
     <string name="tv_rotate_speed">旋转角速度</string>
@@ -26,6 +27,7 @@
     <string name="avoid_obstacle_mode">避障模式</string>
     <string name="meet_obstacle_avoid">遇障绕行</string>
     <string name="meet_obstacle_suspend">遇障暂停</string>
+    <string name="tv_try_time_tips">导航尝试时间 %1$d 分钟</string>
     <string name="tv_unknown">未知</string>
     <string name="btn_map_load">加载</string>
     <string name="btn_map_delete">删除</string>
@@ -42,6 +44,7 @@
     <string name="tv_action">动作</string>
     <string name="tv_go_charge">充电</string>
     <string name="tv_edit">编辑</string>
+    <string name="tv_reset_charge">重置充电桩</string>
     <string name="tv_relocation">重定位</string>
     <string name="tv_clean_map">清除地图</string>
     <string name="tv_save_map">保存地图</string>
@@ -158,6 +161,12 @@
     <string name="sta_config_success">连接与配置底盘相同的无线网络</string>
     <string name="btn_known">我知道了</string>
     <string name="tv_current_low_battery_tips">最低电量%1$d</string>
+    <string name="et_rotate_speed_hint_tips">请输入旋转角度值（比如：10）</string>
+    <string name="tv_rotate_direction">旋转方向</string>
+    <string name="to_left">向左</string>
+    <string name="to_right">向右</string>
+    <string name="btn_send">发送</string>
+    <string name="rotate_speed_empty_tips">旋转角度值不能为空</string>
     <string name="tv_save_task">保存任务</string>
     <string name="et_hint_task_tips">请输入任务名称</string>
     <string name="tv_task_tips">温馨提示：任务名称代表所创建任务的标志，不能重复！</string>
@@ -178,4 +187,10 @@
     <string name="btn_exit">退出应用（推荐）</string>
     <string name="connect_slam_success_tips">连接成功…</string>
     <string name="operate_error_tips">操作失败，请先停止机器当前行为再操作…</string>
+    <string name="tv_reset_charge_title">重置充电桩</string>
+    <string name="tv_reset_charge_tips">步骤如下\n1、将充电桩移至新的位置\n2、将机器导航到充电桩上并处于充电状态\n3、点击“重置”\n4、将机器从充电桩导航出来，即重置成功</string>
+    <string name="btn_reset">重置</string>
+    <string name="reset_not_charge_tips">请先将机器移动至充电桩上</string>
+    <string name="reset_success_tips">重置成功…</string>
+    <string name="reset_fail_tips">重置失败…</string>
 </resources>

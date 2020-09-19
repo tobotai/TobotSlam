@@ -36,6 +36,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     private TextView tvBuildMap;
     private OnMapListener mOnMapListener;
     private AddPointViewDialog mAddPointViewDialog;
+    private ResetChargeDialog mResetChargeDialog;
     private NumberInputDialog mNumberInputDialog;
     private LoadTipsDialog mLoadTipsDialog;
     private ConfirmDialog mConfirmDialog;
@@ -56,6 +57,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         tvBuildMap = view.findViewById(R.id.tv_build_map);
         tvBuildMap.setOnClickListener(this);
         view.findViewById(R.id.tv_add_point).setOnClickListener(this);
+        view.findViewById(R.id.tv_reset_charge).setOnClickListener(this);
         view.findViewById(R.id.tv_relocation).setOnClickListener(this);
         view.findViewById(R.id.tv_clean_map).setOnClickListener(this);
         view.findViewById(R.id.tv_save_map).setOnClickListener(this);
@@ -69,6 +71,10 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         if (isConfirmDialogShow()) {
             mConfirmDialog.getDialog().dismiss();
             mConfirmDialog = null;
+        }
+        if (isResetChargeDialogShow()) {
+            mResetChargeDialog.getDialog().dismiss();
+            mResetChargeDialog = null;
         }
     }
 
@@ -93,6 +99,11 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                 dismiss();
                 if (mOnMapListener != null) {
                     mOnMapListener.onMapAddPoint();
+                }
+                break;
+            case R.id.tv_reset_charge:
+                if (mOnMapListener != null) {
+                    mOnMapListener.onMapResetCharge();
                 }
                 break;
             case R.id.tv_relocation:
@@ -141,6 +152,13 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
             mAddPointViewDialog = AddPointViewDialog.newInstance();
             mAddPointViewDialog.setOnPointListener(listener);
             mAddPointViewDialog.show(fragmentManager, "ADD_POINT_DIALOG");
+        }
+    }
+
+    public void showResetChargeDialog(FragmentManager fragmentManager) {
+        if (!isResetChargeDialogShow()) {
+            mResetChargeDialog = ResetChargeDialog.newInstance();
+            mResetChargeDialog.show(fragmentManager, "RESET_CHARGE_DIALOG");
         }
     }
 
@@ -233,6 +251,10 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         return mAddPointViewDialog != null && mAddPointViewDialog.getDialog() != null && mAddPointViewDialog.getDialog().isShowing();
     }
 
+    private boolean isResetChargeDialogShow() {
+        return mResetChargeDialog != null && mResetChargeDialog.getDialog() != null && mResetChargeDialog.getDialog().isShowing();
+    }
+
     private boolean isNumberInputDialogShow() {
         return mNumberInputDialog != null && mNumberInputDialog.getDialog() != null && mNumberInputDialog.getDialog().isShowing();
     }
@@ -260,6 +282,11 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
          * 建点
          */
         void onMapAddPoint();
+
+        /**
+         * 重置充电桩
+         */
+        void onMapResetCharge();
 
         /**
          * 提示dialog

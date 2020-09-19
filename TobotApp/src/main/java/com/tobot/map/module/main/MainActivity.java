@@ -247,6 +247,13 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     }
 
     @Override
+    public void onMapResetCharge() {
+        if (mMapPopupWindow != null) {
+            mMapPopupWindow.showResetChargeDialog(getSupportFragmentManager());
+        }
+    }
+
+    @Override
     public void onMapShowTipsDialog(String tips) {
         if (mMapPopupWindow != null) {
             mMapPopupWindow.showLoadTipsDialog(getSupportFragmentManager(), tips);

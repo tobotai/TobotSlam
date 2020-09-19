@@ -7,6 +7,7 @@ import com.tobot.map.R;
 import com.tobot.map.base.BaseConstant;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.main.AbsPathMonitor;
+import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.LogUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnNavigateListener;
@@ -91,7 +92,11 @@ public class Task extends AbsPathMonitor implements OnNavigateListener {
         if (isStart) {
             if (mItemCount < mLocationList.size()) {
                 LocationBean bean = mLocationList.get(mItemCount);
-                SlamManager.getInstance().moveTo(bean, MoveData.getInstance().getMoveOption(), 0, this);
+                long tryTime = 0;
+                if (MoveData.getInstance().getObstacleMode() == MoveData.MEET_OBSTACLE_AVOID) {
+                    tryTime = DataHelper.getInstance().getTryTimeMillis(mContext);
+                }
+                SlamManager.getInstance().moveTo(bean, MoveData.getInstance().getMoveOption(), tryTime, this);
                 return;
             }
             // 无限循环的情况

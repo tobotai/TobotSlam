@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseConstant;
 import com.tobot.map.db.MyDBSource;
+import com.tobot.map.util.SharedPreferencesUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.data.LocationBean;
 
@@ -22,8 +23,9 @@ import java.util.concurrent.Executors;
  * @date 2018/8/18
  */
 public class DataHelper {
+    private static final String TRY_TIME_KEY = "try_time_key";
     private String mMapName;
-    private int mLowBattery;
+    private int mLowBattery, mTryTime;
     private String mIp;
 
     private static class BaseDataHolder {
@@ -220,5 +222,22 @@ public class DataHelper {
 
     public void setIp(String ip) {
         mIp = ip;
+    }
+
+    public void setTryTime(Context context, int tryTime) {
+        mTryTime = tryTime;
+        SharedPreferencesUtils.getInstance(context).putInt(TRY_TIME_KEY, tryTime);
+    }
+
+    public int getTryTime(Context context) {
+        if (mTryTime == 0) {
+            mTryTime = SharedPreferencesUtils.getInstance(context).getInt(TRY_TIME_KEY, 0);
+        }
+        return mTryTime;
+    }
+
+    public long getTryTimeMillis(Context context) {
+        int time = getTryTime(context);
+        return time == 0 ? 0 : time * 60000;
     }
 }

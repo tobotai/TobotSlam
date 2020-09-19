@@ -32,12 +32,14 @@ public class SetActivity extends BaseActivity {
         titles.add(getString(R.string.tv_config));
         titles.add(getString(R.string.tv_low_battery));
         titles.add(getString(R.string.tv_map_list));
+        titles.add(getString(R.string.tv_test));
         // 与上面的title要一一对应
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(DeviceInfoFragment.newInstance());
         fragments.add(ConfigFragment.newInstance());
         fragments.add(LowBatteryFragment.newInstance());
         fragments.add(MapListFragment.newInstance());
+        fragments.add(TestFragment.newInstance());
 
         tabLayout.setupWithFragment(getSupportFragmentManager(), R.id.fl_layout, fragments, new SetAdapter(this, titles));
         tabLayout.setTabSelected(0);

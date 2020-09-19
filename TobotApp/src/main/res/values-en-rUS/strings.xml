@@ -11,6 +11,7 @@
     <string name="tv_config">configure</string>
     <string name="tv_map_list">map list</string>
     <string name="tv_low_battery">low power</string>
+    <string name="tv_test">test</string>
     <string name="tv_set_speed">navigation speed</string>
     <string name="tv_current_speed_tips">maximum movement speed %.2fM/S</string>
     <string name="tv_rotate_speed">rotation angular speed</string>
@@ -25,6 +26,7 @@
     <string name="avoid_obstacle_mode">obstacle avoidance mode</string>
     <string name="meet_obstacle_avoid">detour in case of obstacle</string>
     <string name="meet_obstacle_suspend">pause in case of failure</string>
+    <string name="tv_try_time_tips">navigate try time %1$d minute</string>
     <string name="tv_unknown">unknown</string>
     <string name="btn_map_load">load</string>
     <string name="btn_map_delete">delete</string>
@@ -41,6 +43,7 @@
     <string name="tv_action">action</string>
     <string name="tv_go_charge">charge</string>
     <string name="tv_edit">edit</string>
+    <string name="tv_reset_charge">reset charge</string>
     <string name="tv_relocation">relocation</string>
     <string name="tv_clean_map">clear map</string>
     <string name="tv_save_map">save map</string>
@@ -157,6 +160,12 @@
     <string name="sta_config_success">connect to the same wireless network as the chassis</string>
     <string name="btn_known">I know</string>
     <string name="tv_current_low_battery_tips">minimum power %1$d</string>
+    <string name="et_rotate_speed_hint_tips">enter the rotation angle value(for example: 10)</string>
+    <string name="tv_rotate_direction">rotation direction</string>
+    <string name="to_left">to left</string>
+    <string name="to_right">to right</string>
+    <string name="btn_send">send</string>
+    <string name="rotate_speed_empty_tips">rotation angle value cannot be empty</string>
     <string name="tv_save_task">save task</string>
     <string name="et_hint_task_tips">input task name</string>
     <string name="tv_task_tips">warm tip: task name represents the flag of the created task, which cannot be repeated!</string>
@@ -177,4 +186,10 @@
     <string name="btn_exit">exit application (recommended)</string>
     <string name="connect_slam_success_tips">connection succeeded…</string>
     <string name="operate_error_tips">operation failed, please stop the current machine behavior before operation…</string>
+    <string name="tv_reset_charge_title">reset charge</string>
+    <string name="tv_reset_charge_tips">steps\n1.move the charge point to a new location\n2.navigate the machine to the charging point and be charged\n3.click "reset"\n4.when the machine is navigated from the charging point, the reset is successful</string>
+    <string name="btn_reset">reset</string>
+    <string name="reset_not_charge_tips">please move the machine to the charging point first</string>
+    <string name="reset_success_tips">reset success…</string>
+    <string name="reset_fail_tips">reset fail…</string>
 </resources>

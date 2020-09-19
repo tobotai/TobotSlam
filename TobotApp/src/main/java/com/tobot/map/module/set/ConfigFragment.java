@@ -3,15 +3,18 @@ package com.tobot.map.module.set;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.tobot.bar.base.BaseBar;
 import com.tobot.bar.seekbar.StripSeekBar;
 import com.tobot.map.R;
+import com.tobot.map.base.BaseConstant;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.common.TipsDialog;
+import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.set.wifi.WifiConfigDialog;
 import com.tobot.map.util.LogUtils;
 import com.tobot.map.util.NumberUtils;
@@ -54,6 +57,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     RadioButton rbObstacleAvoid;
     @BindView(R.id.rb_obstacle_suspend)
     RadioButton rbObstacleSuspend;
+    @BindView(R.id.ll_try_time)
+    LinearLayout llTryTime;
+    @BindView(R.id.tv_try_time)
+    TextView tvTryTime;
+    @BindView(R.id.sb_try_time)
+    StripSeekBar sbTryTime;
     private MainHandler mMainHandler;
     private WifiConfigDialog mWifiConfigDialog;
     private TipsDialog mTipsDialog;
@@ -61,6 +70,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private float mMaxSpeed = 0.7f;
     private float mMaxRotateSpeed = 2f;
     private float mSpeed;
+    private int mTime;
 
     public static ConfigFragment newInstance() {
         return new ConfigFragment();
@@ -75,6 +85,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     protected void init() {
         sbSpeed.setOnSeekBarChangeListener(this);
         sbRotateSpeed.setOnSeekBarChangeListener(this);
+        sbTryTime.setOnSeekBarChangeListener(this);
         mMainHandler = new MainHandler(new WeakReference<>(this));
         setNavigateMode(MoveData.getInstance().getNavigateMode());
         setMotionMode(MoveData.getInstance().getMotionMode());
@@ -113,11 +124,19 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     @Override
     public void onSeekBarStop(View view, float progress) {
         setSpeed(view, progress);
-        if (view.getId() == R.id.sb_speed) {
-            setSpeed(mSpeed);
-            return;
+        switch (view.getId()) {
+            case R.id.sb_speed:
+                setSpeed(mSpeed);
+                break;
+            case R.id.sb_rotate_speed:
+                setRotateSpeed(mSpeed);
+                break;
+            case R.id.sb_try_time:
+                DataHelper.getInstance().setTryTime(getActivity(), mTime);
+                break;
+            default:
+                break;
         }
-        setRotateSpeed(mSpeed);
     }
 
     @Override
@@ -171,9 +190,11 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                 break;
             case R.id.rb_obstacle_avoid:
                 MoveData.getInstance().setObstacleMode(MoveData.MEET_OBSTACLE_AVOID);
+                setTryTime();
                 break;
             case R.id.rb_obstacle_suspend:
                 MoveData.getInstance().setObstacleMode(MoveData.MEET_OBSTACLE_SUSPEND);
+                llTryTime.setVisibility(View.GONE);
                 break;
             case R.id.rl_config_ap:
                 configAp();
@@ -230,14 +251,22 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     private void setSpeed(View view, float progress) {
-        if (view.getId() == R.id.sb_speed) {
-            mSpeed = progress * mMaxSpeed;
-            tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, mSpeed));
-            return;
+        switch (view.getId()) {
+            case R.id.sb_speed:
+                mSpeed = progress * mMaxSpeed;
+                tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, mSpeed));
+                break;
+            case R.id.sb_rotate_speed:
+                mSpeed = progress * mMaxRotateSpeed;
+                tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, mSpeed));
+                break;
+            case R.id.sb_try_time:
+                mTime = (int) (progress * BaseConstant.TRY_TIME_MAX);
+                tvTryTime.setText(getString(R.string.tv_try_time_tips, mTime));
+                break;
+            default:
+                break;
         }
-
-        mSpeed = progress * mMaxRotateSpeed;
-        tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, mSpeed));
     }
 
     private void setNavigateMode(int navigateMode) {
@@ -267,9 +296,19 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private void setObstacleMode(int obstacleMode) {
         if (obstacleMode == MoveData.MEET_OBSTACLE_AVOID) {
             rbObstacleAvoid.setChecked(true);
+            setTryTime();
             return;
         }
         rbObstacleSuspend.setChecked(true);
+        llTryTime.setVisibility(View.GONE);
+    }
+
+    private void setTryTime() {
+        llTryTime.setVisibility(View.VISIBLE);
+        mTime = DataHelper.getInstance().getTryTime(getActivity());
+        tvTryTime.setText(getString(R.string.tv_try_time_tips, mTime));
+        float progress = mTime / BaseConstant.TRY_TIME_MAX;
+        sbTryTime.setProgress(progress);
     }
 
     private void updateSpeedView(float value) {

@@ -34,6 +34,18 @@
     <View style="@style/view_line" />
 
     <TextView
+        android:id="@+id/tv_reset_charge"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_item_height"
+        android:background="@drawable/selector_item_bg"
+        android:gravity="center"
+        android:text="@string/tv_reset_charge"
+        android:textColor="@color/tv_white"
+        android:textSize="@dimen/tv_content" />
+
+    <View style="@style/view_line" />
+
+    <TextView
         android:id="@+id/tv_relocation"
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_item_height"
