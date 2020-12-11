@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.BaseDialog;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.main.DataHelper;
@@ -91,23 +91,17 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_loop_implement:
-                if (tvLoop.isSelected()) {
-                    tvLoop.setSelected(false);
-                    return;
-                }
-                tvLoop.setSelected(true);
-                break;
-            case R.id.btn_start_implement:
-                dismiss();
-                int loopCount = tvLoop.isSelected() ? BaseConstant.LOOP_INFINITE : mLoopCount;
-                if (mOnExecuteListener != null) {
-                    mOnExecuteListener.onExecute(mLocationList, loopCount);
-                }
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.tv_loop_implement) {
+            tvLoop.setSelected(!tvLoop.isSelected());
+            return;
+        }
+
+        if (id == R.id.btn_start_implement) {
+            dismiss();
+            if (mOnExecuteListener != null) {
+                mOnExecuteListener.onExecute(mLocationList, tvLoop.isSelected() ? BaseConstant.LOOP_INFINITE : mLoopCount);
+            }
         }
     }
 

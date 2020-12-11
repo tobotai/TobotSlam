@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.util.SharedPreferencesUtils;
 import com.tobot.slam.SlamManager;

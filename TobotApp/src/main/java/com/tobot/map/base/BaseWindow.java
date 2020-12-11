@@ -2,6 +2,7 @@ package com.tobot.map.base;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,7 +26,11 @@ public abstract class BaseWindow {
         // 设置布局参数
         mLayoutParams = new LayoutParams();
         // 设置window TYPE
-        mLayoutParams.type = LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mLayoutParams.type = LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            mLayoutParams.type = LayoutParams.TYPE_PHONE;
+        }
         // 设置图片格式，效果位背景透明
         mLayoutParams.format = PixelFormat.RGBA_8888;
         // 设置Window flag

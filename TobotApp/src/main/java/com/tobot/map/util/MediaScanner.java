@@ -38,7 +38,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
 
     public void scanFile(Context context, List<String> filePaths) {
         if (filePaths != null && !filePaths.isEmpty()) {
-            connect(context, "", filePaths.toArray(new String[filePaths.size()]));
+            connect(context, "", filePaths.toArray(new String[0]));
         }
     }
 

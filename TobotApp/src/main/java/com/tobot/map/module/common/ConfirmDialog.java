@@ -1,6 +1,7 @@
 package com.tobot.map.module.common;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
@@ -41,7 +42,7 @@ public class ConfirmDialog extends BaseV4Dialog implements View.OnClickListener 
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -56,18 +57,11 @@ public class ConfirmDialog extends BaseV4Dialog implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_cancel:
-                dismiss();
-                break;
-            case R.id.btn_confirm:
-                dismiss();
-                if (mListener != null) {
-                    mListener.onConfirm();
-                }
-                break;
-            default:
-                break;
+        dismiss();
+        if (v.getId() == R.id.btn_confirm) {
+            if (mListener != null) {
+                mListener.onConfirm();
+            }
         }
     }
 

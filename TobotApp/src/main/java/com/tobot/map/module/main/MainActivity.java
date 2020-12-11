@@ -19,7 +19,7 @@ import com.slamtec.slamware.geometry.PointF;
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.OnDialogBackEventListener;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.event.ConnectSlamEvent;
@@ -270,7 +270,7 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     @Override
     public void onMapSave() {
         if (mMapPopupWindow != null) {
-            mMapPopupWindow.showNumberInputDialog(getSupportFragmentManager());
+            mMapPopupWindow.showNameInputDialog(getSupportFragmentManager());
         }
     }
 

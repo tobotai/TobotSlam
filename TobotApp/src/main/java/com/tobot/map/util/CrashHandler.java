@@ -1,10 +1,12 @@
 package com.tobot.map.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,13 +23,13 @@ import java.util.Date;
  * @date 2019/5/21
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
-    private static final String TAG = CrashHandler.class.getSimpleName();
     private Context mContext;
 
     private CrashHandler() {
     }
 
     private static class CrashHandlerHolder {
+        @SuppressLint("StaticFieldLeak")
         private static final CrashHandler INSTANCE = new CrashHandler();
     }
 
@@ -41,7 +43,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(@NonNull Thread t, Throwable e) {
         LogUtils.i("errorMsg=" + e.getMessage());
         exportExceptionToSDCard(e);
         e.printStackTrace();
@@ -54,6 +56,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      *
      * @param throwable
      */
+    @SuppressLint("SimpleDateFormat")
     private void exportExceptionToSDCard(Throwable throwable) {
         // 判断SD卡是否存在
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

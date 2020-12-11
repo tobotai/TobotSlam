@@ -82,8 +82,13 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     protected void closeLoadTipsDialog() {
-        if (isLoadTipsDialogShow()) {
-            mLoadTipsDialog.getDialog().dismiss();
+        // 避免刚打开就关闭的情况
+        if (mLoadTipsDialog != null) {
+            try {
+                mLoadTipsDialog.getDialog().dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mLoadTipsDialog = null;
         }
     }

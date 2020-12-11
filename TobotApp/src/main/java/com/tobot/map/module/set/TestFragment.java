@@ -41,6 +41,10 @@ public class TestFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (mTestThread != null) {
+            mTestThread.interrupt();
+            mTestThread = null;
+        }
     }
 
     @OnClick({R.id.rb_to_left, R.id.rb_to_right, R.id.btn_send})

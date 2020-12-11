@@ -54,6 +54,7 @@ public class LowBatteryFragment extends BaseFragment implements BaseBar.OnSeekBa
     public void onSeekBarStop(View view, float progress) {
         setProgress(progress);
         DataHelper.getInstance().setLowBattery(mBattery);
+        showToastTips(getString(R.string.set_success_tips));
     }
 
     private void setProgress(float progress) {

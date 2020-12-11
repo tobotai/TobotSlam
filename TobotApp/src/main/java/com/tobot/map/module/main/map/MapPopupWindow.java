@@ -9,12 +9,12 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.common.BasePopupWindow;
 import com.tobot.map.module.common.ConfirmDialog;
 import com.tobot.map.module.common.LoadTipsDialog;
-import com.tobot.map.module.common.NumberInputDialog;
+import com.tobot.map.module.common.NameInputDialog;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.main.MainHandle;
 import com.tobot.map.util.ToastUtils;
@@ -31,13 +31,13 @@ import java.util.List;
  * @author houdeming
  * @date 2020/3/15
  */
-public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDismissListener, NumberInputDialog.OnNumberListener, ConfirmDialog.OnConfirmListener {
+public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDismissListener, NameInputDialog.OnNameListener, ConfirmDialog.OnConfirmListener {
     private WeakReference<Handler> mHandlerWeakReference;
     private TextView tvBuildMap;
     private OnMapListener mOnMapListener;
     private AddPointViewDialog mAddPointViewDialog;
     private ResetChargeDialog mResetChargeDialog;
-    private NumberInputDialog mNumberInputDialog;
+    private NameInputDialog mNameInputDialog;
     private LoadTipsDialog mLoadTipsDialog;
     private ConfirmDialog mConfirmDialog;
 
@@ -127,14 +127,14 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     }
 
     @Override
-    public void onNumber(String number) {
-        if (TextUtils.equals(number, "00") || TextUtils.equals(number, "0")) {
-            ToastUtils.getInstance(mContext).show(mContext.getString(R.string.number_format_error_tips));
+    public void onName(String name) {
+        if (TextUtils.isEmpty(name)) {
+            ToastUtils.getInstance(mContext).show(mContext.getString(R.string.map_name_empty_tips));
             return;
         }
         closeNumberInputDialog();
         showDialogTips(mContext.getString(R.string.map_save_tips));
-        saveMap(number);
+        saveMap(name);
     }
 
     @Override
@@ -162,11 +162,11 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         }
     }
 
-    public void showNumberInputDialog(FragmentManager fragmentManager) {
-        if (!isNumberInputDialogShow()) {
-            mNumberInputDialog = NumberInputDialog.newInstance(mContext.getString(R.string.tv_title_save_map), mContext.getString(R.string.map_rule_tips), mContext.getString(R.string.et_hint_map_tips));
-            mNumberInputDialog.setOnNumberListener(this);
-            mNumberInputDialog.show(fragmentManager, "NUMBER_INPUT_DIALOG");
+    public void showNameInputDialog(FragmentManager fragmentManager) {
+        if (!isNameInputDialogShow()) {
+            mNameInputDialog = NameInputDialog.newInstance(mContext.getString(R.string.tv_title_save_map), mContext.getString(R.string.map_rule_tips), mContext.getString(R.string.et_hint_map_tips));
+            mNameInputDialog.setOnNameListener(this);
+            mNameInputDialog.show(fragmentManager, "NAME_INPUT_DIALOG");
         }
     }
 
@@ -221,7 +221,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
 
     private void saveMap(String number) {
         final List<LocationBean> beanList = DataHelper.getInstance().getLocationBeanList(mContext, number);
-        SlamManager.getInstance().saveMapInThread(BaseConstant.getMapDirectory(mContext), BaseConstant.getFileName(number), beanList, new OnResultListener<Boolean>() {
+        SlamManager.getInstance().saveMapInThread(BaseConstant.getMapDirectory(mContext), BaseConstant.getMapFileName(number), beanList, new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
                 mHandlerWeakReference.get().obtainMessage(MainHandle.MSG_SAVE_MAP, data).sendToTarget();
@@ -241,9 +241,9 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     }
 
     private void closeNumberInputDialog() {
-        if (isNumberInputDialogShow()) {
-            mNumberInputDialog.getDialog().dismiss();
-            mNumberInputDialog = null;
+        if (isNameInputDialogShow()) {
+            mNameInputDialog.getDialog().dismiss();
+            mNameInputDialog = null;
         }
     }
 
@@ -255,8 +255,8 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         return mResetChargeDialog != null && mResetChargeDialog.getDialog() != null && mResetChargeDialog.getDialog().isShowing();
     }
 
-    private boolean isNumberInputDialogShow() {
-        return mNumberInputDialog != null && mNumberInputDialog.getDialog() != null && mNumberInputDialog.getDialog().isShowing();
+    private boolean isNameInputDialogShow() {
+        return mNameInputDialog != null && mNameInputDialog.getDialog() != null && mNameInputDialog.getDialog().isShowing();
     }
 
     private void showDialogTips(String tips) {

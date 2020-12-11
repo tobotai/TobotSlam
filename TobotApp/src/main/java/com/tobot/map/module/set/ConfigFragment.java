@@ -2,6 +2,8 @@ package com.tobot.map.module.set;
 
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -10,7 +12,7 @@ import android.widget.TextView;
 import com.tobot.bar.base.BaseBar;
 import com.tobot.bar.seekbar.StripSeekBar;
 import com.tobot.map.R;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.common.TipsDialog;
@@ -211,11 +213,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         private ConfigFragment mFragment;
 
         private MainHandler(WeakReference<ConfigFragment> reference) {
+            super();
             mFragment = reference.get();
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case MSG_REQUEST_SPEED:
@@ -402,7 +405,10 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             if (!isWifiConfigDialogShow()) {
                 mWifiConfigDialog = WifiConfigDialog.newInstance();
                 mWifiConfigDialog.setOnWifiListener(this);
-                mWifiConfigDialog.show(getFragmentManager(), "STA_DIALOG");
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager != null) {
+                    mWifiConfigDialog.show(fragmentManager, "STA_DIALOG");
+                }
             }
             return;
         }
@@ -415,7 +421,10 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         if (!isTipsDialogShow()) {
             String tips = isConfigApMode ? getString(R.string.mode_config_success_tips, getString(R.string.ap_config_success)) : getString(R.string.mode_config_success_tips, getString(R.string.sta_config_success));
             mTipsDialog = TipsDialog.newInstance(tips);
-            mTipsDialog.show(getFragmentManager(), "TIPS_DIALOG");
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager != null) {
+                mTipsDialog.show(fragmentManager, "TIPS_DIALOG");
+            }
         }
     }
 

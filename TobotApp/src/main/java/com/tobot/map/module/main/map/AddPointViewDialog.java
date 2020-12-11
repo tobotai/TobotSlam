@@ -1,9 +1,11 @@
 package com.tobot.map.module.main.map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,7 @@ import android.widget.Button;
 
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.R;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.common.BaseAnimDialog;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
@@ -49,6 +51,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         return R.layout.dialog_add_point_view;
     }
 
+    @SuppressLint("RtlHardcoded")
     @Override
     protected int getGravity() {
         return Gravity.LEFT;
@@ -56,7 +59,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
 
     @Override
     protected int getDialogWidth() {
-        return getActivity().getResources().getDimensionPixelSize(R.dimen.dialog_add_point_view_width);
+        return getResources().getDimensionPixelSize(R.dimen.dialog_add_point_view_width);
     }
 
     @Override
@@ -98,7 +101,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
             mPose = null;
             // 请求当前pose
             new PoseThread().start();
-            showNumberInputDialog(getString(R.string.tv_title_add_location), getString(R.string.name_rule_tips), getString(R.string.et_hint_location_tips));
+            showNameInputDialog(getString(R.string.tv_title_add_location), getString(R.string.name_rule_tips), getString(R.string.et_hint_location_tips));
             return;
         }
 
@@ -114,12 +117,12 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     }
 
     @Override
-    public void onNumber(String number) {
-        if (number.length() < 2) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.number_format_error_tips));
+    public void onName(String name) {
+        if (TextUtils.isEmpty(name)) {
+            ToastUtils.getInstance(getActivity()).show(getString(R.string.name_empty_tips));
             return;
         }
-        if (MyDBSource.getInstance(getActivity()).queryLocation(number) != null) {
+        if (MyDBSource.getInstance(getActivity()).queryLocation(name) != null) {
             ToastUtils.getInstance(getActivity()).show(getString(R.string.number_edit_fail_tips));
             return;
         }
@@ -128,9 +131,9 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
             new PoseThread().start();
             return;
         }
-        closeNumberInputDialog();
+        closeNameInputDialog();
         LocationBean bean = new LocationBean();
-        bean.setLocationNumber(number);
+        bean.setLocationNumber(name);
         bean.setX(mPose.getX());
         bean.setY(mPose.getY());
         bean.setYaw(mPose.getYaw());

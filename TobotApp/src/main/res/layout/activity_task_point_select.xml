@@ -37,8 +37,8 @@
             android:layout_alignParentRight="true"
             android:background="@drawable/selector_btn_task_confirm_bg"
             android:enabled="false"
-            android:paddingLeft="60dp"
-            android:paddingRight="60dp"
+            android:paddingLeft="@dimen/view_margin_left_right"
+            android:paddingRight="@dimen/view_margin_left_right"
             android:text="@string/btn_confirm"
             android:textColor="@color/tv_white"
             android:textSize="@dimen/btn_tv_size" />

@@ -1,5 +1,6 @@
 package com.tobot.map.module.main.action;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -213,6 +214,7 @@ public class RockerView extends View {
         setMeasuredDimension(measureWidth, measureHeight);
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -265,6 +267,7 @@ public class RockerView extends View {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -317,9 +320,8 @@ public class RockerView extends View {
         // 只有滑动到端的时候再回调
 //        float min = regionRadius - rockerRadius;
         // 至少移动一个摇杆的半径的时候再回调
-        float min = rockerRadius;
-        LogUtils.i("lenXY=" + lenXY + ",min=" + min + ",angle=" + angle);
-        if (lenXY >= min) {
+        LogUtils.i("lenXY=" + lenXY + ",min=" + rockerRadius + ",angle=" + angle);
+        if (lenXY >= rockerRadius) {
             callBack(angle);
         }
 

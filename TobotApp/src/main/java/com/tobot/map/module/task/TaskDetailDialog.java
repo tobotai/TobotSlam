@@ -62,21 +62,20 @@ public class TaskDetailDialog extends BaseDialog implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_cancel:
-                dismiss();
-                break;
-            case R.id.btn_delete:
-                MyDBSource.getInstance(getActivity()).deleteRoute(mTitle);
-                MyDBSource.getInstance(getActivity()).deleteRouteDetail(mTitle);
-                ToastUtils.getInstance(getActivity()).show(getString(R.string.delete_success));
-                dismiss();
-                if (mOnDeleteListener != null) {
-                    mOnDeleteListener.onDelete();
-                }
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_cancel) {
+            dismiss();
+            return;
+        }
+
+        if (id == R.id.btn_delete) {
+            MyDBSource.getInstance(getActivity()).deleteRoute(mTitle);
+            MyDBSource.getInstance(getActivity()).deleteRouteDetail(mTitle);
+            ToastUtils.getInstance(getActivity()).show(getString(R.string.delete_success));
+            dismiss();
+            if (mOnDeleteListener != null) {
+                mOnDeleteListener.onDelete();
+            }
         }
     }
 

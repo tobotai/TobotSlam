@@ -39,16 +39,19 @@ public class DisconnectDialog extends BaseV4Dialog implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_reconnect:
-                callBackOperate(OnOperateListener.OPERATE_RECONNECT);
-                break;
-            case R.id.btn_exit:
-                callBackOperate(OnOperateListener.OPERATE_EXIT);
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_reconnect) {
+            callBackOperate(OnOperateListener.OPERATE_RECONNECT);
+            return;
         }
+
+        if (id == R.id.btn_exit) {
+            callBackOperate(OnOperateListener.OPERATE_EXIT);
+        }
+    }
+
+    public void setOnOperateListener(OnOperateListener listener) {
+        mListener = listener;
     }
 
     private void callBackOperate(int type) {
@@ -56,10 +59,6 @@ public class DisconnectDialog extends BaseV4Dialog implements View.OnClickListen
         if (mListener != null) {
             mListener.onOperate(type);
         }
-    }
-
-    public void setOnOperateListener(OnOperateListener listener) {
-        mListener = listener;
     }
 
     public interface OnOperateListener {

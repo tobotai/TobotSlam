@@ -17,7 +17,7 @@
             android:id="@+id/et_speed"
             android:layout_width="match_parent"
             android:layout_height="@dimen/et_height"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/et_margin_top"
             android:background="@drawable/shape_edit_bg"
             android:gravity="center"
             android:hint="@string/et_rotate_speed_hint_tips"

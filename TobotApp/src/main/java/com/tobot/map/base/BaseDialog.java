@@ -25,6 +25,10 @@ public abstract class BaseDialog extends DialogFragment {
     protected static final String DATA_KEY = "data_key";
     private OnDialogBackEventListener mOnDialogBackEventListener;
 
+    public BaseDialog() {
+        super();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // 去掉dialog的标题

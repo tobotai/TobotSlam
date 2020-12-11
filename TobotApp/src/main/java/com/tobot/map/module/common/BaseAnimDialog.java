@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +17,8 @@ import android.view.WindowManager;
  * @author houdeming
  * @date 2019/10/22
  */
-public abstract class BaseAnimDialog extends DialogFragment implements NumberInputDialog.OnNumberListener, ConfirmDialog.OnConfirmListener {
-    private NumberInputDialog mNumberInputDialog;
+public abstract class BaseAnimDialog extends DialogFragment implements NameInputDialog.OnNameListener, ConfirmDialog.OnConfirmListener {
+    private NameInputDialog mNameInputDialog;
     private ConfirmDialog mConfirmDialog;
 
     @Override
@@ -52,7 +54,7 @@ public abstract class BaseAnimDialog extends DialogFragment implements NumberInp
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
     }
@@ -60,42 +62,11 @@ public abstract class BaseAnimDialog extends DialogFragment implements NumberInp
     @Override
     public void onPause() {
         super.onPause();
-        closeNumberInputDialog();
+        closeNameInputDialog();
         if (isConfirmDialogShow()) {
             mConfirmDialog.getDialog().dismiss();
             mConfirmDialog = null;
         }
-    }
-
-    protected void showNumberInputDialog(String title, String contentTips, String hint) {
-        if (!isNumberInputDialogShow()) {
-            mNumberInputDialog = NumberInputDialog.newInstance(title, contentTips, hint);
-            mNumberInputDialog.setOnNumberListener(this);
-            mNumberInputDialog.show(getFragmentManager(), "NUMBER_INPUT_DIALOG");
-        }
-    }
-
-    protected void closeNumberInputDialog() {
-        if (isNumberInputDialogShow()) {
-            mNumberInputDialog.getDialog().dismiss();
-            mNumberInputDialog = null;
-        }
-    }
-
-    protected void showConfirmDialog(String tips) {
-        if (!isConfirmDialogShow()) {
-            mConfirmDialog = ConfirmDialog.newInstance(tips);
-            mConfirmDialog.setOnConfirmListener(this);
-            mConfirmDialog.show(getFragmentManager(), "DELETE_DIALOG");
-        }
-    }
-
-    private boolean isConfirmDialogShow() {
-        return mConfirmDialog != null && mConfirmDialog.getDialog() != null && mConfirmDialog.getDialog().isShowing();
-    }
-
-    private boolean isNumberInputDialogShow() {
-        return mNumberInputDialog != null && mNumberInputDialog.getDialog() != null && mNumberInputDialog.getDialog().isShowing();
     }
 
     protected abstract int getAnimId();
@@ -109,4 +80,41 @@ public abstract class BaseAnimDialog extends DialogFragment implements NumberInp
     protected abstract int getDialogHeight();
 
     protected abstract void initView(View view);
+
+    protected void showNameInputDialog(String title, String contentTips, String hint) {
+        if (!isNameInputDialogShow()) {
+            mNameInputDialog = NameInputDialog.newInstance(title, contentTips, hint);
+            mNameInputDialog.setOnNameListener(this);
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager != null) {
+                mNameInputDialog.show(fragmentManager, "NAME_INPUT_DIALOG");
+            }
+        }
+    }
+
+    protected void closeNameInputDialog() {
+        if (isNameInputDialogShow()) {
+            mNameInputDialog.getDialog().dismiss();
+            mNameInputDialog = null;
+        }
+    }
+
+    protected void showConfirmDialog(String tips) {
+        if (!isConfirmDialogShow()) {
+            mConfirmDialog = ConfirmDialog.newInstance(tips);
+            mConfirmDialog.setOnConfirmListener(this);
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager != null) {
+                mConfirmDialog.show(fragmentManager, "DELETE_DIALOG");
+            }
+        }
+    }
+
+    private boolean isConfirmDialogShow() {
+        return mConfirmDialog != null && mConfirmDialog.getDialog() != null && mConfirmDialog.getDialog().isShowing();
+    }
+
+    private boolean isNameInputDialogShow() {
+        return mNameInputDialog != null && mNameInputDialog.getDialog() != null && mNameInputDialog.getDialog().isShowing();
+    }
 }

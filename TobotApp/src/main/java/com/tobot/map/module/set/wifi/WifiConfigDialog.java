@@ -2,6 +2,7 @@ package com.tobot.map.module.set.wifi;
 
 import android.net.wifi.ScanResult;
 import android.os.Build;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +80,10 @@ public class WifiConfigDialog extends BaseV4Dialog implements View.OnClickListen
                 if (!isWifiListDialogShow()) {
                     mWifiListDialog = WifiListDialog.newInstance();
                     mWifiListDialog.setOnItemClickListener(this);
-                    mWifiListDialog.show(getFragmentManager(), "WIFI_LIST_DIALOG");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    if (fragmentManager != null) {
+                        mWifiListDialog.show(fragmentManager, "WIFI_LIST_DIALOG");
+                    }
                 }
                 break;
             case R.id.btn_cancel:

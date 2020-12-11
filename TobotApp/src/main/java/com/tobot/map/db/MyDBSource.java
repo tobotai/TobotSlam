@@ -60,6 +60,9 @@ public class MyDBSource {
     }
 
     public synchronized void insertLocationList(List<LocationBean> dataList) {
+        if (dataList == null || dataList.isEmpty()) {
+            return;
+        }
         SQLiteDatabase database = mHelper.getWritableDatabase();
         String sql = "insert into " + MySQLiteHelper.TABLE_LOCATION + "("
                 + MySQLiteHelper.MAP_NAME + ","
@@ -150,6 +153,9 @@ public class MyDBSource {
     }
 
     private LocationBean queryLocation(String selection, String selectionArg) {
+        if (TextUtils.isEmpty(selectionArg)) {
+            return null;
+        }
         LocationBean bean = null;
         SQLiteDatabase database = mHelper.getWritableDatabase();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, null, selection + "=?",
@@ -258,6 +264,9 @@ public class MyDBSource {
     }
 
     public synchronized void deleteLocation(String locationNumber) {
+        if (TextUtils.isEmpty(locationNumber)) {
+            return;
+        }
         SQLiteDatabase database = mHelper.getWritableDatabase();
         // 如果数据库中有该数据返回1，否则返回0
         database.delete(MySQLiteHelper.TABLE_LOCATION, MySQLiteHelper.LOCATION_NUMBER + "=?", new String[]{locationNumber});
@@ -315,6 +324,9 @@ public class MyDBSource {
     }
 
     public synchronized RouteBean queryRoute(String routeName) {
+        if (TextUtils.isEmpty(routeName)) {
+            return null;
+        }
         RouteBean bean = null;
         SQLiteDatabase database = mHelper.getWritableDatabase();
         String whereClause = MySQLiteHelper.ROUTE_NAME + "=?";
@@ -390,6 +402,9 @@ public class MyDBSource {
 
     public synchronized List<LocationBean> queryRouteDetail(String routeName) {
         List<LocationBean> beanList = new ArrayList<>();
+        if (TextUtils.isEmpty(routeName)) {
+            return beanList;
+        }
         SQLiteDatabase database = mHelper.getWritableDatabase();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE_DETAIL, null, MySQLiteHelper.ROUTE_NAME + "=?",
                 new String[]{routeName}, null, null, null);

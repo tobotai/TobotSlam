@@ -2,6 +2,7 @@ package com.tobot.map.module.main;
 
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 
 import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.robot.Pose;
@@ -26,12 +27,13 @@ public class MainHandle extends Handler {
     private MapView mMapView;
 
     MainHandle(WeakReference<MainActivity> activityWeakReference, WeakReference<MapView> mapViewWeakReference) {
+        super();
         mMainActivity = activityWeakReference.get();
         mMapView = mapViewWeakReference.get();
     }
 
     @Override
-    public void handleMessage(Message msg) {
+    public void handleMessage(@NonNull Message msg) {
         super.handleMessage(msg);
         if (mMainActivity == null || mMapView == null) {
             return;

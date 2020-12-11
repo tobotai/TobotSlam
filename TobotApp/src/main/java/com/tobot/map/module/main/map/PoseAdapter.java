@@ -21,15 +21,12 @@ public class PoseAdapter extends BaseRecyclerAdapter<LocationBean> {
         super(context, itemLayoutId);
     }
 
-    public void setOnPoseListener(OnPoseListener listener) {
-        mOnPoseListener = listener;
-    }
-
     @Override
     public void convert(BaseRecyclerHolder viewHolder, final LocationBean data, int position) {
         LinearLayout llPose = (LinearLayout) viewHolder.getView(R.id.ll_pose);
         TextView tvNum = (TextView) viewHolder.getView(R.id.tv_location_num);
         TextView tvPose = (TextView) viewHolder.getView(R.id.tv_location_pose);
+
         if (data != null) {
             tvNum.setText(data.getLocationNumber());
             tvPose.setText(mContext.getString(R.string.tv_pose_tips, data.getX(), data.getY()));
@@ -43,6 +40,10 @@ public class PoseAdapter extends BaseRecyclerAdapter<LocationBean> {
                 }
             });
         }
+    }
+
+    public void setOnPoseListener(OnPoseListener listener) {
+        mOnPoseListener = listener;
     }
 
     public interface OnPoseListener {

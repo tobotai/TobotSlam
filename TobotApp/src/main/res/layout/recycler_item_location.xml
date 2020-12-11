@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/tv_location_margin_left"
         android:layout_toRightOf="@id/btn_location"
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_tips" />
@@ -29,7 +29,7 @@
         android:id="@+id/btn_delete"
         style="@style/btn_location_style"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="@dimen/btn_map_margin_right"
         android:layout_toLeftOf="@id/btn_edit"
         android:text="@string/btn_delete" />
 </RelativeLayout>

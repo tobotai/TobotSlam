@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,10 @@ public abstract class BaseFragment extends Fragment implements ConfirmDialog.OnC
     protected void showLoadTipsDialog(String tips) {
         if (!isLoadTipsDialogShow()) {
             mLoadTipsDialog = LoadTipsDialog.newInstance(tips);
-            mLoadTipsDialog.show(getFragmentManager(), "LOAD_DIALOG");
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager != null) {
+                mLoadTipsDialog.show(fragmentManager, "LOAD_DIALOG");
+            }
         }
     }
 
@@ -77,7 +81,10 @@ public abstract class BaseFragment extends Fragment implements ConfirmDialog.OnC
         if (!isConfirmDialogShow()) {
             mConfirmDialog = ConfirmDialog.newInstance(tips);
             mConfirmDialog.setOnConfirmListener(this);
-            mConfirmDialog.show(getFragmentManager(), "TIPS_DIALOG");
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager != null) {
+                mConfirmDialog.show(fragmentManager, "TIPS_DIALOG");
+            }
         }
     }
 

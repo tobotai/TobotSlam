@@ -22,17 +22,18 @@ public class ConnectIpAdapter extends BaseRecyclerAdapter<String> {
     @Override
     public void convert(BaseRecyclerHolder viewHolder, final String data, final int position) {
         TextView tvIp = (TextView) viewHolder.getView(R.id.tv_item_ip);
+
         if (!TextUtils.isEmpty(data)) {
             tvIp.setText(data);
-        }
-
-        tvIp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(position, data);
+            
+            tvIp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(position, data);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }

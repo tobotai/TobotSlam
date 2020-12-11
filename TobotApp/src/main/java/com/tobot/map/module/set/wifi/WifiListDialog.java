@@ -1,5 +1,6 @@
 package com.tobot.map.module.set.wifi;
 
+import android.app.Activity;
 import android.net.wifi.ScanResult;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +38,10 @@ public class WifiListDialog extends BaseV4Dialog {
         WifiAdapter adapter = new WifiAdapter(getActivity(), R.layout.recycler_item_wifi);
         adapter.setOnItemClickListener(mOnItemClickListener);
         recyclerView.setAdapter(adapter);
-        adapter.setData(NetworkUtils.getWifiList(getActivity()));
+        Activity activity = getActivity();
+        if (activity != null) {
+            adapter.setData(NetworkUtils.getWifiList(activity));
+        }
     }
 
     @Override

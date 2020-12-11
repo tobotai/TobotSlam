@@ -18,7 +18,7 @@
         android:id="@+id/tv_location_pose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/tv_location_margin_left"
         android:textColor="@drawable/selector_tv_item"
         android:textSize="@dimen/tv_tips" />
 </LinearLayout>

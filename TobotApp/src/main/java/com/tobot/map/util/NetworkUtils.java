@@ -23,7 +23,7 @@ import java.util.Locale;
  * @date 2018/4/16
  */
 public class NetworkUtils {
-    private static final String TAG = NetworkUtils.class.getSimpleName();
+    private static final String TAG = "NetworkUtils";
 
     /**
      * 网络是否连接
@@ -36,9 +36,7 @@ public class NetworkUtils {
             ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (mConnectivityManager != null) {
                 NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-                if (mNetworkInfo != null) {
-                    return mNetworkInfo.isAvailable();
-                }
+                return mNetworkInfo != null && mNetworkInfo.isAvailable();
             }
         }
         return false;
@@ -57,9 +55,7 @@ public class NetworkUtils {
                 NetworkInfo networkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                 if (networkInfo != null) {
                     NetworkInfo.State mWiFiNetworkInfo = networkInfo.getState();
-                    if (mWiFiNetworkInfo == NetworkInfo.State.CONNECTED) {
-                        return true;
-                    }
+                    return mWiFiNetworkInfo == NetworkInfo.State.CONNECTED;
                 }
             }
         }

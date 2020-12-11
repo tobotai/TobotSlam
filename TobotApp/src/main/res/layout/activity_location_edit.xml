@@ -21,8 +21,7 @@
             <EditText
                 android:id="@+id/et_number"
                 style="@style/et_edit_style"
-                android:hint="@string/et_hint_edit_location_tips"
-                android:inputType="number" />
+                android:hint="@string/et_hint_edit_location_tips" />
 
             <EditText
                 android:id="@+id/et_name_china"
@@ -84,8 +83,8 @@
                         android:layout_centerVertical="true"
                         android:background="@drawable/selector_btn_bg"
                         android:gravity="center"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
+                        android:paddingLeft="@dimen/btn_area_padding_left"
+                        android:paddingRight="@dimen/btn_area_padding_left"
                         android:text="@string/btn_ultrasonic_area"
                         android:textColor="@color/tv_white"
                         android:textSize="@dimen/btn_tv_size" />

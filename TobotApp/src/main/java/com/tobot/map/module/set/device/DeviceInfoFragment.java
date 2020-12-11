@@ -59,6 +59,9 @@ public class DeviceInfoFragment extends BaseFragment {
                 final boolean isBatteryCharging = SlamManager.getInstance().isBatteryCharging();
                 final RectF rectF = SlamManager.getInstance().getMap().getMapArea();
 
+                if (getActivity() == null) {
+                    return;
+                }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

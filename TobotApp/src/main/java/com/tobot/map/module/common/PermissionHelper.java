@@ -10,7 +10,7 @@ import android.support.v4.content.ContextCompat;
  * 权限请求
  *
  * @author houdeming
- * @date 2020/3/3.
+ * @date 2020/3/3
  */
 public class PermissionHelper {
     private static final String[] REQUESTED_PERMISSIONS = {

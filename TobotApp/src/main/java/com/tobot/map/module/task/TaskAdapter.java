@@ -24,11 +24,6 @@ public class TaskAdapter extends BaseRecyclerAdapter<RouteBean> {
         super(context, itemLayoutId);
     }
 
-    public void setSelectData(List<RouteBean> data) {
-        mSelectList = data;
-        notifyDataSetChanged();
-    }
-
     @Override
     public void convert(BaseRecyclerHolder viewHolder, final RouteBean data, final int position) {
         LinearLayout llRoot = (LinearLayout) viewHolder.getView(R.id.ll_root);
@@ -63,6 +58,11 @@ public class TaskAdapter extends BaseRecyclerAdapter<RouteBean> {
                 }
             });
         }
+    }
+
+    public void setSelectData(List<RouteBean> data) {
+        mSelectList = data;
+        notifyDataSetChanged();
     }
 
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {

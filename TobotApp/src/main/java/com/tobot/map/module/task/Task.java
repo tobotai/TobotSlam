@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.main.AbsPathMonitor;
 import com.tobot.map.module.main.DataHelper;

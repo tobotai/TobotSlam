@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 
 import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.robot.ArtifactUsage;
@@ -174,14 +175,14 @@ class MapHelper {
         }
     }
 
-    private class MapThreadHandle extends Handler {
+    private static class MapThreadHandle extends Handler {
 
         private MapThreadHandle(Looper looper) {
             super(looper);
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             if (msg.what == MSG_STOP) {
                 SlamManager.getInstance().cancelAction();

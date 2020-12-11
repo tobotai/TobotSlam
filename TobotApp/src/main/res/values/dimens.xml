@@ -13,6 +13,7 @@
     <dimen name="layout_item_height">45dp</dimen>
     <dimen name="layout_location_item_height">50dp</dimen>
     <dimen name="btn_height">45dp</dimen>
+    <dimen name="btn_area_padding_left">10dp</dimen>
     <dimen name="dialog_btn_height">45dp</dimen>
     <dimen name="et_height">45dp</dimen>
     <dimen name="et_tv">17sp</dimen>
@@ -47,7 +48,7 @@
     <dimen name="dialog_btn_margin_top">20dp</dimen>
     <dimen name="item_post_height">50dp</dimen>
     <dimen name="ll_area_pose_area_width">240dp</dimen>
-    <dimen name="iv_drawable_padding">10dp</dimen>
+    <dimen name="iv_drawable_padding">8dp</dimen>
     <dimen name="popup_margin_bottom">10dp</dimen>
     <dimen name="popup_margin_left_right">10dp</dimen>
     <dimen name="pb_size">34dp</dimen>
@@ -64,4 +65,5 @@
     <dimen name="wheelView_margin_top">4dp</dimen>
     <dimen name="tv_toast_size">12sp</dimen>
     <dimen name="tv_line_space">6dp</dimen>
+    <dimen name="tv_location_margin_left">10dp</dimen>
 </resources>

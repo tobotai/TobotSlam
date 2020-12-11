@@ -16,7 +16,7 @@ import com.tobot.map.base.BaseRecyclerHolder;
  */
 public class MapAdapter extends BaseRecyclerAdapter<String> {
     private String mMap;
-    private OnMapListener mListener;
+    private OnMapListener<String> mListener;
 
     public MapAdapter(Context context, int itemLayoutId) {
         super(context, itemLayoutId);
@@ -39,32 +39,32 @@ public class MapAdapter extends BaseRecyclerAdapter<String> {
                 tvName.setSelected(false);
                 btnLoad.setVisibility(View.VISIBLE);
             }
+
+            btnLoad.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onMapSwitch(position, data);
+                    }
+                }
+            });
+
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onMapDelete(position, data);
+                    }
+                }
+            });
         }
-
-        btnLoad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onMapSwitch(position, data);
-                }
-            }
-        });
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onMapDelete(position, data);
-                }
-            }
-        });
     }
 
     public void setCurrentMap(String name) {
         mMap = name;
     }
 
-    public void setOnMapListener(OnMapListener listener) {
+    public void setOnMapListener(OnMapListener<String> listener) {
         mListener = listener;
     }
 
@@ -76,14 +76,6 @@ public class MapAdapter extends BaseRecyclerAdapter<String> {
          * @param data
          */
         void onMapSwitch(int position, T data);
-
-        /**
-         * 重命名地图
-         *
-         * @param position
-         * @param data
-         */
-        void onMapEdit(int position, T data);
 
         /**
          * 删除地图

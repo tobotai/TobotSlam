@@ -43,7 +43,7 @@ public class SetAdapter implements TabAdapter {
         return new QTabView.TabTitle.Builder()
                 // 设置数据也有设置字体颜色的方法
                 .setContent(mData.get(position))
-                .setTextColor(mContext.getColor(R.color.tv_white), mContext.getColor(R.color.tv_content))
+                .setTextColor(mContext.getResources().getColor(R.color.tv_white), mContext.getResources().getColor(R.color.tv_content))
                 .build();
     }
 

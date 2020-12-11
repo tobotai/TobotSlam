@@ -66,22 +66,21 @@ public class TaskSaveDialog extends BaseDialog implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_cancel:
-                dismiss();
-                break;
-            case R.id.btn_confirm:
-                String content = editText.getText().toString().trim();
-                if (TextUtils.isEmpty(content)) {
-                    ToastUtils.getInstance(getActivity()).show(getString(R.string.task_empty_tips));
-                    return;
-                }
-                if (mOnNameListener != null) {
-                    mOnNameListener.onName(content);
-                }
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_cancel) {
+            dismiss();
+            return;
+        }
+
+        if (id == R.id.btn_confirm) {
+            String content = editText.getText().toString().trim();
+            if (TextUtils.isEmpty(content)) {
+                ToastUtils.getInstance(getActivity()).show(getString(R.string.task_empty_tips));
+                return;
+            }
+            if (mOnNameListener != null) {
+                mOnNameListener.onName(content);
+            }
         }
     }
 

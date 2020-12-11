@@ -1,5 +1,6 @@
 package com.tobot.map.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -13,6 +14,7 @@ public class SharedPreferencesUtils {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    @SuppressLint("CommitPrefEdits")
     private SharedPreferencesUtils(Context context) {
         sharedPreferences = context.getSharedPreferences("sp_data", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();

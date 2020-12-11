@@ -10,7 +10,7 @@
         android:layout_height="@dimen/head_height"
         android:layout_gravity="center"
         android:drawableLeft="@drawable/ic_add"
-        android:drawablePadding="8dp"
+        android:drawablePadding="@dimen/iv_drawable_padding"
         android:gravity="center"
         android:text="@string/tv_create_task"
         android:textColor="@color/shape_cancel_bg_normal"

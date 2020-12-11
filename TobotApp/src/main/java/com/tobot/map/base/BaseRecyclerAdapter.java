@@ -1,6 +1,7 @@
 package com.tobot.map.base;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,13 @@ import java.util.List;
  * @author houdeming
  * @date 2018/6/27
  */
+@SuppressWarnings("rawtypes")
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
     protected List<T> mData = new ArrayList<>();
     protected Context mContext;
     private int mLayoutId;
     private LayoutInflater mLayoutInflater;
-    protected OnItemClickListener mOnItemClickListener;
+    protected OnItemClickListener<T> mOnItemClickListener;
 
     public BaseRecyclerAdapter(Context context, int itemLayoutId) {
         mContext = context;
@@ -26,19 +28,15 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public void setData(List<T> data) {
-        mData = data;
-        notifyDataSetChanged();
-    }
-
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mLayoutInflater.inflate(mLayoutId, parent, false);
         return new BaseRecyclerHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         BaseRecyclerHolder itemHolder = (BaseRecyclerHolder) holder;
         T data = mData != null ? mData.get(position) : null;
         convert(itemHolder, data, position);
@@ -58,7 +56,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
      */
     public abstract void convert(BaseRecyclerHolder viewHolder, T data, int position);
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setData(List<T> data) {
+        mData = data;
+        notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener<T> listener) {
         mOnItemClickListener = listener;
     }
 

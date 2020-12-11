@@ -27,7 +27,7 @@
             android:id="@+id/tv_delete"
             style="@style/tv_connect_tips"
             android:drawableRight="@drawable/ic_delete"
-            android:drawablePadding="4dp"
+            android:drawablePadding="@dimen/iv_drawable_padding"
             android:text="@string/tv_connect_history" />
 
         <android.support.v7.widget.RecyclerView
@@ -54,7 +54,7 @@
             android:id="@+id/et_ip_input"
             android:layout_width="match_parent"
             android:layout_height="@dimen/et_height"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/et_margin_top"
             android:background="@drawable/shape_edit_bg"
             android:gravity="center"
             android:hint="@string/et_ip_hint_tips"

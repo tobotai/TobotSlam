@@ -1,6 +1,7 @@
 package com.tobot.map.module.task;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.State;
 import android.view.View;
@@ -18,7 +19,7 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull State state) {
         outRect.set(mHorizontalSpacing, mVerticalSpacing, mHorizontalSpacing, mVerticalSpacing);
     }
 }

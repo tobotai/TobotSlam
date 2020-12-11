@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
@@ -123,12 +123,7 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
         String nameChina = etNameChina.getText().toString().trim();
         String nameEnglish = etNameEnglish.getText().toString().trim();
         if (TextUtils.isEmpty(number)) {
-            showToastTips(getString(R.string.number_empty_tips));
-            return;
-        }
-        // 编号格式必须2位数或以上
-        if (number.length() < 2) {
-            showToastTips(getString(R.string.number_format_error_tips));
+            showToastTips(getString(R.string.name_empty_tips));
             return;
         }
         // 如果修改编号，则不能与存在的编号一样

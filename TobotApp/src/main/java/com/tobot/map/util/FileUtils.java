@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * @date 2018/4/13
  */
 public class FileUtils {
-    private static final String TAG = FileUtils.class.getSimpleName();
+    private static final String TAG = "FileUtils";
 
     /**
      * 保存文件
@@ -177,13 +178,13 @@ public class FileUtils {
                 in.read(first3bytes);
                 in.reset();
                 if (first3bytes[0] == (byte) 0xEF && first3bytes[1] == (byte) 0xBB && first3bytes[2] == (byte) 0xBF) {
-                    reader = new BufferedReader(new InputStreamReader(in, "utf-8"));
+                    reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
                 } else if (first3bytes[0] == (byte) 0xFF && first3bytes[1] == (byte) 0xFE) {
                     reader = new BufferedReader(new InputStreamReader(in, "unicode"));
                 } else if (first3bytes[0] == (byte) 0xFE && first3bytes[1] == (byte) 0xFF) {
-                    reader = new BufferedReader(new InputStreamReader(in, "utf-16be"));
+                    reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_16BE));
                 } else if (first3bytes[0] == (byte) 0xFF && first3bytes[1] == (byte) 0xFF) {
-                    reader = new BufferedReader(new InputStreamReader(in, "utf-16le"));
+                    reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_16LE));
                 } else {
                     reader = new BufferedReader(new InputStreamReader(in, "GBK"));
                 }
@@ -215,12 +216,9 @@ public class FileUtils {
                 File[] files = file.listFiles();
                 if (files != null && files.length > 0) {
                     List<String> data = new ArrayList<>();
-                    for (int i = 0, length = files.length; i < length; i++) {
-                        File childFile = files[i];
+                    for (File childFile : files) {
                         if (childFile.isFile()) {
-                            String fileName = childFile.getName();
-                            String name = fileName.substring(fileName.lastIndexOf("."));
-                            if (name.equalsIgnoreCase(".doc") || name.equalsIgnoreCase(".docx")) {
+                            if (isWord(childFile.getName())) {
                                 data.add(childFile.getAbsolutePath());
                             }
                         }
@@ -241,12 +239,9 @@ public class FileUtils {
                 File[] files = file.listFiles();
                 if (files != null && files.length > 0) {
                     List<String> data = new ArrayList<>();
-                    for (int i = 0, length = files.length; i < length; i++) {
-                        File childFile = files[i];
+                    for (File childFile : files) {
                         if (childFile.isFile()) {
-                            String fileName = childFile.getName();
-                            String name = fileName.substring(fileName.lastIndexOf("."));
-                            if (name.equalsIgnoreCase(".txt")) {
+                            if (isTxt(childFile.getName())) {
                                 data.add(childFile.getAbsolutePath());
                             }
                         }
@@ -272,14 +267,11 @@ public class FileUtils {
     private static List<String> getChildPhotoPath(File file, List<String> data) {
         File[] files = file.listFiles();
         if (files != null && files.length > 0) {
-            for (int i = 0, length = files.length; i < length; i++) {
-                File childFile = files[i];
+            for (File childFile : files) {
                 if (childFile.isDirectory()) {
                     getChildPhotoPath(childFile, data);
                 } else {
-                    String fileName = childFile.getName();
-                    String name = fileName.substring(fileName.lastIndexOf("."));
-                    if (name.equalsIgnoreCase(".png") || name.equalsIgnoreCase(".jpg") || name.equalsIgnoreCase(".jpeg")) {
+                    if (isPicture(childFile.getName())) {
                         data.add(childFile.getAbsolutePath());
                     }
                 }
@@ -301,23 +293,11 @@ public class FileUtils {
         try {
             File[] files = file.listFiles();
             if (files != null && files.length > 0) {
-                for (int i = 0, length = files.length; i < length; i++) {
-                    File childFile = files[i];
+                for (File childFile : files) {
                     if (childFile.isDirectory()) {
                         getChildVideoPath(childFile, data);
                     } else {
-                        String fileName = childFile.getName();
-                        String name = fileName.substring(fileName.lastIndexOf("."));
-                        if (name.equalsIgnoreCase(".mp4") || name.equalsIgnoreCase(".3gp") || name.equalsIgnoreCase(".wmv")
-                                || name.equalsIgnoreCase(".ts") || name.equalsIgnoreCase(".rmvb") || name.equalsIgnoreCase(".mov")
-                                || name.equalsIgnoreCase(".m4v") || name.equalsIgnoreCase(".avi") || name.equalsIgnoreCase(".m3u8")
-                                || name.equalsIgnoreCase(".3gpp") || name.equalsIgnoreCase(".3gpp2") || name.equalsIgnoreCase(".mkv")
-                                || name.equalsIgnoreCase(".flv") || name.equalsIgnoreCase(".divx") || name.equalsIgnoreCase(".f4v")
-                                || name.equalsIgnoreCase(".rm") || name.equalsIgnoreCase(".asf") || name.equalsIgnoreCase(".ram")
-                                || name.equalsIgnoreCase(".mpg") || name.equalsIgnoreCase(".v8") || name.equalsIgnoreCase(".swf")
-                                || name.equalsIgnoreCase(".m2v") || name.equalsIgnoreCase(".asx") || name.equalsIgnoreCase(".ra")
-                                || name.equalsIgnoreCase(".ndivx") || name.equalsIgnoreCase(".xvid")) {
-
+                        if (isVideo(childFile.getName())) {
                             data.add(childFile.getAbsolutePath());
                         }
                     }
@@ -327,5 +307,65 @@ public class FileUtils {
             e.printStackTrace();
         }
         return data;
+    }
+
+    public static boolean isVideo(String fileName) {
+        if (!TextUtils.isEmpty(fileName)) {
+            try {
+                String name = fileName.substring(fileName.lastIndexOf("."));
+                return name.equalsIgnoreCase(".mp4") || name.equalsIgnoreCase(".3gp");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean isMusic(String fileName) {
+        if (!TextUtils.isEmpty(fileName)) {
+            try {
+                String name = fileName.substring(fileName.lastIndexOf("."));
+                return name.equalsIgnoreCase(".mp3") || name.equalsIgnoreCase(".wav");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPicture(String fileName) {
+        if (!TextUtils.isEmpty(fileName)) {
+            try {
+                String name = fileName.substring(fileName.lastIndexOf("."));
+                return name.equalsIgnoreCase(".png") || name.equalsIgnoreCase(".jpg") || name.equalsIgnoreCase(".jpeg");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean isWord(String fileName) {
+        if (!TextUtils.isEmpty(fileName)) {
+            try {
+                String name = fileName.substring(fileName.lastIndexOf("."));
+                return name.equalsIgnoreCase(".doc") || name.equalsIgnoreCase(".docx");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean isTxt(String fileName) {
+        if (!TextUtils.isEmpty(fileName)) {
+            try {
+                String name = fileName.substring(fileName.lastIndexOf("."));
+                return name.equalsIgnoreCase(".txt");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }

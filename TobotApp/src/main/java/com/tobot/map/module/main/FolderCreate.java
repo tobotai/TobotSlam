@@ -2,7 +2,7 @@ package com.tobot.map.module.main;
 
 import android.content.Context;
 
-import com.tobot.map.base.BaseConstant;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.util.FileUtils;
 
 import java.io.File;

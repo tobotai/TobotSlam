@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.tobot.map">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -35,9 +36,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:targetApi="q">
         <activity
             android:name=".module.connect.ConnectActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
