@@ -19,8 +19,8 @@ import com.slamtec.slamware.geometry.PointF;
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
-import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.OnDialogBackEventListener;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.event.ConnectSlamEvent;
 import com.tobot.map.event.ConnectSuccessEvent;
@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     private EditPopupWindow mEditPopupWindow;
     private int mEditType, mOption;
     private MapClickHandle mMapClickHandle;
-    private boolean isHandleMove, isShowTips;
+    private boolean isHandleMove, isShowTips, isUpdateMap;
     private Charge mCharge;
     private static final int LOW_BATTERY = 1;
     private int mLowBatteryStatus;
@@ -186,12 +186,25 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (isUpdateMap && mMapHelper != null) {
+            isUpdateMap = false;
+            mMapHelper.startUpdateMap();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         closeLoadTipsDialog();
         if (isDisconnectDialogShow()) {
             mDisconnectDialog.getDialog().dismiss();
             mDisconnectDialog = null;
+        }
+        isUpdateMap = true;
+        if (mMapHelper != null) {
+            mMapHelper.stopUpdateMap();
         }
     }
 
@@ -499,6 +512,11 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     }
 
     private void handleLowBattery(int battery, boolean isCharge) {
+        // 电量不可能为0
+        if (battery <= 0) {
+            return;
+        }
+
         if (battery <= DataHelper.getInstance().getLowBattery()) {
             if (!isCharge && mLowBatteryStatus != LOW_BATTERY) {
                 mLowBatteryStatus = LOW_BATTERY;

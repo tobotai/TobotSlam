@@ -37,6 +37,7 @@ class MapHelper {
         mContext = contextWeakReference.get();
         mMainHandler = handlerWeakReference.get();
         mMapView = mapViewWeakReference.get();
+        isFirstRefresh = true;
         startUpdateMap();
         mHandlerThread = new HandlerThread("MAP_THREAD");
         mHandlerThread.start();
@@ -63,8 +64,7 @@ class MapHelper {
         mRefreshCount = 0;
     }
 
-    private void startUpdateMap() {
-        isFirstRefresh = true;
+    void startUpdateMap() {
         isStart = true;
         if (mapUpdate == null) {
             mapUpdate = new Thread(updateMapRunnable);
@@ -76,7 +76,7 @@ class MapHelper {
         }
     }
 
-    private void stopUpdateMap() {
+    void stopUpdateMap() {
         isFirstRefresh = false;
         isStart = false;
         if (mapUpdate != null) {
