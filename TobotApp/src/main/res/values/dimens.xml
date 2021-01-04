@@ -25,11 +25,14 @@
     <dimen name="btn_connect_margin_top">30dp</dimen>
     <dimen name="sta_connect_margin_right">30dp</dimen>
     <dimen name="view_mode_margin_top">20dp</dimen>
+    <dimen name="layout_margin_top">30dp</dimen>
     <dimen name="ip_connect_history_size">140dp</dimen>
     <dimen name="item_split_line_height">1dp</dimen>
     <integer name="dialog_width_weight">9</integer>
     <integer name="dialog_progress_width_weight">3</integer>
     <dimen name="tab_set_width">130dp</dimen>
+    <dimen name="tab_set_tv_normal">13sp</dimen>
+    <dimen name="tab_set_tv_select">14sp</dimen>
     <dimen name="btn_map_margin_right">5dp</dimen>
     <dimen name="view_set_margin_left_right">30dp</dimen>
     <dimen name="tv_mode_tips">14sp</dimen>

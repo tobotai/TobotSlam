@@ -2,15 +2,12 @@ package com.tobot.map.module.main;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
-import android.support.annotation.NonNull;
 
 import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.robot.ArtifactUsage;
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.util.NetworkUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.view.MapView;
 
@@ -21,17 +18,13 @@ import java.lang.ref.WeakReference;
  * @date 2019/10/23
  */
 class MapHelper {
-    private static final int MSG_STOP = 1;
     private Context mContext;
     private Thread mapUpdate;
     private Handler mMainHandler;
     private MapView mMapView;
-    private HandlerThread mHandlerThread;
-    private MapThreadHandle mMapThreadHandle;
     private boolean isFirstRefresh;
     private int mRefreshCount;
     private boolean isStart;
-    private SignalThread mSignalThread;
 
     MapHelper(WeakReference<Context> contextWeakReference, WeakReference<Handler> handlerWeakReference, WeakReference<MapView> mapViewWeakReference) {
         mContext = contextWeakReference.get();
@@ -39,24 +32,15 @@ class MapHelper {
         mMapView = mapViewWeakReference.get();
         isFirstRefresh = true;
         startUpdateMap();
-        mHandlerThread = new HandlerThread("MAP_THREAD");
-        mHandlerThread.start();
-        mMapThreadHandle = new MapThreadHandle(mHandlerThread.getLooper());
     }
 
     void destroy() {
         stopUpdateMap();
         cancelAction();
-        if (mHandlerThread != null) {
-            mHandlerThread.quit();
-            mHandlerThread = null;
-        }
     }
 
     void cancelAction() {
-        if (mMapThreadHandle != null) {
-            mMapThreadHandle.obtainMessage(MSG_STOP).sendToTarget();
-        }
+        ThreadPoolManager.getInstance().execute(new CancelRunnable());
     }
 
     void updateMap() {
@@ -70,10 +54,6 @@ class MapHelper {
             mapUpdate = new Thread(updateMapRunnable);
             mapUpdate.start();
         }
-        if (mSignalThread == null) {
-            mSignalThread = new SignalThread();
-            mSignalThread.start();
-        }
     }
 
     void stopUpdateMap() {
@@ -83,9 +63,8 @@ class MapHelper {
             mapUpdate.interrupt();
             mapUpdate = null;
         }
-        if (mSignalThread != null) {
-            mSignalThread.interrupt();
-            mSignalThread = null;
+        if (mMapView != null) {
+            mMapView.setMapUpdate(false);
         }
     }
 
@@ -116,7 +95,7 @@ class MapHelper {
                         mMapView.setSensors(SlamManager.getInstance().getSensors(), SlamManager.getInstance().getSensorValues(), pose);
                     }
 
-                    if ((cnt % 15) == 0) {
+                    if ((cnt % 20) == 0) {
                         // 获取地图
                         if (isFirstRefresh || SlamManager.getInstance().isMapUpdate()) {
                             mRefreshCount++;
@@ -143,8 +122,16 @@ class MapHelper {
                         // 获取机器人信息
                         ActionStatus actionStatus = SlamManager.getInstance().getRemainingActionStatus();
                         mMainHandler.obtainMessage(MainHandle.MSG_GET_STATUS, new Object[]{battery, isCharge, locationQuality, actionStatus}).sendToTarget();
+                    }
+
+                    if ((cnt % 30) == 0) {
                         // 获取充电桩位置
                         mMapView.setHomePose(SlamManager.getInstance().getHomePose());
+                    }
+
+                    if (cnt % 60 == 0) {
+                        // 显示网络信号
+                        mMainHandler.obtainMessage(MainHandle.MSG_GET_RSSI, NetworkUtils.getRssi(mContext)).sendToTarget();
                     }
 
                     Thread.sleep(33);
@@ -156,37 +143,11 @@ class MapHelper {
         }
     };
 
-    private class SignalThread extends Thread {
+    private static class CancelRunnable implements Runnable {
+
         @Override
         public void run() {
-            super.run();
-            while (isStart) {
-                if (mMainHandler != null) {
-                    mMainHandler.obtainMessage(MainHandle.MSG_GET_RSSI, NetworkUtils.getRssi(mContext)).sendToTarget();
-                }
-
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return;
-                }
-            }
-        }
-    }
-
-    private static class MapThreadHandle extends Handler {
-
-        private MapThreadHandle(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == MSG_STOP) {
-                SlamManager.getInstance().cancelAction();
-            }
+            SlamManager.getInstance().cancelAction();
         }
     }
 }

@@ -91,7 +91,7 @@
     <string name="tv_config_ultrasonic">ultrasonic switch</string>
     <string name="btn_ultrasonic_area">ultrasonic area</string>
     <string name="name_rule_tips">Tips: Please name the locations and points appropriately according to the requirements. It is suggested to name them after the number type.</string>
-    <string name="name_edit_rule_no_ultrasonic_tips">Tips: The name of the location dot and the name in Both Chinese and English can be modified, but cannot be repeated!</string>
+    <string name="name_edit_rule_tips">Tips: The name of the location dot and the name in Both Chinese and English can be modified, but cannot be repeated!</string>
     <string name="map_rule_tips">Tips: Please name the map properly according to the requirements. If the saved map name is consistent with the existing map name, the saved map name will be overwritten.</string>
     <string name="map_load_tips">map loading…</string>
     <string name="map_load_fail_tips">map loading failed…</string>
@@ -175,15 +175,14 @@
     <string name="signal_weak">deviation</string>
     <string name="signal_difference">very poor</string>
     <string name="signal_difference_tips">the current network connection is very poor. Please approach the robot or check the network connection device</string>
-    <string name="tv_slam_disconnect_tips">the chassis connection has been disconnected, reconnection may take more time. It is recommended that you exit the current application and enter again!</string>
-    <string name="btn_reconnect">reconnect</string>
-    <string name="btn_exit">exit application (recommended)</string>
-    <string name="connect_slam_success_tips">connection succeeded…</string>
-    <string name="operate_error_tips">operation failed, please stop the current machine behavior before operation…</string>
+    <string name="slam_disconnect_tips">Chassis connection disconnects, please exit current application!</string>
+    <string name="operate_error_tips">operation failed…</string>
     <string name="tv_reset_charge_title">reset charge</string>
     <string name="tv_reset_charge_tips">steps\n1.move the charge point to a new location\n2.navigate the machine to the charging point and be charged\n3.click "reset"\n4.when the machine is navigated from the charging point, the reset is successful</string>
     <string name="btn_reset">reset</string>
     <string name="reset_not_charge_tips">please move the machine to the charging point first</string>
     <string name="reset_success_tips">reset success…</string>
     <string name="reset_fail_tips">reset fail…</string>
+    <string name="sensor_bumper_trigger">Anti-collision sensor triggered</string>
+    <string name="sensor_cliff_trigger">Drop proof sensor triggered</string>
 </resources>

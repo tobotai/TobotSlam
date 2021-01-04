@@ -92,7 +92,7 @@
     <string name="tv_config_ultrasonic">超声波开关</string>
     <string name="btn_ultrasonic_area">超声波区域</string>
     <string name="name_rule_tips">温馨提示：请按需求合理命名位置点名称，建议以数字类型命名。</string>
-    <string name="name_edit_rule_no_ultrasonic_tips">温馨提示：位置点名称、中英文名称均可修改，但不能重复！</string>
+    <string name="name_edit_rule_tips">温馨提示：位置点名称、中英文名称均可修改，但不能重复！</string>
     <string name="map_rule_tips">温馨提示：请按需求合理命名地图名称，当保存的地图名称与现有地图名称一致时，将会覆盖保存。</string>
     <string name="map_load_tips">地图加载中…</string>
     <string name="map_load_fail_tips">地图加载失败…</string>
@@ -176,15 +176,14 @@
     <string name="signal_weak">偏差</string>
     <string name="signal_difference">非常差</string>
     <string name="signal_difference_tips">当前网络连接非常差，请靠近机器人或检查网络连接设备</string>
-    <string name="tv_slam_disconnect_tips">底盘连接已经断开，重连可能会花费更多时间，建议您退出当前应用，重新进入！</string>
-    <string name="btn_reconnect">重新连接</string>
-    <string name="btn_exit">退出应用（推荐）</string>
-    <string name="connect_slam_success_tips">连接成功…</string>
-    <string name="operate_error_tips">操作失败，请先停止机器当前行为再操作…</string>
+    <string name="slam_disconnect_tips">底盘连接断开，请退出当前应用！</string>
+    <string name="operate_error_tips">操作失败…</string>
     <string name="tv_reset_charge_title">重置充电桩</string>
     <string name="tv_reset_charge_tips">步骤如下\n1、将充电桩移至新的位置\n2、将机器导航到充电桩上并处于充电状态\n3、点击“重置”\n4、将机器从充电桩导航出来，即重置成功</string>
     <string name="btn_reset">重置</string>
     <string name="reset_not_charge_tips">请先将机器移动至充电桩上</string>
     <string name="reset_success_tips">重置成功…</string>
     <string name="reset_fail_tips">重置失败…</string>
+    <string name="sensor_bumper_trigger">防碰撞传感器触发</string>
+    <string name="sensor_cliff_trigger">防跌落传感器触发</string>
 </resources>

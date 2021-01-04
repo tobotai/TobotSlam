@@ -76,8 +76,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:9.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'q.rorbin:VerticalTabLayout:1.2.5'
     implementation(name: 'TobotBar-1.1.5', ext: 'aar')
     implementation(name: 'TobotWheelView-1.2.1', ext: 'aar')
-    implementation files('libs/TobotSlam-2.7.2.jar')
+    implementation files('libs/TobotSlam-2.8.0.jar')
 }

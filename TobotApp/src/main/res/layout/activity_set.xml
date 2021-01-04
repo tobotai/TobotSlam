@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <q.rorbin.verticaltablayout.VerticalTabLayout
-        android:id="@+id/tab_layout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="@dimen/tab_set_width"
         android:layout_height="match_parent"
         android:background="@color/tab_set_bg"
-        app:indicator_color="@color/layout_item_pressed_bg"
-        app:indicator_gravity="fill"
-        app:tab_height="@dimen/layout_item_height"
-        app:tab_mode="scrollable" />
+        android:overScrollMode="never" />
 
     <FrameLayout
-        android:id="@+id/fl_layout"
+        android:id="@+id/fl"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

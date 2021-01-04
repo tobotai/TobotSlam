@@ -57,7 +57,7 @@ public class MapService extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConnectSlamEvent(ConnectSlamEvent event) {
         if (mConnectSlamThread == null) {
-            mConnectSlamThread = new ConnectSlamThread(new WeakReference<Context>(this), event.getIp());
+            mConnectSlamThread = new ConnectSlamThread(new WeakReference<>(this), event.getIp());
             mConnectSlamThread.start();
         }
     }
@@ -66,7 +66,6 @@ public class MapService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
-                // 第一次检测到网络的时候，要检测新版本
                 boolean isConnect = NetworkUtils.isConnected(MapService.this);
                 LogUtils.i("net isConnect=" + isConnect);
             }

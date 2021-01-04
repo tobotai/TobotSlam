@@ -1,24 +1,38 @@
 package com.tobot.map.module.set;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseRecyclerAdapter;
+import com.tobot.map.entity.SetBean;
+import com.tobot.map.module.common.ItemSplitLineDecoration;
 import com.tobot.map.module.set.device.DeviceInfoFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import q.rorbin.verticaltablayout.VerticalTabLayout;
 
 /**
  * @author houdeming
  * @date 2019/10/19
  */
-public class SetActivity extends BaseActivity {
-    @BindView(R.id.tab_layout)
-    VerticalTabLayout tabLayout;
+public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<SetBean> {
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    private static final int TAG_DEVICE_INFO = 0;
+    private static final int TAG_CONFIG = 1;
+    private static final int TAG_MAP_LIST = 2;
+    private static final int TAG_TEST = 3;
+    private SetAdapter mAdapter;
+    private DeviceInfoFragment mDeviceInfoFragment;
+    private ConfigFragment mConfigFragment;
+    private MapListFragment mMapListFragment;
+    private TestFragment mTestFragment;
 
     @Override
     protected int getLayoutResId() {
@@ -27,21 +41,111 @@ public class SetActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        List<String> titles = new ArrayList<>();
-        titles.add(getString(R.string.tv_device_info));
-        titles.add(getString(R.string.tv_config));
-        titles.add(getString(R.string.tv_low_battery));
-        titles.add(getString(R.string.tv_map_list));
-        titles.add(getString(R.string.tv_test));
-        // 与上面的title要一一对应
-        List<Fragment> fragments = new ArrayList<>();
-        fragments.add(DeviceInfoFragment.newInstance());
-        fragments.add(ConfigFragment.newInstance());
-        fragments.add(LowBatteryFragment.newInstance());
-        fragments.add(MapListFragment.newInstance());
-        fragments.add(TestFragment.newInstance());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new ItemSplitLineDecoration(this, ItemSplitLineDecoration.VERTICAL, true));
+        mAdapter = new SetAdapter(this, R.layout.recycler_item_set);
+        mAdapter.setOnItemClickListener(this);
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.setData(getTagList());
+        // 默认选中
+        setSelectFragment(TAG_DEVICE_INFO);
+    }
 
-        tabLayout.setupWithFragment(getSupportFragmentManager(), R.id.fl_layout, fragments, new SetAdapter(this, titles));
-        tabLayout.setTabSelected(0);
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (mDeviceInfoFragment == null && fragment instanceof DeviceInfoFragment) {
+            mDeviceInfoFragment = (DeviceInfoFragment) fragment;
+        }
+        if (mConfigFragment == null && fragment instanceof ConfigFragment) {
+            mConfigFragment = (ConfigFragment) fragment;
+        }
+        if (mMapListFragment == null && fragment instanceof MapListFragment) {
+            mMapListFragment = (MapListFragment) fragment;
+        }
+        if (mTestFragment == null && fragment instanceof TestFragment) {
+            mTestFragment = (TestFragment) fragment;
+        }
+    }
+
+    @Override
+    public void onItemClick(int position, SetBean data) {
+        if (mAdapter != null) {
+            mAdapter.setSelect(position);
+        }
+        setSelectFragment(data.getId());
+    }
+
+    private List<SetBean> getTagList() {
+        List<SetBean> titles = new ArrayList<>();
+        SetBean bean = new SetBean(TAG_DEVICE_INFO, getString(R.string.tv_device_info));
+        titles.add(bean);
+
+        bean = new SetBean(TAG_CONFIG, getString(R.string.tv_config));
+        titles.add(bean);
+
+        bean = new SetBean(TAG_MAP_LIST, getString(R.string.tv_map_list));
+        titles.add(bean);
+
+        bean = new SetBean(TAG_TEST, getString(R.string.tv_test));
+        titles.add(bean);
+        return titles;
+    }
+
+    private void setSelectFragment(int position) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        hideFragment(transaction);
+        switch (position) {
+            case TAG_DEVICE_INFO:
+                if (mDeviceInfoFragment == null) {
+                    mDeviceInfoFragment = DeviceInfoFragment.newInstance();
+                    transaction.add(R.id.fl, mDeviceInfoFragment);
+                } else {
+                    transaction.show(mDeviceInfoFragment);
+                }
+                break;
+            case TAG_CONFIG:
+                if (mConfigFragment == null) {
+                    mConfigFragment = ConfigFragment.newInstance();
+                    transaction.add(R.id.fl, mConfigFragment);
+                } else {
+                    transaction.show(mConfigFragment);
+                }
+                break;
+            case TAG_MAP_LIST:
+                if (mMapListFragment == null) {
+                    mMapListFragment = MapListFragment.newInstance();
+                    transaction.add(R.id.fl, mMapListFragment);
+                } else {
+                    transaction.show(mMapListFragment);
+                }
+                break;
+            case TAG_TEST:
+                if (mTestFragment == null) {
+                    mTestFragment = TestFragment.newInstance();
+                    transaction.add(R.id.fl, mTestFragment);
+                } else {
+                    transaction.show(mTestFragment);
+                }
+                break;
+            default:
+                break;
+        }
+        transaction.commit();
+    }
+
+    private void hideFragment(FragmentTransaction transaction) {
+        if (mDeviceInfoFragment != null) {
+            transaction.hide(mDeviceInfoFragment);
+        }
+        if (mConfigFragment != null) {
+            transaction.hide(mConfigFragment);
+        }
+        if (mMapListFragment != null) {
+            transaction.hide(mMapListFragment);
+        }
+        if (mTestFragment != null) {
+            transaction.hide(mTestFragment);
+        }
     }
 }

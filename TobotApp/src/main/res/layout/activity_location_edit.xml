@@ -100,7 +100,7 @@
                 android:layout_marginLeft="@dimen/view_margin_left_right"
                 android:layout_marginTop="@dimen/et_margin_top"
                 android:layout_marginRight="@dimen/view_margin_left_right"
-                android:text="@string/name_edit_rule_no_ultrasonic_tips"
+                android:text="@string/name_edit_rule_tips"
                 android:textColor="@color/tv_tips"
                 android:textSize="@dimen/tv_tips" />
 

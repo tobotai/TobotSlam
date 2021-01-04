@@ -91,7 +91,7 @@
     <string name="tv_config_ultrasonic">超聲波開關</string>
     <string name="btn_ultrasonic_area">超聲波區域</string>
     <string name="name_rule_tips">溫馨提示：請按需求合理命名位置點名稱，建議以數字類型命名。</string>
-    <string name="name_edit_rule_no_ultrasonic_tips">溫馨提示：位置點名稱、中英文名稱均可修改，但不能重復！</string>
+    <string name="name_edit_rule_tips">溫馨提示：位置點名稱、中英文名稱均可修改，但不能重復！</string>
     <string name="map_rule_tips">溫馨提示：請按需求合理命名地圖名稱，當保存的地圖名稱與現有地圖名稱壹致時，將會覆蓋保存。</string>
     <string name="map_load_tips">地圖加載中…</string>
     <string name="map_load_fail_tips">地圖加載失敗…</string>
@@ -175,15 +175,14 @@
     <string name="signal_weak">偏差</string>
     <string name="signal_difference">非常差</string>
     <string name="signal_difference_tips">當前網絡連接非常差，請靠近機器人或檢查網絡連接設備</string>
-    <string name="tv_slam_disconnect_tips">底盤連接已經斷開，重連可能會花費更多時間，建議您退出當前應用，重新進入！</string>
-    <string name="btn_reconnect">重新連接</string>
-    <string name="btn_exit">退出應用（推薦）</string>
-    <string name="connect_slam_success_tips">連接成功…</string>
-    <string name="operate_error_tips">操作失敗，請先停止機器當前行為再操作…</string>
+    <string name="slam_disconnect_tips">底盤連接斷開，請退出當前應用！</string>
+    <string name="operate_error_tips">操作失敗…</string>
     <string name="tv_reset_charge_title">重置充電樁</string>
     <string name="tv_reset_charge_tips">步驟如下\n1、將充電樁移至新的位置\n2、將機器導航到充電樁上並處於充電狀態\n3、點擊“重置”\n4、將機器從充電樁導航出來，即重置成功</string>
     <string name="btn_reset">重置</string>
     <string name="reset_not_charge_tips">請先將機器移動至充電樁上</string>
     <string name="reset_success_tips">重置成功…</string>
     <string name="reset_fail_tips">重置失敗…</string>
+    <string name="sensor_bumper_trigger">防碰撞傳感器觸發</string>
+    <string name="sensor_cliff_trigger">防跌落傳感器觸發</string>
 </resources>

@@ -7,6 +7,7 @@ import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.util.SharedPreferencesUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.data.LocationBean;
 
@@ -15,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author houdeming
@@ -74,8 +73,7 @@ public class DataHelper {
     }
 
     public void requestMapNumberList(final Context context, final MapRequestCallBack callBack) {
-        ExecutorService mExecutor = Executors.newCachedThreadPool();
-        mExecutor.execute(new Runnable() {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_NAME_SUFFIX);
@@ -94,8 +92,7 @@ public class DataHelper {
     }
 
     public void requestMapNameList(final Context context, final MapRequestCallBack callBack) {
-        ExecutorService mExecutor = Executors.newCachedThreadPool();
-        mExecutor.execute(new Runnable() {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_NAME_SUFFIX);
@@ -107,8 +104,7 @@ public class DataHelper {
     }
 
     public void requestMapPathList(final Context context, final MapRequestCallBack callBack) {
-        ExecutorService mExecutor = Executors.newCachedThreadPool();
-        mExecutor.execute(new Runnable() {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_NAME_SUFFIX);

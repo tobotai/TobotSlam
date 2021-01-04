@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#3788FB</color>
     <color name="colorAccent">#3788FB</color>
     <color name="head_tv_color">#000000</color>
+    <color name="tv_title">#000000</color>
     <color name="tv_content">#000000</color>
     <color name="tv_tips">#8A8A8A</color>
     <color name="tv_white">#FFFFFF</color>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,13 +18,13 @@ import android.widget.TextView;
 import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.geometry.PointF;
 import com.slamtec.slamware.robot.Pose;
+import com.slamtec.slamware.robot.SensorType;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
 import com.tobot.map.base.OnDialogBackEventListener;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
-import com.tobot.map.event.ConnectSlamEvent;
-import com.tobot.map.event.ConnectSuccessEvent;
+import com.tobot.map.module.common.TipsDialog;
 import com.tobot.map.module.main.action.ActionPopupWindow;
 import com.tobot.map.module.main.action.Charge;
 import com.tobot.map.module.main.edit.AddLineView;
@@ -44,10 +45,6 @@ import com.tobot.slam.data.LocationBean;
 import com.tobot.slam.data.Rubber;
 import com.tobot.slam.view.MapView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -58,8 +55,8 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2019/10/18
  */
-public class MainActivity extends BaseActivity implements MapView.OnSingleClickListener, AddPointViewDialog.OnPointListener, MapPopupWindow.OnMapListener, OnEditListener,
-        ActionPopupWindow.OnChargeListener, OnSlamExceptionListener, DisconnectDialog.OnOperateListener, OnDialogBackEventListener {
+public class MainActivity extends BaseActivity implements MapView.OnMapListener, AddPointViewDialog.OnPointListener, MapPopupWindow.OnMapListener, OnEditListener,
+        ActionPopupWindow.OnChargeListener, OnSlamExceptionListener, OnDialogBackEventListener, TipsDialog.OnConfirmListener {
     @BindView(R.id.map_view)
     MapView mapView;
     @BindView(R.id.tv_status)
@@ -101,7 +98,7 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     private Charge mCharge;
     private static final int LOW_BATTERY = 1;
     private int mLowBatteryStatus;
-    private DisconnectDialog mDisconnectDialog;
+    private TipsDialog mTipsDialog;
     private boolean isDisconnect;
     private int mSignalWeakCount;
 
@@ -120,14 +117,13 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
 
     @Override
     protected void init() {
-        mapView.setOnSingleClickListener(this);
+        mapView.setOnMapListener(this);
         mMainHandler = new MainHandle(new WeakReference<>(this), new WeakReference<>(mapView));
         mMapHelper = new MapHelper(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler), new WeakReference<>(mapView));
         mMapClickHandle = new MapClickHandle(new WeakReference<>(this), new WeakReference<>(mapView));
         mNavigate = new Navigate(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler));
         mTask = new Task(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler));
         mCharge = new Charge(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler));
-        EventBus.getDefault().register(this);
         // 监听slam的异常信息
         SlamManager.getInstance().setOnSlamExceptionListener(this);
     }
@@ -145,7 +141,6 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
                 if (mMapHelper != null) {
                     mMapHelper.updateMap();
                 }
-                mapView.setCentred();
                 return;
             }
 
@@ -198,9 +193,9 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     protected void onPause() {
         super.onPause();
         closeLoadTipsDialog();
-        if (isDisconnectDialogShow()) {
-            mDisconnectDialog.getDialog().dismiss();
-            mDisconnectDialog = null;
+        if (isTipsDialogShow()) {
+            mTipsDialog.getDialog().dismiss();
+            mTipsDialog = null;
         }
         isUpdateMap = true;
         if (mMapHelper != null) {
@@ -219,14 +214,46 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
             mMapHelper = null;
         }
         isClosePopupWindow();
-        EventBus.getDefault().unregister(this);
         stopService(new Intent(getApplicationContext(), MapService.class));
     }
 
     @Override
-    public void OnSingleClick(MotionEvent event) {
+    public void onMapClick(MotionEvent event) {
         if (mMapClickHandle != null) {
             mMapClickHandle.handleMapClick(mEditType, mOption, event, isHandleMove);
+        }
+    }
+
+    @Override
+    public void onSensorStatus(SensorType sensorType, boolean isTrigger) {
+        if (isTrigger && sensorType != null) {
+            String tips = "";
+            switch (sensorType) {
+                case Bumper:
+                    tips = getString(R.string.sensor_bumper_trigger);
+                    break;
+                case Cliff:
+                    tips = getString(R.string.sensor_cliff_trigger);
+                    break;
+                default:
+                    break;
+            }
+
+            if (!TextUtils.isEmpty(tips)) {
+                isDisconnect = false;
+                if (Looper.myLooper() == Looper.getMainLooper()) {
+                    showTipsDialog(tips);
+                    return;
+                }
+
+                String finalTips = tips;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showTipsDialog(finalTips);
+                    }
+                });
+            }
         }
     }
 
@@ -347,28 +374,24 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
     }
 
     @Override
-    public void onOperate(int type) {
-        if (type == DisconnectDialog.OnOperateListener.OPERATE_EXIT) {
+    public void onConfirm() {
+        if (isDisconnect) {
             finish();
-            return;
         }
-        showLoadTipsDialog(getString(R.string.tv_connect_ing), null);
-        EventBus.getDefault().post(new ConnectSlamEvent(DataHelper.getInstance().getIp()));
     }
 
     @Override
     public void onSlamException(Exception e) {
         String error = e.getMessage();
         LogUtils.i("slam error=" + error);
-        if (TextUtils.isEmpty(error)) {
-            return;
-        }
-        if (error.contains("Operation Failed")) {
-            handleOperationFailed();
-            return;
-        }
-        if (error.contains("Connection Failed")) {
-            handleConnectionFailed();
+        if (!TextUtils.isEmpty(error)) {
+            if (error.contains("Operation Failed")) {
+                handleOperationFailed();
+                return;
+            }
+            if (error.contains("Connection Failed")) {
+                handleConnectionFailed();
+            }
         }
     }
 
@@ -401,13 +424,6 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onConnectSuccessEvent(ConnectSuccessEvent event) {
-        isDisconnect = false;
-        closeLoadTipsDialog();
-        showToast(getString(R.string.connect_slam_success_tips));
-    }
-
     private void handleConnectionFailed() {
         if (isFinish) {
             return;
@@ -417,11 +433,7 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!isDisconnectDialogShow()) {
-                        mDisconnectDialog = DisconnectDialog.newInstance();
-                        mDisconnectDialog.setOnOperateListener(MainActivity.this);
-                        mDisconnectDialog.show(getSupportFragmentManager(), "DISCONNECT_DIALOG");
-                    }
+                    showTipsDialog(getString(R.string.slam_disconnect_tips));
                 }
             });
         }
@@ -619,7 +631,17 @@ public class MainActivity extends BaseActivity implements MapView.OnSingleClickL
         return isFlag;
     }
 
-    private boolean isDisconnectDialogShow() {
-        return mDisconnectDialog != null && mDisconnectDialog.getDialog() != null && mDisconnectDialog.getDialog().isShowing();
+    private void showTipsDialog(String tips) {
+        if (isTipsDialogShow()) {
+            mTipsDialog.setContent(tips);
+            return;
+        }
+        mTipsDialog = TipsDialog.newInstance(tips);
+        mTipsDialog.setOnConfirmListener(this);
+        mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
+    }
+
+    private boolean isTipsDialogShow() {
+        return mTipsDialog != null && mTipsDialog.getDialog() != null && mTipsDialog.getDialog().isShowing();
     }
 }

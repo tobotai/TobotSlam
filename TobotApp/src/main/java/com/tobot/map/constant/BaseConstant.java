@@ -52,4 +52,9 @@ public class BaseConstant {
     public static final int LOOP_INFINITE = 0;
     
     public static final float TRY_TIME_MAX = 30.0f;
+
+    /**
+     * 最大电量
+     */
+    public static final float BATTERY_MAX = 100.0f;
 }

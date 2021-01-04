@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.util.FileUtils;
+import com.tobot.map.util.ThreadPoolManager;
 
 import java.io.File;
-import java.util.concurrent.Executors;
 
 /**
  * @author houdeming
@@ -19,7 +19,7 @@ class FolderCreate {
     private static final String FOLDER_MAP = BaseConstant.DIRECTORY + "/" + BaseConstant.DIRECTORY_MAP_SECOND;
 
     FolderCreate(final Context context) {
-        Executors.newCachedThreadPool().execute(new Runnable() {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 createFolder(FileUtils.getFolder(context, FOLDER_MAP));
