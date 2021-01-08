@@ -184,5 +184,5 @@
     <string name="reset_success_tips">reset success…</string>
     <string name="reset_fail_tips">reset fail…</string>
     <string name="sensor_bumper_trigger">Anti-collision sensor triggered</string>
-    <string name="sensor_cliff_trigger">Drop proof sensor triggered</string>
+    <string name="sensor_cliff_trigger">Drop proof(#%1$d) sensor triggered</string>
 </resources>

@@ -29,9 +29,9 @@
     <color name="shape_btn_enable_false_bg">#5E5E5E</color>
     <color name="shape_tv_point_bg">#EDEDED</color>
     <color name="sb_speed_bg">#C3C1C2</color>
-    <color name="sb_speed_start">#F6812B</color>
-    <color name="sb_speed_center">#6BA01E</color>
-    <color name="sb_speed_end">#EB361A</color>
+    <color name="sb_speed_start">#3788FB</color>
+    <color name="sb_speed_center">#3788FB</color>
+    <color name="sb_speed_end">#3788FB</color>
     <color name="sb_speed_circle">#FFFFFF</color>
     <color name="wheelView_textColorOut">#EDEDED</color>
     <color name="wheelView_textColorCenter">#FFFFFF</color>

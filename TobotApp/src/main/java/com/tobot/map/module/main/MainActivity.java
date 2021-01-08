@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     @Override
-    public void onSensorStatus(SensorType sensorType, boolean isTrigger) {
+    public void onSensorStatus(SensorType sensorType, int id, boolean isTrigger) {
         if (isTrigger && sensorType != null) {
             String tips = "";
             switch (sensorType) {
@@ -233,7 +233,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                     tips = getString(R.string.sensor_bumper_trigger);
                     break;
                 case Cliff:
-                    tips = getString(R.string.sensor_cliff_trigger);
+                    tips = getString(R.string.sensor_cliff_trigger, id);
                     break;
                 default:
                     break;

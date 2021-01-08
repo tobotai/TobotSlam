@@ -10,5 +10,5 @@
         android:background="@drawable/selector_item_bg"
         android:gravity="center"
         android:textColor="@drawable/selector_tv_item"
-        android:textSize="@dimen/tab_set_tv_normal" />
+        android:textSize="@dimen/tv_content" />
 </RelativeLayout>

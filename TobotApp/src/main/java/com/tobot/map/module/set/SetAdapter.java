@@ -26,9 +26,7 @@ public class SetAdapter extends BaseRecyclerAdapter<SetBean> {
 
         if (data != null) {
             tvName.setText(data.getName());
-            boolean isSelected = mSelectPosition == position;
-            tvName.setTextSize(mContext.getResources().getDimension(isSelected ? R.dimen.tab_set_tv_select : R.dimen.tab_set_tv_normal));
-            tvName.setSelected(isSelected);
+            tvName.setSelected(mSelectPosition == position);
 
             tvName.setOnClickListener(new View.OnClickListener() {
                 @Override

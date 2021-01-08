@@ -185,5 +185,5 @@
     <string name="reset_success_tips">重置成功…</string>
     <string name="reset_fail_tips">重置失败…</string>
     <string name="sensor_bumper_trigger">防碰撞传感器触发</string>
-    <string name="sensor_cliff_trigger">防跌落传感器触发</string>
+    <string name="sensor_cliff_trigger">防跌落(#%1$d)传感器触发</string>
 </resources>
