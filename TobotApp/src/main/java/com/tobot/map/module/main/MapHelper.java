@@ -26,7 +26,6 @@ class MapHelper {
     private int mRefreshCount, mBattery, mQuality;
     private ActionStatus mActionStatus;
     private float mX, mY, mYaw;
-    private int mRssid = 1;
 
     MapHelper(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference, WeakReference<MapView> mapViewWeakReference) {
         mContext = contextWeakReference.get();
@@ -52,7 +51,6 @@ class MapHelper {
 
     void startUpdateMap() {
         if (mMapRunnable == null) {
-            mRssid = 1;
             isStart = true;
             mMapRunnable = new MapRunnable();
             ThreadPoolManager.getInstance().execute(mMapRunnable);
@@ -71,15 +69,12 @@ class MapHelper {
         }
     }
 
-    void setRssi(int rssiId) {
-        mRssid = rssiId;
-    }
-
     private class MapRunnable implements Runnable {
 
         @Override
         public void run() {
             int cnt = 0;
+            int mRssid = 1;
             mRefreshCount = 0;
 
             while (isStart) {

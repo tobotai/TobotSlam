@@ -473,10 +473,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             @Override
             public void run() {
                 tvRssi.setText(getString(R.string.tv_signal_tips, rssiId, tips));
-                // 避免没有显示的问题
-                if (mMapHelper != null) {
-                    mMapHelper.setRssi(rssiId);
-                }
             }
         });
     }
