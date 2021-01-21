@@ -2,17 +2,28 @@ package com.tobot.map.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * @author houdeming
  * @date 2020/4/1
  */
-public class RouteBean implements Parcelable {
+public class RouteBean implements Parcelable, Cloneable {
     private String routeName;
     private int type;
     private String content;
 
     public RouteBean() {
+    }
+
+    @NonNull
+    public RouteBean clone() {
+        try {
+            return (RouteBean) super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new RouteBean();
     }
 
     private RouteBean(Parcel in) {

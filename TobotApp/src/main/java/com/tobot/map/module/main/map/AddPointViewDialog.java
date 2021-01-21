@@ -19,6 +19,7 @@ import com.tobot.map.module.common.BaseAnimDialog;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.LogUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.data.LocationBean;
@@ -78,7 +79,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         mAdapter = new LocationAdapter(getActivity(), R.layout.recycler_item_location);
         mAdapter.setOnLocationListener(this);
         recyclerView.setAdapter(mAdapter);
-        showLocationData(MyDBSource.getInstance(getActivity()).queryLocation());
+        ThreadPoolManager.getInstance().execute(new DataRunnable());
     }
 
     @Override
@@ -100,7 +101,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         if (id == R.id.btn_add_current_point) {
             mPose = null;
             // 请求当前pose
-            new PoseThread().start();
+            ThreadPoolManager.getInstance().execute(new PoseRunnable());
             showNameInputDialog(getString(R.string.tv_title_add_location), getString(R.string.name_rule_tips), getString(R.string.et_hint_location_tips));
             return;
         }
@@ -128,7 +129,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         }
         if (mPose == null) {
             ToastUtils.getInstance(getActivity()).show(getString(R.string.pose_get_fail_tips));
-            new PoseThread().start();
+            ThreadPoolManager.getInstance().execute(new PoseRunnable());
             return;
         }
         closeNameInputDialog();
@@ -202,10 +203,25 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         }
     }
 
-    private class PoseThread extends Thread {
+    private class DataRunnable implements Runnable {
         @Override
         public void run() {
-            super.run();
+            List<LocationBean> data = MyDBSource.getInstance(getActivity()).queryLocation();
+            if (getActivity() == null) {
+                return;
+            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showLocationData(data);
+                }
+            });
+        }
+    }
+
+    private class PoseRunnable implements Runnable {
+        @Override
+        public void run() {
             mPose = SlamManager.getInstance().getPose();
         }
     }

@@ -12,6 +12,7 @@ import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.data.LocationBean;
@@ -36,7 +37,6 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
     TextView tvUltrasonicSwitch;
     private String mNumber;
     private boolean isRequestPose;
-    private LocationThread mLocationThread;
     private Pose mPose;
     private int mUltrasonicStatus;
     private SensorAreaDialog mSensorAreaDialog;
@@ -67,10 +67,6 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
     @Override
     public void onPause() {
         super.onPause();
-        if (mLocationThread != null) {
-            mLocationThread.interrupt();
-            mLocationThread = null;
-        }
         if (isSensorAreaDialogShow()) {
             mSensorAreaDialog.getDialog().dismiss();
             mSensorAreaDialog = null;
@@ -92,8 +88,7 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
         switch (view.getId()) {
             case R.id.btn_update_location:
                 isRequestPose = true;
-                mLocationThread = new LocationThread();
-                mLocationThread.start();
+                ThreadPoolManager.getInstance().execute(new LocationRunnable());
                 break;
             case R.id.tv_config_ultrasonic:
                 if (tvUltrasonicSwitch.isSelected()) {
@@ -188,18 +183,14 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
         return mSensorAreaDialog != null && mSensorAreaDialog.getDialog() != null && mSensorAreaDialog.getDialog().isShowing();
     }
 
-    private class LocationThread extends Thread {
-
+    private class LocationRunnable implements Runnable {
         @Override
         public void run() {
-            super.run();
             mPose = SlamManager.getInstance().getPose();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (mPose != null) {
-                        showToastTips(getString(R.string.pose_request_success_tips));
-                    }
+                    showToastTips(getString(mPose != null ? R.string.pose_request_success_tips : R.string.pose_request_fail_tips));
                 }
             });
         }

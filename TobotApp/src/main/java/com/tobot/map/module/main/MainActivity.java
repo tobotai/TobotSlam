@@ -1,7 +1,6 @@
 package com.tobot.map.module.main;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,7 +84,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     AddLineView addLineView;
     private static final int CODE_SET = 1;
     private static final int CODE_TASK = 2;
-    private MainHandle mMainHandler;
     private MapHelper mMapHelper;
     private Navigate mNavigate;
     private Task mTask;
@@ -100,7 +98,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     private int mLowBatteryStatus;
     private TipsDialog mTipsDialog;
     private boolean isDisconnect;
-    private int mSignalWeakCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,13 +115,11 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     protected void init() {
         mapView.setOnMapListener(this);
-        mMainHandler = new MainHandle(new WeakReference<>(this), new WeakReference<>(mapView));
-        mMapHelper = new MapHelper(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler), new WeakReference<>(mapView));
+        mMapHelper = new MapHelper(new WeakReference<>(this), new WeakReference<>(this), new WeakReference<>(mapView));
         mMapClickHandle = new MapClickHandle(new WeakReference<>(this), new WeakReference<>(mapView));
-        mNavigate = new Navigate(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler));
-        mTask = new Task(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler));
-        mCharge = new Charge(new WeakReference<Context>(this), new WeakReference<Handler>(mMainHandler));
-        // 监听slam的异常信息
+        mNavigate = new Navigate(new WeakReference<>(this), new WeakReference<>(this));
+        mTask = new Task(new WeakReference<>(this), new WeakReference<>(this));
+        mCharge = new Charge(new WeakReference<>(this), new WeakReference<>(this));
         SlamManager.getInstance().setOnSlamExceptionListener(this);
     }
 
@@ -206,9 +201,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mMainHandler != null) {
-            mMainHandler.removeCallbacksAndMessages(null);
-        }
         if (mMapHelper != null) {
             mMapHelper.destroy();
             mMapHelper = null;
@@ -227,18 +219,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onSensorStatus(SensorType sensorType, int id, boolean isTrigger) {
         if (isTrigger && sensorType != null) {
-            String tips = "";
-            switch (sensorType) {
-                case Bumper:
-                    tips = getString(R.string.sensor_bumper_trigger);
-                    break;
-                case Cliff:
-                    tips = getString(R.string.sensor_cliff_trigger, id);
-                    break;
-                default:
-                    break;
-            }
-
+            String tips = DataHelper.getInstance().getSensorTips(this, sensorType, id);
             if (!TextUtils.isEmpty(tips)) {
                 isDisconnect = false;
                 if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -246,11 +227,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                     return;
                 }
 
-                String finalTips = tips;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        showTipsDialog(finalTips);
+                        showTipsDialog(tips);
                     }
                 });
             }
@@ -457,28 +437,25 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     public void updatePoseShow(Pose pose) {
         if (pose != null) {
-            tvPoseShow.setText(getString(R.string.tv_pose_show, pose.getX(), pose.getY(), (float) (pose.getYaw() * 180 / Math.PI)));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvPoseShow.setText(getString(R.string.tv_pose_show, pose.getX(), pose.getY(), (float) (pose.getYaw() * 180 / Math.PI)));
+                }
+            });
         }
     }
 
     public void updateStatus(int battery, boolean isCharge, int locationQuality, ActionStatus actionStatus) {
         String chargeStatus = isCharge ? getString(R.string.tv_charge_true) : getString(R.string.tv_charge_false);
         String status = actionStatus != null ? actionStatus.toString() : getString(R.string.tv_unknown);
-        tvStatus.setText(getString(R.string.tv_status_show, locationQuality, chargeStatus, battery, status));
-        handleLowBattery(battery, isCharge);
-    }
-
-    public void setMapUpdateStatus(boolean isUpdate) {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.setMapUpdateStatus(isUpdate);
-        }
-    }
-
-    public void relocationResult(boolean isSuccess) {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.closeLoadTipsDialog();
-        }
-        showToastTips(isSuccess ? getString(R.string.relocation_map_success) : getString(R.string.relocation_map_fail));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvStatus.setText(getString(R.string.tv_status_show, locationQuality, chargeStatus, battery, status));
+                handleLowBattery(battery, isCharge);
+            }
+        });
     }
 
     public void cleanMapResult(boolean isSuccess) {
@@ -486,41 +463,22 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             mapView.clearLocationLabel();
             mapView.setCentred();
         }
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.closeLoadTipsDialog();
-        }
-        showToastTips(isSuccess ? getString(R.string.map_clean_success_tips) : getString(R.string.map_clean_fail_tips));
     }
 
-    public void saveMapResult(boolean isSuccess) {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.closeLoadTipsDialog();
-        }
-        showToastTips(isSuccess ? getString(R.string.map_save_success_tips) : getString(R.string.map_save_fail_tips));
-    }
-
-    public void setRssi(int rssiId) {
-        // [-100, 0]，其中0到-50表示信号最好，-50到-70表示信号偏差，小于-70表示最差，有可能连接不上或者掉线
+    public void setRssi(int rssiId, String tips) {
         if (isFinish) {
             return;
         }
-        String tips;
-        if (rssiId > -50) {
-            mSignalWeakCount = 0;
-            tips = getString(R.string.signal_strong);
-        } else if (rssiId >= -70) {
-            mSignalWeakCount = 0;
-            tips = getString(R.string.signal_weak);
-        } else {
-            mSignalWeakCount++;
-            if (mSignalWeakCount >= 2) {
-                mSignalWeakCount = 0;
-                showToastTips(getString(R.string.signal_difference_tips));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvRssi.setText(getString(R.string.tv_signal_tips, rssiId, tips));
+                // 避免没有显示的问题
+                if (mMapHelper != null) {
+                    mMapHelper.setRssi(rssiId);
+                }
             }
-            tips = getString(R.string.signal_difference);
-        }
-
-        tvRssi.setText(getString(R.string.tv_signal_tips, rssiId, tips));
+        });
     }
 
     private void handleLowBattery(int battery, boolean isCharge) {
@@ -542,7 +500,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     private void handleTvMapClick() {
         if (mMapPopupWindow == null) {
-            mMapPopupWindow = new MapPopupWindow(this, new WeakReference<Handler>(mMainHandler), this);
+            mMapPopupWindow = new MapPopupWindow(this, new WeakReference<>(this), this);
         }
         if (mMapPopupWindow.isShowing()) {
             mMapPopupWindow.dismiss();

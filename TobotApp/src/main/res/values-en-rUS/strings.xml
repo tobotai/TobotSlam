@@ -171,10 +171,9 @@
     <string name="tv_task_point_tips">trajectory\n%1$s</string>
     <string name="tv_loop_tips">prompt: if infinite cycles are enabled, infinite cycles will be executed first, and the number of cycles will be invalid</string>
     <string name="tv_signal_tips">network signal:%1$d(%2$s)</string>
-    <string name="signal_strong">good</string>
-    <string name="signal_weak">deviation</string>
-    <string name="signal_difference">very poor</string>
-    <string name="signal_difference_tips">the current network connection is very poor. Please approach the robot or check the network connection device</string>
+    <string name="signal_1">strong</string>
+    <string name="signal_2">relatively strong</string>
+    <string name="signal_3">general</string>
     <string name="slam_disconnect_tips">Chassis connection disconnects, please exit current application!</string>
     <string name="operate_error_tips">operation failed…</string>
     <string name="tv_reset_charge_title">reset charge</string>

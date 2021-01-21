@@ -1,7 +1,6 @@
 package com.tobot.map.module.main;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.tobot.map.module.common.MoveData;
 import com.tobot.slam.SlamManager;
@@ -15,11 +14,11 @@ import java.lang.ref.WeakReference;
  */
 public abstract class AbsPathMonitor implements OnObstacleListener {
     protected Context mContext;
-    private Handler mHandler;
+    private MainActivity mActivity;
 
-    public AbsPathMonitor(WeakReference<Context> contextWeakReference, WeakReference<Handler> handlerWeakReference) {
+    public AbsPathMonitor(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
         mContext = contextWeakReference.get();
-        mHandler = handlerWeakReference.get();
+        mActivity = activityWeakReference.get();
     }
 
     protected void startMonitor() {
@@ -33,8 +32,8 @@ public abstract class AbsPathMonitor implements OnObstacleListener {
     }
 
     protected void showToast(String tips) {
-        if (mHandler != null) {
-            mHandler.obtainMessage(MainHandle.MSG_SHOW_TOAST, tips).sendToTarget();
+        if (mActivity != null) {
+            mActivity.showToast(tips);
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.tobot.map.module.main.action;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.tobot.map.R;
 import com.tobot.map.module.main.AbsPathMonitor;
+import com.tobot.map.module.main.MainActivity;
 import com.tobot.map.util.LogUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnChargeListener;
@@ -17,8 +17,8 @@ import java.lang.ref.WeakReference;
  */
 public class Charge extends AbsPathMonitor implements OnChargeListener {
 
-    public Charge(WeakReference<Context> contextWeakReference, WeakReference<Handler> handlerWeakReference) {
-        super(contextWeakReference, handlerWeakReference);
+    public Charge(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
+        super(contextWeakReference, activityWeakReference);
     }
 
     @Override

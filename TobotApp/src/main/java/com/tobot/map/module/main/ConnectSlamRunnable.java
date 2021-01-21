@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.event.ConnectSuccessEvent;
 import com.tobot.map.util.LogUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 
@@ -17,7 +18,7 @@ import java.lang.ref.WeakReference;
  * @author houdeming
  * @date 2020/5/13
  */
-public class ConnectSlamThread extends Thread {
+public class ConnectSlamRunnable implements Runnable {
     /**
      * 底盘端口号
      */
@@ -27,7 +28,7 @@ public class ConnectSlamThread extends Thread {
     private String mIp;
     private boolean isRun;
 
-    public ConnectSlamThread(WeakReference<Context> reference, String ip) {
+    public ConnectSlamRunnable(WeakReference<Context> reference, String ip) {
         mContext = reference.get();
         mIp = ip;
         isRun = true;
@@ -35,12 +36,11 @@ public class ConnectSlamThread extends Thread {
 
     public void close() {
         isRun = false;
-        interrupt();
+        ThreadPoolManager.getInstance().cancel(this);
     }
 
     @Override
     public void run() {
-        super.run();
         while (isRun) {
             try {
                 Thread.sleep(TIME_CONNECT);

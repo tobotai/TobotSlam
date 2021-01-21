@@ -3,6 +3,7 @@ package com.tobot.map.module.main;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.slamtec.slamware.robot.SensorType;
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
@@ -235,5 +236,20 @@ public class DataHelper {
     public long getTryTimeMillis(Context context) {
         int time = getTryTime(context);
         return time == 0 ? 0 : time * 60000;
+    }
+
+    public String getSensorTips(Context context, SensorType sensorType, int id) {
+        String tips = "";
+        switch (sensorType) {
+            case Bumper:
+                tips = context.getString(R.string.sensor_bumper_trigger);
+                break;
+            case Cliff:
+                tips = context.getString(R.string.sensor_cliff_trigger, id);
+                break;
+            default:
+                break;
+        }
+        return tips;
     }
 }

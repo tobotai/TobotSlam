@@ -1,11 +1,11 @@
 package com.tobot.map.module.main;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.robot.ArtifactUsage;
 import com.slamtec.slamware.robot.Pose;
+import com.tobot.map.R;
 import com.tobot.map.util.NetworkUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
@@ -19,16 +19,18 @@ import java.lang.ref.WeakReference;
  */
 class MapHelper {
     private Context mContext;
-    private Thread mapUpdate;
-    private Handler mMainHandler;
+    private MapRunnable mMapRunnable;
+    private MainActivity mActivity;
     private MapView mMapView;
-    private boolean isFirstRefresh;
-    private int mRefreshCount;
-    private boolean isStart;
+    private boolean isFirstRefresh, isStart, isLastCharge;
+    private int mRefreshCount, mBattery, mQuality;
+    private ActionStatus mActionStatus;
+    private float mX, mY, mYaw;
+    private int mRssid = 1;
 
-    MapHelper(WeakReference<Context> contextWeakReference, WeakReference<Handler> handlerWeakReference, WeakReference<MapView> mapViewWeakReference) {
+    MapHelper(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference, WeakReference<MapView> mapViewWeakReference) {
         mContext = contextWeakReference.get();
-        mMainHandler = handlerWeakReference.get();
+        mActivity = activityWeakReference.get();
         mMapView = mapViewWeakReference.get();
         isFirstRefresh = true;
         startUpdateMap();
@@ -49,35 +51,39 @@ class MapHelper {
     }
 
     void startUpdateMap() {
-        isStart = true;
-        if (mapUpdate == null) {
-            mapUpdate = new Thread(updateMapRunnable);
-            mapUpdate.start();
+        if (mMapRunnable == null) {
+            mRssid = 1;
+            isStart = true;
+            mMapRunnable = new MapRunnable();
+            ThreadPoolManager.getInstance().execute(mMapRunnable);
         }
     }
 
     void stopUpdateMap() {
         isFirstRefresh = false;
         isStart = false;
-        if (mapUpdate != null) {
-            mapUpdate.interrupt();
-            mapUpdate = null;
+        if (mMapRunnable != null) {
+            ThreadPoolManager.getInstance().cancel(mMapRunnable);
+            mMapRunnable = null;
         }
         if (mMapView != null) {
             mMapView.setMapUpdate(false);
         }
     }
 
-    private Runnable updateMapRunnable = new Runnable() {
-        int cnt;
+    void setRssi(int rssiId) {
+        mRssid = rssiId;
+    }
+
+    private class MapRunnable implements Runnable {
 
         @Override
         public void run() {
-            cnt = 0;
+            int cnt = 0;
             mRefreshCount = 0;
 
             while (isStart) {
-                if (mMainHandler == null || mMapView == null) {
+                if (mActivity == null || mMapView == null) {
                     return;
                 }
 
@@ -86,7 +92,17 @@ class MapHelper {
                         // 更新机器人当前姿态
                         Pose pose = SlamManager.getInstance().getPose();
                         mMapView.setRobotPose(pose);
-                        mMainHandler.obtainMessage(MainHandle.MSG_GET_ROBOT_POSE, pose).sendToTarget();
+                        if (pose != null) {
+                            float x = pose.getX();
+                            float y = pose.getY();
+                            float yaw = pose.getYaw();
+                            if (mX != x || mY != y || mYaw != yaw) {
+                                mX = x;
+                                mY = y;
+                                mYaw = yaw;
+                                mActivity.updatePoseShow(pose);
+                            }
+                        }
                         // 更新机器人扫描的区域
                         mMapView.setLaserScan(SlamManager.getInstance().getLaserScan());
                         // 获取机器健康信息
@@ -121,7 +137,13 @@ class MapHelper {
                         int locationQuality = SlamManager.getInstance().getLocalizationQuality();
                         // 获取机器人信息
                         ActionStatus actionStatus = SlamManager.getInstance().getRemainingActionStatus();
-                        mMainHandler.obtainMessage(MainHandle.MSG_GET_STATUS, new Object[]{battery, isCharge, locationQuality, actionStatus}).sendToTarget();
+                        if (mBattery != battery || isLastCharge != isCharge || mQuality != locationQuality || mActionStatus != actionStatus) {
+                            mBattery = battery;
+                            isLastCharge = isCharge;
+                            mQuality = locationQuality;
+                            mActionStatus = actionStatus;
+                            mActivity.updateStatus(battery, isCharge, locationQuality, actionStatus);
+                        }
                     }
 
                     if ((cnt % 30) == 0) {
@@ -131,7 +153,11 @@ class MapHelper {
 
                     if (cnt % 60 == 0) {
                         // 显示网络信号
-                        mMainHandler.obtainMessage(MainHandle.MSG_GET_RSSI, NetworkUtils.getRssi(mContext)).sendToTarget();
+                        int rssiId = NetworkUtils.getRssi(mContext);
+                        if (rssiId != mRssid) {
+                            mRssid = rssiId;
+                            mActivity.setRssi(rssiId, getRssiTips(rssiId));
+                        }
                     }
 
                     Thread.sleep(33);
@@ -141,7 +167,19 @@ class MapHelper {
                 }
             }
         }
-    };
+
+        private String getRssiTips(int rssiId) {
+            String tips;
+            if (rssiId >= -60) {
+                tips = mContext.getString(R.string.signal_1);
+            } else if (rssiId >= -80) {
+                tips = mContext.getString(R.string.signal_2);
+            } else {
+                tips = mContext.getString(R.string.signal_3);
+            }
+            return tips;
+        }
+    }
 
     private static class CancelRunnable implements Runnable {
 

@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
-import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.BaseRecyclerAdapter;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.entity.RouteBean;
 import com.tobot.map.util.ToastUtils;

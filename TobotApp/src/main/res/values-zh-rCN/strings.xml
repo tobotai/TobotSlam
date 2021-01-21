@@ -170,11 +170,10 @@
     <string name="tv_implement_count">循环次数：%1$d</string>
     <string name="tv_task_point_tips">运动轨迹\n%1$s</string>
     <string name="tv_loop_tips">提示：若开启无限次循环，则优先无限次循环执行，循环次数将失效</string>
-    <string name="tv_signal_tips">网络信号：%1$d（%2$s）</string>
-    <string name="signal_strong">良好</string>
-    <string name="signal_weak">偏差</string>
-    <string name="signal_difference">非常差</string>
-    <string name="signal_difference_tips">当前网络连接非常差，请靠近机器人或检查网络连接设备</string>
+    <string name="tv_signal_tips">网络信号：%1$d(%2$s)</string>
+    <string name="signal_1">强</string>
+    <string name="signal_2">较强</string>
+    <string name="signal_3">一般</string>
     <string name="slam_disconnect_tips">底盘连接断开，请退出当前应用！</string>
     <string name="operate_error_tips">操作失败…</string>
     <string name="tv_reset_charge_title">重置充电桩</string>

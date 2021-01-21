@@ -1,7 +1,6 @@
 package com.tobot.map.module.main.map;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,7 +15,8 @@ import com.tobot.map.module.common.ConfirmDialog;
 import com.tobot.map.module.common.LoadTipsDialog;
 import com.tobot.map.module.common.NameInputDialog;
 import com.tobot.map.module.main.DataHelper;
-import com.tobot.map.module.main.MainHandle;
+import com.tobot.map.module.main.MainActivity;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnResultListener;
@@ -32,7 +32,7 @@ import java.util.List;
  * @date 2020/3/15
  */
 public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDismissListener, NameInputDialog.OnNameListener, ConfirmDialog.OnConfirmListener {
-    private WeakReference<Handler> mHandlerWeakReference;
+    private MainActivity mActivity;
     private TextView tvBuildMap;
     private OnMapListener mOnMapListener;
     private AddPointViewDialog mAddPointViewDialog;
@@ -41,9 +41,9 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     private LoadTipsDialog mLoadTipsDialog;
     private ConfirmDialog mConfirmDialog;
 
-    public MapPopupWindow(Context context, WeakReference<Handler> reference, OnMapListener listener) {
+    public MapPopupWindow(Context context, WeakReference<MainActivity> reference, OnMapListener listener) {
         super(context);
-        mHandlerWeakReference = reference;
+        mActivity = reference.get();
         mOnMapListener = listener;
     }
 
@@ -81,7 +81,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     @Override
     public void show(View parent) {
         super.show(parent);
-        new MapThread().start();
+        ThreadPoolManager.getInstance().execute(new MapRunnable());
     }
 
     @Override
@@ -143,10 +143,6 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         cleanMap();
     }
 
-    public void setMapUpdateStatus(boolean isUpdate) {
-        tvBuildMap.setSelected(isUpdate);
-    }
-
     public void showAddPointViewDialog(FragmentManager fragmentManager, AddPointViewDialog.OnPointListener listener) {
         if (!isAddPointViewDialogShow()) {
             mAddPointViewDialog = AddPointViewDialog.newInstance();
@@ -177,17 +173,6 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         }
     }
 
-    public void closeLoadTipsDialog() {
-        try {
-            if (isLoadTipsDialogShow()) {
-                mLoadTipsDialog.getDialog().dismiss();
-                mLoadTipsDialog = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void showConfirmDialog(FragmentManager fragmentManager, String tips) {
         if (!isConfirmDialogShow()) {
             mConfirmDialog = ConfirmDialog.newInstance(tips);
@@ -201,7 +186,13 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         SlamManager.getInstance().recoverLocationByDefault(new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
-                mHandlerWeakReference.get().obtainMessage(MainHandle.MSG_RELOCATION, data).sendToTarget();
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeLoadTipsDialog();
+                        ToastUtils.getInstance(mContext).show(mContext.getString(data ? R.string.relocation_map_success : R.string.relocation_map_fail));
+                    }
+                });
             }
         });
     }
@@ -214,7 +205,15 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                 if (data) {
                     MyDBSource.getInstance(mContext).deleteAllLocation();
                 }
-                mHandlerWeakReference.get().obtainMessage(MainHandle.MSG_CLEAN_MAP, data).sendToTarget();
+
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mActivity.cleanMapResult(data);
+                        closeLoadTipsDialog();
+                        ToastUtils.getInstance(mContext).show(mContext.getString(data ? R.string.map_clean_success_tips : R.string.map_clean_fail_tips));
+                    }
+                });
             }
         });
     }
@@ -224,9 +223,26 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         SlamManager.getInstance().saveMapInThread(BaseConstant.getMapDirectory(mContext), BaseConstant.getMapFileName(number), beanList, new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
-                mHandlerWeakReference.get().obtainMessage(MainHandle.MSG_SAVE_MAP, data).sendToTarget();
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeLoadTipsDialog();
+                        ToastUtils.getInstance(mContext).show(mContext.getString(data ? R.string.map_save_success_tips : R.string.map_save_fail_tips));
+                    }
+                });
             }
         });
+    }
+
+    private void closeLoadTipsDialog() {
+        try {
+            if (isLoadTipsDialogShow()) {
+                mLoadTipsDialog.getDialog().dismiss();
+                mLoadTipsDialog = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean isLoadTipsDialogShow() {
@@ -269,11 +285,16 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         return mConfirmDialog != null && mConfirmDialog.getDialog() != null && mConfirmDialog.getDialog().isShowing();
     }
 
-    private class MapThread extends Thread {
+    private class MapRunnable implements Runnable {
         @Override
         public void run() {
-            super.run();
-            mHandlerWeakReference.get().obtainMessage(MainHandle.MSG_MAP_IS_UPDATE, SlamManager.getInstance().isMapUpdate()).sendToTarget();
+            boolean isUpdate = SlamManager.getInstance().isMapUpdate();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvBuildMap.setSelected(isUpdate);
+                }
+            });
         }
     }
 

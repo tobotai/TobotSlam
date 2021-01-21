@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import com.tobot.map.event.ConnectSlamEvent;
 import com.tobot.map.util.LogUtils;
 import com.tobot.map.util.NetworkUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,7 +26,7 @@ import java.lang.ref.WeakReference;
  * @date 2019/10/23
  */
 public class MapService extends Service {
-    private ConnectSlamThread mConnectSlamThread;
+    private ConnectSlamRunnable mConnectSlamRunnable;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,18 +48,18 @@ public class MapService extends Service {
         super.onDestroy();
         unregisterReceiver(receiver);
         EventBus.getDefault().unregister(this);
-        if (mConnectSlamThread != null) {
-            mConnectSlamThread.close();
-            mConnectSlamThread = null;
+        if (mConnectSlamRunnable != null) {
+            mConnectSlamRunnable.close();
+            mConnectSlamRunnable = null;
         }
         SlamManager.getInstance().disconnect();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConnectSlamEvent(ConnectSlamEvent event) {
-        if (mConnectSlamThread == null) {
-            mConnectSlamThread = new ConnectSlamThread(new WeakReference<>(this), event.getIp());
-            mConnectSlamThread.start();
+        if (mConnectSlamRunnable == null) {
+            mConnectSlamRunnable = new ConnectSlamRunnable(new WeakReference<>(this), event.getIp());
+            ThreadPoolManager.getInstance().execute(mConnectSlamRunnable);
         }
     }
 

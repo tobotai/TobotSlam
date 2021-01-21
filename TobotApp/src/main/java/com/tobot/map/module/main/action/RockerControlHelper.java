@@ -2,6 +2,7 @@ package com.tobot.map.module.main.action;
 
 import com.slamtec.slamware.action.MoveDirection;
 import com.tobot.map.util.LogUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 
 import java.lang.ref.WeakReference;
@@ -16,7 +17,7 @@ class RockerControlHelper implements RockerView.OnShakeListener {
     private boolean isStart;
     private RockerView.Direction mDirection;
     private int mClickCount;
-    private RunThread mRunThread;
+    private MoveRunnable mMoveRunnable;
 
     RockerControlHelper(WeakReference<RockerView> rockerViewWeakReference) {
         RockerView rockerView = rockerViewWeakReference.get();
@@ -35,26 +36,39 @@ class RockerControlHelper implements RockerView.OnShakeListener {
         mDirection = direction;
         mClickCount = 0;
         isStart = true;
-        if (mRunThread == null) {
-            mRunThread = new RunThread();
-            mRunThread.start();
-        }
+        mMoveRunnable = new MoveRunnable();
+        ThreadPoolManager.getInstance().execute(mMoveRunnable);
     }
 
     @Override
     public void onFinish() {
         LogUtils.i("onFinish");
         isStart = false;
-        if (mRunThread != null) {
-            mRunThread.interrupt();
-            mRunThread = null;
+        ThreadPoolManager.getInstance().cancel(mMoveRunnable);
+    }
+
+    private void controlMove(RockerView.Direction direction) {
+        switch (direction) {
+            case DIRECTION_LEFT:
+                SlamManager.getInstance().moveBy(MoveDirection.TURN_LEFT);
+                break;
+            case DIRECTION_RIGHT:
+                SlamManager.getInstance().moveBy(MoveDirection.TURN_RIGHT);
+                break;
+            case DIRECTION_UP:
+                SlamManager.getInstance().moveBy(MoveDirection.FORWARD);
+                break;
+            case DIRECTION_DOWN:
+                SlamManager.getInstance().moveBy(MoveDirection.BACKWARD);
+                break;
+            default:
+                break;
         }
     }
 
-    private class RunThread extends Thread {
+    private class MoveRunnable implements Runnable {
         @Override
         public void run() {
-            super.run();
             while (isStart) {
                 long delayTime;
                 // 左右控制的时候，间隔发送
@@ -81,25 +95,6 @@ class RockerControlHelper implements RockerView.OnShakeListener {
 
             LogUtils.i("cancel");
             SlamManager.getInstance().cancelMove();
-        }
-    }
-
-    private void controlMove(RockerView.Direction direction) {
-        switch (direction) {
-            case DIRECTION_LEFT:
-                SlamManager.getInstance().moveBy(MoveDirection.TURN_LEFT);
-                break;
-            case DIRECTION_RIGHT:
-                SlamManager.getInstance().moveBy(MoveDirection.TURN_RIGHT);
-                break;
-            case DIRECTION_UP:
-                SlamManager.getInstance().moveBy(MoveDirection.FORWARD);
-                break;
-            case DIRECTION_DOWN:
-                SlamManager.getInstance().moveBy(MoveDirection.BACKWARD);
-                break;
-            default:
-                break;
         }
     }
 }

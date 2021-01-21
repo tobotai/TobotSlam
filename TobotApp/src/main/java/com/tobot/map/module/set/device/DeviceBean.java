@@ -1,15 +1,27 @@
 package com.tobot.map.module.set.device;
 
+import android.support.annotation.NonNull;
+
 /**
  * @author houdeming
  * @date 2020/4/28
  */
-public class DeviceBean {
+public class DeviceBean implements Cloneable {
     private int id;
     private String name;
     private String content;
 
     public DeviceBean() {
+    }
+
+    @NonNull
+    public DeviceBean clone() {
+        try {
+            return (DeviceBean) super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new DeviceBean();
     }
 
     public int getId() {

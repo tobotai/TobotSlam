@@ -81,13 +81,19 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
         SetBean bean = new SetBean(TAG_DEVICE_INFO, getString(R.string.tv_device_info));
         titles.add(bean);
 
-        bean = new SetBean(TAG_CONFIG, getString(R.string.tv_config));
+        bean = bean.clone();
+        bean.setId(TAG_CONFIG);
+        bean.setName(getString(R.string.tv_config));
         titles.add(bean);
 
-        bean = new SetBean(TAG_MAP_LIST, getString(R.string.tv_map_list));
+        bean = bean.clone();
+        bean.setId(TAG_MAP_LIST);
+        bean.setName(getString(R.string.tv_map_list));
         titles.add(bean);
 
-        bean = new SetBean(TAG_TEST, getString(R.string.tv_test));
+        bean = bean.clone();
+        bean.setId(TAG_TEST);
+        bean.setName(getString(R.string.tv_test));
         titles.add(bean);
         return titles;
     }

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.data.NetBean;
 
@@ -40,16 +41,27 @@ public class DeviceInfoFragment extends BaseFragment {
         mDeviceAdapter = new DeviceAdapter(getActivity(), R.layout.recycler_item_device);
         recyclerView.setAdapter(mDeviceAdapter);
         if (SlamManager.getInstance().isConnected()) {
-            new DeviceThread().start();
+            ThreadPoolManager.getInstance().execute(new DeviceRunnable());
             return;
         }
         mDeviceAdapter.setData(getData());
     }
 
-    private class DeviceThread extends Thread {
+    private List<DeviceBean> getData() {
+        List<DeviceBean> data = new ArrayList<>();
+        String[] deviceArray = getResources().getStringArray(R.array.device_list);
+        DeviceBean bean = new DeviceBean();
+        for (String name : deviceArray) {
+            bean = bean.clone();
+            bean.setName(name);
+            data.add(bean);
+        }
+        return data;
+    }
+
+    private class DeviceRunnable implements Runnable {
         @Override
         public void run() {
-            super.run();
             try {
                 final String deviceId = SlamManager.getInstance().getDeviceId();
                 final String slamVersion = SlamManager.getInstance().getSlamVersion();
@@ -67,9 +79,9 @@ public class DeviceInfoFragment extends BaseFragment {
                     public void run() {
                         List<DeviceBean> data = new ArrayList<>();
                         String[] deviceArray = getResources().getStringArray(R.array.device_list);
-                        DeviceBean bean;
+                        DeviceBean bean = new DeviceBean();
                         for (int i = 0, length = deviceArray.length; i < length; i++) {
-                            bean = new DeviceBean();
+                            bean = bean.clone();
                             bean.setName(deviceArray[i]);
                             // 按照顺序添加
                             switch (i) {
@@ -112,17 +124,5 @@ public class DeviceInfoFragment extends BaseFragment {
                 e.printStackTrace();
             }
         }
-    }
-
-    private List<DeviceBean> getData() {
-        List<DeviceBean> data = new ArrayList<>();
-        String[] deviceArray = getResources().getStringArray(R.array.device_list);
-        DeviceBean bean;
-        for (String name : deviceArray) {
-            bean = new DeviceBean();
-            bean.setName(name);
-            data.add(bean);
-        }
-        return data;
     }
 }

@@ -1,13 +1,13 @@
 package com.tobot.map.module.task;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.main.AbsPathMonitor;
 import com.tobot.map.module.main.DataHelper;
+import com.tobot.map.module.main.MainActivity;
 import com.tobot.map.util.LogUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnNavigateListener;
@@ -25,8 +25,8 @@ public class Task extends AbsPathMonitor implements OnNavigateListener {
     private int mAllLoopCount, mItemCount, mCurrentLoopCount;
     private boolean isStart;
 
-    public Task(WeakReference<Context> contextWeakReference, WeakReference<Handler> handlerWeakReference) {
-        super(contextWeakReference, handlerWeakReference);
+    public Task(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
+        super(contextWeakReference, activityWeakReference);
     }
 
     @Override

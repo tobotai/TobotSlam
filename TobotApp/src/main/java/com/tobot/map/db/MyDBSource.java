@@ -188,9 +188,9 @@ public class MyDBSource {
         List<LocationBean> dataList = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, getColumns(), null, null, null, null, null);
         cursor.moveToFirst();
-        LocationBean bean;
+        LocationBean bean = new LocationBean();
         while (!cursor.isAfterLast()) {
-            bean = new LocationBean();
+            bean = bean.clone();
             bean.setMapName(cursor.getString(1));
             bean.setLocationNumber(cursor.getString(2));
             bean.setLocationNameChina(cursor.getString(3));
@@ -219,9 +219,9 @@ public class MyDBSource {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, getColumns(), MySQLiteHelper.TYPE + "=?",
                 new String[]{String.valueOf(type)}, null, null, null);
         cursor.moveToFirst();
-        LocationBean bean;
+        LocationBean bean = new LocationBean();
         while (!cursor.isAfterLast()) {
-            bean = new LocationBean();
+            bean = bean.clone();
             bean.setMapName(cursor.getString(1));
             bean.setLocationNumber(cursor.getString(2));
             bean.setLocationNameChina(cursor.getString(3));
@@ -352,9 +352,9 @@ public class MyDBSource {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE, null, null,
                 null, null, null, orderBy);
         cursor.moveToFirst();
-        RouteBean bean;
+        RouteBean bean = new RouteBean();
         while (!cursor.isAfterLast()) {
-            bean = new RouteBean();
+            bean = bean.clone();
             bean.setRouteName(cursor.getString(1));
             bean.setType(cursor.getInt(2));
             bean.setContent(cursor.getString(3));
@@ -409,9 +409,9 @@ public class MyDBSource {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE_DETAIL, null, MySQLiteHelper.ROUTE_NAME + "=?",
                 new String[]{routeName}, null, null, null);
         cursor.moveToFirst();
-        LocationBean bean;
+        LocationBean bean = new LocationBean();
         while (!cursor.isAfterLast()) {
-            bean = new LocationBean();
+            bean = bean.clone();
             bean.setMapName(cursor.getString(2));
             bean.setLocationNumber(cursor.getString(3));
             bean.setLocationNameChina(cursor.getString(4));

@@ -170,11 +170,10 @@
     <string name="tv_implement_count">循環次數：%1$d</string>
     <string name="tv_task_point_tips">運動軌跡\n%1$s</string>
     <string name="tv_loop_tips">提示：若開啟無限次循環，則優先無限次循環執行，循環次數將失效</string>
-    <string name="tv_signal_tips">網絡信號：%1$d（%2$s）</string>
-    <string name="signal_strong">良好</string>
-    <string name="signal_weak">偏差</string>
-    <string name="signal_difference">非常差</string>
-    <string name="signal_difference_tips">當前網絡連接非常差，請靠近機器人或檢查網絡連接設備</string>
+    <string name="tv_signal_tips">網絡信號：%1$d(%2$s)</string>
+    <string name="signal_1">強</string>
+    <string name="signal_2">較強</string>
+    <string name="signal_3">壹般</string>
     <string name="slam_disconnect_tips">底盤連接斷開，請退出當前應用！</string>
     <string name="operate_error_tips">操作失敗…</string>
     <string name="tv_reset_charge_title">重置充電樁</string>
