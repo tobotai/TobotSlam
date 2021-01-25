@@ -85,11 +85,13 @@ class RockerControlHelper implements RockerView.OnShakeListener {
                     controlMove(mDirection);
                 }
 
-                try {
-                    Thread.sleep(delayTime);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
+                if (isStart) {
+                    try {
+                        Thread.sleep(delayTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
                 }
             }
 

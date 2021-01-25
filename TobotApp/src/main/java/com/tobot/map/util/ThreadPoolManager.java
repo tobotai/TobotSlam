@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadPoolManager {
     private static final int CORE_POOL_SIZE = 3;
-    private static final int MAX_POOL_SIZE = 20;
+    private static final int MAX_POOL_SIZE = 10;
     private static final long TIME = 5000L;
     private ThreadPoolExecutor mThreadPool;
 
