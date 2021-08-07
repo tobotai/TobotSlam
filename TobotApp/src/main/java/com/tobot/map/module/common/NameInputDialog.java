@@ -8,13 +8,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseV4Dialog;
+import com.tobot.map.base.BaseDialog;
 
 /**
  * @author houdeming
  * @date 2019/10/24
  */
-public class NameInputDialog extends BaseV4Dialog implements View.OnClickListener {
+public class NameInputDialog extends BaseDialog implements View.OnClickListener {
     private static final String CONTENT_KEY = "content_key";
     private static final String HINT_KEY = "hint_key";
     private TextView tvTitle, tvTips;
@@ -53,6 +53,11 @@ public class NameInputDialog extends BaseV4Dialog implements View.OnClickListene
     }
 
     @Override
+    protected double getScreenWidthPercentage() {
+        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
@@ -61,11 +66,6 @@ public class NameInputDialog extends BaseV4Dialog implements View.OnClickListene
             tvTips.setText(bundle.getString(CONTENT_KEY));
             editText.setHint(bundle.getString(HINT_KEY));
         }
-    }
-
-    @Override
-    protected double getScreenWidthPercentage() {
-        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
     }
 
     @Override

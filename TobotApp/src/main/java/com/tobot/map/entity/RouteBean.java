@@ -17,12 +17,14 @@ public class RouteBean implements Parcelable, Cloneable {
     }
 
     @NonNull
+    @Override
     public RouteBean clone() {
         try {
             return (RouteBean) super.clone();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return new RouteBean();
     }
 

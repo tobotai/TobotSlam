@@ -232,19 +232,17 @@
                     android:layout_marginTop="@dimen/view_margin_top" />
 
                 <RelativeLayout
-                    android:id="@+id/rl_config_ap"
+                    android:id="@+id/rl_set_sensor_status"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_item_height"
                     android:background="@drawable/selector_item_bg"
-                    android:gravity="center_vertical"
-                    android:visibility="gone">
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:duplicateParentState="true"
-                        android:text="@string/tv_config_ap"
+                        android:text="@string/set_sensor_status"
                         android:textColor="@drawable/selector_tv_item"
                         android:textSize="@dimen/tv_content" />
 
@@ -256,24 +254,20 @@
                         android:src="@drawable/ic_right_arrow" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/view_line"
-                    android:visibility="gone" />
+                <View style="@style/view_line" />
 
                 <RelativeLayout
-                    android:id="@+id/rl_config_wifi"
+                    android:id="@+id/rl_firmware_upgrade"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_item_height"
                     android:background="@drawable/selector_item_bg"
-                    android:gravity="center_vertical"
-                    android:visibility="gone">
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:duplicateParentState="true"
-                        android:text="@string/tv_config_wifi"
+                        android:text="@string/firmware_upgrade"
                         android:textColor="@drawable/selector_tv_item"
                         android:textSize="@dimen/tv_content" />
 
@@ -285,9 +279,7 @@
                         android:src="@drawable/ic_right_arrow" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/view_line"
-                    android:visibility="gone" />
+                <View style="@style/view_line" />
             </LinearLayout>
         </LinearLayout>
     </com.tobot.map.module.common.HorizontalConflictScrollView>

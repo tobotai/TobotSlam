@@ -5,7 +5,8 @@ import android.os.Looper;
 import android.view.View;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseV4Dialog;
+import com.tobot.map.base.BaseDialog;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
 
@@ -13,7 +14,7 @@ import com.tobot.slam.SlamManager;
  * @author houdeming
  * @date 2018/8/16
  */
-public class ResetChargeDialog extends BaseV4Dialog implements View.OnClickListener {
+public class ResetChargeDialog extends BaseDialog implements View.OnClickListener {
 
     public static ResetChargeDialog newInstance() {
         return new ResetChargeDialog();
@@ -54,7 +55,7 @@ public class ResetChargeDialog extends BaseV4Dialog implements View.OnClickListe
     }
 
     private void reset() {
-        new Thread(new Runnable() {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 boolean isCharge = SlamManager.getInstance().isBatteryCharging();
@@ -63,9 +64,10 @@ public class ResetChargeDialog extends BaseV4Dialog implements View.OnClickListe
                     showTips(getString(isSuccess ? R.string.reset_success_tips : R.string.reset_fail_tips), true);
                     return;
                 }
+
                 showTips(getString(R.string.reset_not_charge_tips), false);
             }
-        }).start();
+        });
     }
 
     private void showTips(final String tips, final boolean isClose) {

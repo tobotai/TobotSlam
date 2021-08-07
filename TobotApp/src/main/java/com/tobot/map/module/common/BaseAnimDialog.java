@@ -21,6 +21,10 @@ public abstract class BaseAnimDialog extends DialogFragment implements NameInput
     private NameInputDialog mNameInputDialog;
     private ConfirmDialog mConfirmDialog;
 
+    public BaseAnimDialog() {
+        super();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -69,16 +73,46 @@ public abstract class BaseAnimDialog extends DialogFragment implements NameInput
         }
     }
 
+    /**
+     * 获取动画资源
+     *
+     * @return
+     */
     protected abstract int getAnimId();
 
+    /**
+     * 获取页面布局资源
+     *
+     * @return
+     */
     protected abstract int getLayoutResId();
 
+    /**
+     * 获取居中位置
+     *
+     * @return
+     */
     protected abstract int getGravity();
 
+    /**
+     * 获取宽度
+     *
+     * @return
+     */
     protected abstract int getDialogWidth();
 
+    /**
+     * 获取高度
+     *
+     * @return
+     */
     protected abstract int getDialogHeight();
 
+    /**
+     * 初始化
+     *
+     * @param view
+     */
     protected abstract void initView(View view);
 
     protected void showNameInputDialog(String title, String contentTips, String hint) {

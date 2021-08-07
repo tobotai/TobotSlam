@@ -24,6 +24,7 @@ public class SharedPreferencesUtils {
         if (context == null) {
             return sInstance;
         }
+
         if (sInstance == null) {
             synchronized (SharedPreferencesUtils.class) {
                 if (sInstance == null) {
@@ -31,6 +32,7 @@ public class SharedPreferencesUtils {
                 }
             }
         }
+
         return sInstance;
     }
 
@@ -38,6 +40,7 @@ public class SharedPreferencesUtils {
         if (editor == null || TextUtils.isEmpty(name)) {
             return false;
         }
+
         editor.putBoolean(name, value);
         editor.commit();
         return true;
@@ -47,6 +50,7 @@ public class SharedPreferencesUtils {
         if (sharedPreferences == null || TextUtils.isEmpty(name)) {
             return defaultValue;
         }
+
         return sharedPreferences.getBoolean(name, defaultValue);
     }
 
@@ -54,6 +58,7 @@ public class SharedPreferencesUtils {
         if (editor == null || TextUtils.isEmpty(name)) {
             return false;
         }
+
         editor.putString(name, value);
         editor.commit();
         return true;
@@ -63,6 +68,7 @@ public class SharedPreferencesUtils {
         if (sharedPreferences == null || TextUtils.isEmpty(name)) {
             return defaultValue;
         }
+
         return sharedPreferences.getString(name, defaultValue);
     }
 
@@ -70,6 +76,7 @@ public class SharedPreferencesUtils {
         if (editor == null || TextUtils.isEmpty(name)) {
             return false;
         }
+
         editor.putLong(name, value);
         editor.commit();
         return true;
@@ -79,6 +86,7 @@ public class SharedPreferencesUtils {
         if (sharedPreferences == null || TextUtils.isEmpty(name)) {
             return defaultValue;
         }
+
         return sharedPreferences.getLong(name, defaultValue);
     }
 
@@ -86,6 +94,7 @@ public class SharedPreferencesUtils {
         if (editor == null || TextUtils.isEmpty(name)) {
             return false;
         }
+
         editor.putInt(name, value);
         editor.commit();
         return true;
@@ -95,6 +104,7 @@ public class SharedPreferencesUtils {
         if (sharedPreferences == null || TextUtils.isEmpty(name)) {
             return defaultValue;
         }
+
         return sharedPreferences.getInt(name, defaultValue);
     }
 
@@ -102,6 +112,7 @@ public class SharedPreferencesUtils {
         if (editor == null || TextUtils.isEmpty(name)) {
             return false;
         }
+
         editor.putFloat(name, value);
         editor.commit();
         return true;
@@ -111,6 +122,7 @@ public class SharedPreferencesUtils {
         if (sharedPreferences == null || TextUtils.isEmpty(name)) {
             return defaultValue;
         }
+
         return sharedPreferences.getFloat(name, defaultValue);
     }
 
@@ -118,9 +130,11 @@ public class SharedPreferencesUtils {
         if (TextUtils.isEmpty(key) || sharedPreferences == null || editor == null) {
             return false;
         }
+
         if (!sharedPreferences.contains(key)) {
             return false;
         }
+
         editor.remove(key);
         editor.commit();
         return true;
@@ -130,6 +144,7 @@ public class SharedPreferencesUtils {
         if (editor == null) {
             return false;
         }
+
         editor.clear();
         editor.commit();
         return true;

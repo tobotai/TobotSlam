@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -64,17 +64,42 @@
 
                 <View style="@style/view_line" />
 
-                <EditText
-                    android:id="@+id/et_speed"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/et_height"
+                <TextView
+                    android:id="@+id/tv_log_out_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/view_margin_top"
-                    android:background="@drawable/shape_edit_bg"
-                    android:gravity="center"
-                    android:hint="@string/et_rotate_speed_hint_tips"
-                    android:inputType="number"
-                    android:textColor="@color/et_tv"
-                    android:textSize="@dimen/et_tv" />
+                    android:textColor="@color/tv_content"
+                    android:textSize="@dimen/tv_content" />
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_log_no"
+                        style="@style/rb_speed"
+                        android:checked="true"
+                        android:text="@string/log_no" />
+
+                    <RadioButton
+                        android:id="@+id/rb_log_logcat"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/log_logcat" />
+
+                    <RadioButton
+                        android:id="@+id/rb_log_adb"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/log_adb" />
+                </RadioGroup>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -103,10 +128,130 @@
                         android:text="@string/to_right" />
                 </RadioGroup>
 
-                <Button
-                    android:id="@+id/btn_send"
-                    style="@style/btn_connect"
-                    android:text="@string/btn_send" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_speed"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_weight="3"
+                        android:background="@drawable/shape_edit_bg"
+                        android:gravity="center"
+                        android:hint="@string/et_rotate_speed_hint_tips"
+                        android:inputType="number"
+                        android:textColor="@color/et_tv"
+                        android:textSize="@dimen/et_tv" />
+
+                    <Button
+                        android:id="@+id/btn_send"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/btn_height"
+                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_btn_oval_bg"
+                        android:text="@string/btn_send"
+                        android:textColor="@color/tv_white"
+                        android:textSize="@dimen/btn_tv_size" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:text="@string/get_sensor_count"
+                    android:textColor="@color/tv_content"
+                    android:textSize="@dimen/tv_content" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_sensor_sonar_count"
+                        style="@style/btn_sensor_count_style" />
+
+                    <Button
+                        android:id="@+id/btn_sensor_cliff_count"
+                        style="@style/btn_sensor_count_style"
+                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
+
+                    <Button
+                        android:id="@+id/btn_sensor_bumper_count"
+                        style="@style/btn_sensor_count_style"
+                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:text="@string/get_sensor_status"
+                    android:textColor="@color/tv_content"
+                    android:textSize="@dimen/tv_content" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_sensor_sonar_status"
+                        style="@style/btn_sensor_count_style" />
+
+                    <Button
+                        android:id="@+id/btn_sensor_cliff_status"
+                        style="@style/btn_sensor_count_style"
+                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
+
+                    <Button
+                        android:id="@+id/btn_sensor_bumper_status"
+                        style="@style/btn_sensor_count_style"
+                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_get_sensor_detect_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/layout_item_height"
+                    android:background="@drawable/selector_item_bg"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/get_sensor_detect_info"
+                        android:textColor="@drawable/selector_tv_item"
+                        android:textSize="@dimen/tv_content" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right_arrow" />
+                </RelativeLayout>
+
+                <View style="@style/view_line" />
             </LinearLayout>
         </LinearLayout>
     </com.tobot.map.module.common.HorizontalConflictScrollView>

@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:name=".base.BaseApplication"
@@ -45,7 +46,7 @@
         <activity
             android:name=".module.connect.ConnectActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,31 +58,55 @@
         <activity
             android:name=".module.main.MainActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="landscape" />
 
         <activity
             android:name=".module.set.SetActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".module.set.ContactUsActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
             android:screenOrientation="landscape" />
 
         <activity
             android:name=".module.main.map.LocationEditActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="landscape" />
 
         <activity
             android:name=".module.task.TaskActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="landscape" />
 
         <activity
             android:name=".module.task.TaskPointSelectActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".module.set.firmware.GetSensorDetectActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".module.set.firmware.SetSensorDataReportedActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".module.set.firmware.FirmwareUpgradeActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
             android:screenOrientation="landscape" />
 
         <service android:name=".module.main.MapService" />

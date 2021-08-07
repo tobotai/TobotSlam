@@ -9,6 +9,9 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
+import com.tobot.map.constant.BaseConstant;
+import com.tobot.map.module.log.Logger;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -39,6 +42,7 @@ public class NetworkUtils {
                 return mNetworkInfo != null && mNetworkInfo.isAvailable();
             }
         }
+
         return false;
     }
 
@@ -59,6 +63,7 @@ public class NetworkUtils {
                 }
             }
         }
+
         return false;
     }
 
@@ -83,6 +88,7 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
         }
+
         return -100;
     }
 
@@ -101,7 +107,7 @@ public class NetworkUtils {
                     if (info != null) {
                         //"@Hyatt_WiFi" 获取的ssid是带双引号的
                         String name = info.getSSID();
-                        LogUtils.i("name=" + name);
+                        Logger.i(BaseConstant.TAG, "name=" + name);
                         if (!TextUtils.isEmpty(name)) {
                             return name.substring(1, name.length() - 1);
                         }
@@ -111,6 +117,7 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
         }
+
         return null;
     }
 
@@ -123,7 +130,7 @@ public class NetworkUtils {
                     WifiInfo info = manager.getConnectionInfo();
                     if (info != null) {
                         String macAddress = info.getMacAddress();
-                        LogUtils.i("macAddress=" + macAddress);
+                        Logger.i(BaseConstant.TAG, "macAddress=" + macAddress);
                         if (!TextUtils.isEmpty(macAddress)) {
                             macAddress = macAddress.toUpperCase(Locale.ENGLISH);
                         }
@@ -134,6 +141,7 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
         }
+
         return null;
     }
 
@@ -156,6 +164,7 @@ public class NetworkUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -168,6 +177,7 @@ public class NetworkUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -191,6 +201,7 @@ public class NetworkUtils {
                 }
             }
         }
+
         return wifiList;
     }
 }

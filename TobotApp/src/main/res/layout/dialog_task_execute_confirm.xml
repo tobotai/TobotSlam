@@ -49,6 +49,29 @@
                     style="@style/view_line"
                     android:layout_marginTop="@dimen/view_margin_top" />
 
+                <TextView
+                    android:id="@+id/tv_charge_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:drawableRight="@drawable/selector_switch"
+                    android:drawablePadding="@dimen/iv_drawable_padding"
+                    android:gravity="center_vertical"
+                    android:text="@string/tv_charge_switch"
+                    android:textColor="@color/tv_content"
+                    android:textSize="@dimen/tv_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_charge_switch_tips"
+                    android:textColor="@color/tv_warn_tips"
+                    android:textSize="@dimen/tv_mode_tips" />
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,17 +113,17 @@
                         android:textSize="@dimen/tv_content" />
                 </LinearLayout>
 
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/wheelView_margin_top" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:layout_marginTop="@dimen/wheelView_margin_top"
                     android:text="@string/tv_loop_tips"
                     android:textColor="@color/tv_warn_tips"
                     android:textSize="@dimen/tv_mode_tips" />
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
 
                 <Button
                     android:id="@+id/btn_start_implement"

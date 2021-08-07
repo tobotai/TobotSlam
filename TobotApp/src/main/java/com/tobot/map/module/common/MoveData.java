@@ -87,9 +87,7 @@ public class MoveData {
         // 让机器人停下来的时候旋转，true：旋转，false：不旋转
         option.setWithYaw(false);
         // 机器人移动的时候精确到点
-        if (mMotionMode == MOTION_TO_POINT_EXACT) {
-            option.setPrecise(true);
-        }
+        option.setPrecise(mMotionMode == MOTION_TO_POINT_EXACT);
         // 为true时，当机器人规划路径失败后，机器人不进行旋转重新规划
         option.setReturnUnreachableDirectly(false);
         // 不追加直接替换

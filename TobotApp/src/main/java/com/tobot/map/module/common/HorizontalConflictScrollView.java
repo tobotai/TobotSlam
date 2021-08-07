@@ -49,6 +49,7 @@ public class HorizontalConflictScrollView extends ScrollView {
             default:
                 break;
         }
+
         return super.onInterceptTouchEvent(ev);
     }
 }

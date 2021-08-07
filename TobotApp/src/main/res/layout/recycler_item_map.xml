@@ -13,13 +13,13 @@
 
     <Button
         android:id="@+id/btn_map_delete"
-        style="@style/btn_map_style"
+        style="@style/btn_item_style"
         android:layout_alignParentRight="true"
         android:text="@string/btn_map_delete" />
 
     <Button
         android:id="@+id/btn_map_load"
-        style="@style/btn_map_style"
+        style="@style/btn_item_style"
         android:layout_marginRight="@dimen/btn_map_margin_right"
         android:layout_toLeftOf="@id/btn_map_delete"
         android:text="@string/btn_map_load" />

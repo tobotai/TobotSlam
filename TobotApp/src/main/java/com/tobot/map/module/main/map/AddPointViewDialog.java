@@ -17,8 +17,8 @@ import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.common.BaseAnimDialog;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
+import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.DataHelper;
-import com.tobot.map.util.LogUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
@@ -85,9 +85,9 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogUtils.i("AddPointViewDialog requestCode=" + requestCode + ",resultCode=" + resultCode);
+        Logger.i(BaseConstant.TAG, "AddPointViewDialog requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (resultCode == Activity.RESULT_OK && data != null) {
-            showLocationData(MyDBSource.getInstance(getActivity()).queryLocation());
+            showLocationData(MyDBSource.getInstance(getActivity()).queryLocationList());
             if (mOnPointListener != null) {
                 LocationBean bean = data.getParcelableExtra(BaseConstant.DATA_KEY);
                 mOnPointListener.onUpdateLocationLabel(data.getStringExtra(BaseConstant.NUMBER_KEY), bean);
@@ -112,7 +112,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
                 MyDBSource.getInstance(getActivity()).deleteAllLocation();
                 MyDBSource.getInstance(getActivity()).insertLocationList(sortList);
             }
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.point_sort_success));
+            ToastUtils.getInstance(getActivity()).show(R.string.point_sort_success);
             showLocationData(sortList);
         }
     }
@@ -120,18 +120,21 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     @Override
     public void onName(String name) {
         if (TextUtils.isEmpty(name)) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.name_empty_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.name_empty_tips);
             return;
         }
+
         if (MyDBSource.getInstance(getActivity()).queryLocation(name) != null) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.number_edit_fail_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.number_edit_fail_tips);
             return;
         }
+
         if (mPose == null) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.pose_get_fail_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.pose_get_fail_tips);
             ThreadPoolManager.getInstance().execute(new PoseRunnable());
             return;
         }
+
         closeNameInputDialog();
         LocationBean bean = new LocationBean();
         bean.setLocationNumber(name);
@@ -139,7 +142,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         bean.setY(mPose.getY());
         bean.setYaw(mPose.getYaw());
         MyDBSource.getInstance(getActivity()).insertLocation(bean);
-        showLocationData(MyDBSource.getInstance(getActivity()).queryLocation());
+        showLocationData(MyDBSource.getInstance(getActivity()).queryLocationList());
         if (mOnPointListener != null) {
             mOnPointListener.onAddLocationLabel(bean);
         }
@@ -175,7 +178,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         if (mLocationBean != null) {
             String number = mLocationBean.getLocationNumber();
             MyDBSource.getInstance(getActivity()).deleteLocation(number);
-            showLocationData(MyDBSource.getInstance(getActivity()).queryLocation());
+            showLocationData(MyDBSource.getInstance(getActivity()).queryLocationList());
             if (mOnPointListener != null) {
                 mOnPointListener.onDeleteLocationLabel(number);
             }
@@ -206,10 +209,11 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     private class DataRunnable implements Runnable {
         @Override
         public void run() {
-            List<LocationBean> data = MyDBSource.getInstance(getActivity()).queryLocation();
+            List<LocationBean> data = MyDBSource.getInstance(getActivity()).queryLocationList();
             if (getActivity() == null) {
                 return;
             }
+
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

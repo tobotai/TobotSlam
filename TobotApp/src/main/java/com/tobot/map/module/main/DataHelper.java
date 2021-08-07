@@ -7,6 +7,7 @@ import com.slamtec.slamware.robot.SensorType;
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
+import com.tobot.map.module.main.warning.WarningInfo;
 import com.tobot.map.util.SharedPreferencesUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
@@ -23,10 +24,13 @@ import java.util.List;
  * @date 2018/8/18
  */
 public class DataHelper {
+    private static final String IP_SOCKET_KEY = "ip_socket_key";
     private static final String TRY_TIME_KEY = "try_time_key";
+    private static final String LOG_KEY = "log_key";
     private String mMapName;
-    private int mLowBattery, mTryTime;
+    private int mLowBattery, mTryTime, mLogType;
     private String mIp;
+    private List<WarningInfo> mWarningList;
 
     private static class BaseDataHolder {
         private static final DataHelper INSTANCE = new DataHelper();
@@ -50,26 +54,30 @@ public class DataHelper {
             callBackNavigateCondition(false, context.getString(R.string.emergency_stop_tips), callBack);
             return;
         }
+
         // 刹车按钮，请在线程中判断
         if (SlamManager.getInstance().isSystemBrakeStop()) {
             callBackNavigateCondition(false, context.getString(R.string.break_stop_tips), callBack);
             return;
         }
+
         // 如果在直充的话，不允许导航
         if (isDirectCharge()) {
             callBackNavigateCondition(false, context.getString(R.string.direct_charge_to_navigate_tips), callBack);
             return;
         }
+
         callBackNavigateCondition(true, "", callBack);
     }
 
     public List<LocationBean> getLocationBeanList(Context context, String mapNumber) {
-        List<LocationBean> list = MyDBSource.getInstance(context).queryLocation();
+        List<LocationBean> list = MyDBSource.getInstance(context).queryLocationList();
         if (list != null && !list.isEmpty()) {
             for (LocationBean bean : list) {
                 bean.setMapName(mapNumber);
             }
         }
+
         return list;
     }
 
@@ -77,14 +85,15 @@ public class DataHelper {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_NAME_SUFFIX);
+                List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_MAP_NAME_SUFFIX);
                 List<String> map = new ArrayList<>();
                 if (data != null && !data.isEmpty()) {
                     for (String name : data) {
-                        int index = name.lastIndexOf(BaseConstant.FILE_NAME_SUFFIX);
+                        int index = name.lastIndexOf(BaseConstant.FILE_MAP_NAME_SUFFIX);
                         map.add(name.substring(0, index));
                     }
                 }
+
                 if (callBack != null) {
                     callBack.onMapList(map);
                 }
@@ -96,7 +105,7 @@ public class DataHelper {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_NAME_SUFFIX);
+                List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_MAP_NAME_SUFFIX);
                 if (callBack != null) {
                     callBack.onMapList(data);
                 }
@@ -108,13 +117,14 @@ public class DataHelper {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_NAME_SUFFIX);
+                List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_MAP_NAME_SUFFIX);
                 List<String> path = new ArrayList<>();
                 if (data != null && !data.isEmpty()) {
                     for (String name : data) {
                         path.add(BaseConstant.getMapDirectory(context).concat(File.separator).concat(name));
                     }
                 }
+
                 if (callBack != null) {
                     callBack.onMapList(path);
                 }
@@ -132,6 +142,7 @@ public class DataHelper {
         if (SlamManager.getInstance().isDockingStatus()) {
             return false;
         }
+
         // 如果不在充电桩上的话，要考虑直充的情况
         return SlamManager.getInstance().isBatteryCharging();
     }
@@ -175,10 +186,12 @@ public class DataHelper {
                             return Integer.compare(Integer.parseInt(num1), Integer.parseInt(num2));
                         }
                     }
+
                     return 0;
                 }
             });
         }
+
         return data;
     }
 
@@ -208,9 +221,19 @@ public class DataHelper {
                     builder.append(interval);
                 }
             }
+
             return builder.toString();
         }
+
         return "";
+    }
+
+    public void setIpSocket(Context context, String ipSocket) {
+        SharedPreferencesUtils.getInstance(context).putString(IP_SOCKET_KEY, ipSocket);
+    }
+
+    public String getIpSocket(Context context) {
+        return SharedPreferencesUtils.getInstance(context).getString(IP_SOCKET_KEY, context.getString(R.string.ip_socket));
     }
 
     public String getIp() {
@@ -228,7 +251,7 @@ public class DataHelper {
 
     public int getTryTime(Context context) {
         if (mTryTime == 0) {
-            mTryTime = SharedPreferencesUtils.getInstance(context).getInt(TRY_TIME_KEY, 0);
+            mTryTime = SharedPreferencesUtils.getInstance(context).getInt(TRY_TIME_KEY, BaseConstant.TRY_TIME_DEFAULT);
         }
         return mTryTime;
     }
@@ -250,6 +273,66 @@ public class DataHelper {
             default:
                 break;
         }
+
         return tips;
+    }
+
+    public void setLogType(Context context, int type) {
+        mLogType = type;
+        SharedPreferencesUtils.getInstance(context).putInt(LOG_KEY, type);
+    }
+
+    public int getLogType(Context context) {
+        if (mLogType == BaseConstant.LOG_NO) {
+            mLogType = SharedPreferencesUtils.getInstance(context).getInt(LOG_KEY, BaseConstant.LOG_NO);
+        }
+        return mLogType;
+    }
+
+    public void setWarningData(WarningInfo info) {
+        if (info != null) {
+            if (mWarningList == null) {
+                mWarningList = new ArrayList<>();
+            }
+
+            try {
+                if (!mWarningList.isEmpty()) {
+                    for (WarningInfo warningInfo : mWarningList) {
+                        if (TextUtils.equals(info.getType(), warningInfo.getType()) && info.getId() == warningInfo.getId()) {
+                            warningInfo.setCount(warningInfo.getCount() + 1);
+                            return;
+                        }
+                    }
+                }
+
+                mWarningList.add(info);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<WarningInfo> getWarningList() {
+        if (mWarningList != null && !mWarningList.isEmpty()) {
+            Collections.sort(mWarningList, new Comparator<WarningInfo>() {
+                @Override
+                public int compare(WarningInfo o1, WarningInfo o2) {
+                    if (o1 != null && o2 != null) {
+                        return Integer.compare(o1.getId(), o2.getId());
+                    }
+
+                    return 0;
+                }
+            });
+        }
+
+        return mWarningList;
+    }
+
+    public void clearWarningList() {
+        if (mWarningList != null && !mWarningList.isEmpty()) {
+            mWarningList.clear();
+        }
+        mWarningList = null;
     }
 }

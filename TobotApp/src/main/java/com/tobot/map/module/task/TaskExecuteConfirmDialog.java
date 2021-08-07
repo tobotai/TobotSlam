@@ -1,12 +1,13 @@
 package com.tobot.map.module.task;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.BaseDialog;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.slam.data.LocationBean;
@@ -24,7 +25,7 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
     private static final int MAX = 200;
     private static final float LINE_SPACE = 1.5f;
     private static final int ITEM_VISIBLE_COUNT = 3;
-    private TextView tvTitle, tvTaskPoint, tvLoopCount, tvLoop;
+    private TextView tvTitle, tvTaskPoint, tvChargeSwitch, tvLoopCount, tvLoop;
     /**
      * 默认执行一次
      */
@@ -49,10 +50,12 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
     protected void initView(View view) {
         tvTitle = view.findViewById(R.id.tv_title);
         tvTaskPoint = view.findViewById(R.id.tv_content);
+        tvChargeSwitch = view.findViewById(R.id.tv_charge_switch);
         tvLoopCount = view.findViewById(R.id.tv_implement_count);
         WheelView wheelView = view.findViewById(R.id.wheel_view_count);
         tvLoop = view.findViewById(R.id.tv_loop_implement);
         tvLoopCount.setText(getString(R.string.tv_implement_count, mLoopCount));
+        tvChargeSwitch.setOnClickListener(this);
         tvLoop.setOnClickListener(this);
         view.findViewById(R.id.btn_start_implement).setOnClickListener(this);
         wheelView.setDividerType(WheelView.DividerType.WRAP);
@@ -66,20 +69,25 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            String name = bundle.getString(DATA_KEY);
-            tvTitle.setText(name);
-            mLocationList = MyDBSource.getInstance(getActivity()).queryRouteDetail(name);
-            tvTaskPoint.setText(getString(R.string.tv_task_point_tips, DataHelper.getInstance().getTaskDetailTips(getActivity(), mLocationList)));
-        }
+    protected boolean isCanCancelByBack() {
+        return true;
     }
 
     @Override
     protected double getScreenWidthPercentage() {
         return 1;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String name = bundle.getString(DATA_KEY);
+            tvTitle.setText(name);
+            mLocationList = MyDBSource.getInstance(getActivity()).queryRouteDetailList(name);
+            tvTaskPoint.setText(getString(R.string.tv_task_point_tips, DataHelper.getInstance().getTaskDetailTips(getActivity(), mLocationList)));
+        }
     }
 
     @Override
@@ -91,17 +99,21 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.tv_loop_implement) {
-            tvLoop.setSelected(!tvLoop.isSelected());
-            return;
-        }
-
-        if (id == R.id.btn_start_implement) {
-            dismiss();
-            if (mOnExecuteListener != null) {
-                mOnExecuteListener.onExecute(mLocationList, tvLoop.isSelected() ? BaseConstant.LOOP_INFINITE : mLoopCount);
-            }
+        switch (v.getId()) {
+            case R.id.tv_loop_implement:
+                tvLoop.setSelected(!tvLoop.isSelected());
+                break;
+            case R.id.btn_start_implement:
+                dismiss();
+                if (mOnExecuteListener != null) {
+                    mOnExecuteListener.onExecute(mLocationList, tvChargeSwitch.isSelected(), tvLoop.isSelected() ? BaseConstant.LOOP_INFINITE : mLoopCount);
+                }
+                break;
+            case R.id.tv_charge_switch:
+                tvChargeSwitch.setSelected(!tvChargeSwitch.isSelected());
+                break;
+            default:
+                break;
         }
     }
 
@@ -114,8 +126,9 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
          * 执行
          *
          * @param locationBeans
+         * @param isAddCharge
          * @param loopCount
          */
-        void onExecute(List<LocationBean> locationBeans, int loopCount);
+        void onExecute(List<LocationBean> locationBeans, boolean isAddCharge, int loopCount);
     }
 }

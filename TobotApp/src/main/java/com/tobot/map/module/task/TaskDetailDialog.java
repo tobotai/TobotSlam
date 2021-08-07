@@ -1,6 +1,7 @@
 package com.tobot.map.module.task;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
@@ -44,20 +45,25 @@ public class TaskDetailDialog extends BaseDialog implements View.OnClickListener
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            mTitle = bundle.getString(DATA_KEY);
-            tvTitle.setText(mTitle);
-            List<LocationBean> locationBeanList = MyDBSource.getInstance(getActivity()).queryRouteDetail(mTitle);
-            tvContent.setText(getString(R.string.tv_task_point_tips, DataHelper.getInstance().getTaskDetailTips(getActivity(), locationBeanList)));
-        }
+    protected boolean isCanCancelByBack() {
+        return true;
     }
 
     @Override
     protected double getScreenWidthPercentage() {
         return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mTitle = bundle.getString(DATA_KEY);
+            tvTitle.setText(mTitle);
+            List<LocationBean> locationBeanList = MyDBSource.getInstance(getActivity()).queryRouteDetailList(mTitle);
+            tvContent.setText(getString(R.string.tv_task_point_tips, DataHelper.getInstance().getTaskDetailTips(getActivity(), locationBeanList)));
+        }
     }
 
     @Override
@@ -71,7 +77,7 @@ public class TaskDetailDialog extends BaseDialog implements View.OnClickListener
         if (id == R.id.btn_delete) {
             MyDBSource.getInstance(getActivity()).deleteRoute(mTitle);
             MyDBSource.getInstance(getActivity()).deleteRouteDetail(mTitle);
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.delete_success));
+            ToastUtils.getInstance(getActivity()).show(R.string.delete_success);
             dismiss();
             if (mOnDeleteListener != null) {
                 mOnDeleteListener.onDelete();

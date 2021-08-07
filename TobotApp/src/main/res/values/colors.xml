@@ -36,6 +36,7 @@
     <color name="wheelView_textColorOut">#EDEDED</color>
     <color name="wheelView_textColorCenter">#FFFFFF</color>
     <color name="wheelView_dividerColor">#EDEDED</color>
+    <color name="tv_socket_connect_success_tips">#00FF00</color>
     <color name="tv_rssi_tips">#FFFF00</color>
     <color name="shape_btn_circle_normal">#FE7700</color>
 </resources>

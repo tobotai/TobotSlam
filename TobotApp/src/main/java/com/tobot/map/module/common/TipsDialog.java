@@ -7,13 +7,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseV4Dialog;
+import com.tobot.map.base.BaseDialog;
 
 /**
  * @author houdeming
  * @date 2020/4/28
  */
-public class TipsDialog extends BaseV4Dialog implements View.OnClickListener {
+public class TipsDialog extends BaseDialog implements View.OnClickListener {
     private TextView tvTips;
     private String mContent;
     private OnConfirmListener mOnConfirmListener;
@@ -43,6 +43,11 @@ public class TipsDialog extends BaseV4Dialog implements View.OnClickListener {
     }
 
     @Override
+    protected double getScreenWidthPercentage() {
+        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
@@ -50,11 +55,6 @@ public class TipsDialog extends BaseV4Dialog implements View.OnClickListener {
             mContent = bundle.getString(DATA_KEY);
             tvTips.setText(mContent);
         }
-    }
-
-    @Override
-    protected double getScreenWidthPercentage() {
-        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
     }
 
     @Override
@@ -73,9 +73,11 @@ public class TipsDialog extends BaseV4Dialog implements View.OnClickListener {
                 if (mContent.contains(content)) {
                     return;
                 }
+
                 // 继续追加内容
                 content = mContent + "，" + content;
             }
+
             mContent = content;
             tvTips.setText(content);
         }

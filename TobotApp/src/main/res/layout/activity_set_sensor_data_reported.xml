@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_head" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="@dimen/tab_set_width"
+            android:layout_height="match_parent"
+            android:background="@color/tab_set_bg"
+            android:overScrollMode="never" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/view_margin_top"
+                android:paddingBottom="@dimen/view_margin_top">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/view_set_margin_left_right"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/et_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_marginTop="@dimen/view_margin_top"
+                        android:background="@drawable/shape_edit_bg"
+                        android:gravity="center"
+                        android:hint="@string/et_sensor_num_hint_tips"
+                        android:inputType="number"
+                        android:textColor="@color/et_tv"
+                        android:textSize="@dimen/et_tv" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/view_margin_top"
+                        android:text="@string/tv_sensor_num_use_tips"
+                        android:textColor="@color/tv_tips"
+                        android:textSize="@dimen/tv_tips" />
+
+                    <RadioGroup
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/view_margin_top"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_open"
+                            style="@style/rb_speed"
+                            android:checked="true"
+                            android:text="@string/btn_open" />
+
+                        <RadioButton
+                            android:id="@+id/rb_close"
+                            style="@style/rb_speed"
+                            android:layout_marginLeft="@dimen/rb_wall_margin"
+                            android:text="@string/btn_close" />
+                    </RadioGroup>
+
+                    <Button
+                        android:id="@+id/btn_send"
+                        style="@style/btn_connect"
+                        android:text="@string/btn_send" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/view_margin_top"
+            android:layout_weight="1"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/view_margin_top"
+                android:paddingBottom="@dimen/view_margin_top">
+
+                <TextView
+                    android:id="@+id/tv_sensor_sonar"
+                    style="@style/tv_sensor_report_style" />
+
+                <TextView
+                    android:id="@+id/tv_sensor_cliff"
+                    style="@style/tv_sensor_report_style"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
+                <TextView
+                    android:id="@+id/tv_sensor_bumper"
+                    style="@style/tv_sensor_report_style"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.tobot.map.module.main.map;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -52,11 +53,21 @@ public class SensorAreaDialog extends BaseDialog implements View.OnClickListener
         PoseAdapter adapter = new PoseAdapter(getActivity(), R.layout.recycler_item_pose);
         adapter.setOnPoseListener(this);
         recyclerView.setAdapter(adapter);
-        adapter.setData(MyDBSource.getInstance(getActivity()).queryLocation());
+        adapter.setData(MyDBSource.getInstance(getActivity()).queryLocationList());
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    protected boolean isCanCancelByBack() {
+        return true;
+    }
+
+    @Override
+    protected double getScreenWidthPercentage() {
+        return 1;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -67,25 +78,23 @@ public class SensorAreaDialog extends BaseDialog implements View.OnClickListener
                 if (startX != 0) {
                     etStartX.setText(String.valueOf(startX));
                 }
+
                 float startY = bean.getStartY();
                 if (startY != 0) {
                     etStartY.setText(String.valueOf(startY));
                 }
+
                 float endX = bean.getEndX();
                 if (endX != 0) {
                     etEndX.setText(String.valueOf(endX));
                 }
+
                 float endY = bean.getEndY();
                 if (endY != 0) {
                     etEndY.setText(String.valueOf(endY));
                 }
             }
         }
-    }
-
-    @Override
-    protected double getScreenWidthPercentage() {
-        return 1;
     }
 
     @Override
@@ -103,6 +112,7 @@ public class SensorAreaDialog extends BaseDialog implements View.OnClickListener
             etEndY.setText(String.valueOf(y));
             return;
         }
+
         isEnd = true;
         etStartX.setText(String.valueOf(x));
         etStartY.setText(String.valueOf(y));
@@ -114,19 +124,22 @@ public class SensorAreaDialog extends BaseDialog implements View.OnClickListener
         String endX = etEndX.getText().toString();
         String endY = etEndY.getText().toString();
         if (TextUtils.isEmpty(startX)) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.start_x_empty_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.start_x_empty_tips);
             return;
         }
+
         if (TextUtils.isEmpty(startY)) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.start_y_empty_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.start_y_empty_tips);
             return;
         }
+
         if (TextUtils.isEmpty(endX)) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.end_x_empty_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.end_x_empty_tips);
             return;
         }
+
         if (TextUtils.isEmpty(endY)) {
-            ToastUtils.getInstance(getActivity()).show(getString(R.string.end_y_empty_tips));
+            ToastUtils.getInstance(getActivity()).show(R.string.end_y_empty_tips);
             return;
         }
 

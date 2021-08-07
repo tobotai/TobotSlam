@@ -32,9 +32,9 @@
         <item name="android:background">@color/item_split_line</item>
     </style>
 
-    <style name="btn_map_style" parent="@style/Widget.AppCompat.Button.Borderless">
+    <style name="btn_item_style" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:layout_height">@dimen/btn_item_height</item>
         <item name="android:background">@drawable/selector_btn_stroke_bg</item>
         <item name="android:textSize">@dimen/tv_tips</item>
         <item name="android:textColor">@drawable/selector_tv_item</item>
@@ -43,10 +43,11 @@
 
     <style name="btn_location_style" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:layout_height">@dimen/btn_item_height</item>
         <item name="android:background">@drawable/selector_btn_stroke_bg</item>
         <item name="android:textSize">@dimen/tv_tips</item>
         <item name="android:textColor">@drawable/selector_tv_location</item>
+        <item name="android:layout_centerVertical">true</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:paddingLeft">@dimen/btn_padding_left_right</item>
         <item name="android:paddingRight">@dimen/btn_padding_left_right</item>
@@ -109,5 +110,31 @@
         <item name="android:drawablePadding">@dimen/rb_padding</item>
         <item name="android:textSize">@dimen/tv_content</item>
         <item name="android:textColor">@drawable/selector_tv_map_item</item>
+    </style>
+
+    <style name="btn_sensor_count_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/selector_btn_stroke_bg</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+        <item name="android:textColor">@drawable/selector_tv_item</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">@dimen/tv_line_space</item>
+        <item name="android:paddingTop">@dimen/view_margin_top</item>
+        <item name="android:paddingBottom">@dimen/view_margin_top</item>
+    </style>
+
+    <style name="tv_sensor_report_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/shape_btn_stroke_bg</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+        <item name="android:textColor">@color/tv_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">@dimen/tv_line_space</item>
+        <item name="android:paddingTop">@dimen/view_margin_top</item>
+        <item name="android:paddingBottom">@dimen/view_margin_top</item>
+        <item name="android:layout_marginRight">@dimen/view_margin_top</item>
     </style>
 </resources>

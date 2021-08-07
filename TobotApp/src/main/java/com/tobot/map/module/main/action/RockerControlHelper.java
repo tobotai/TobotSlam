@@ -1,8 +1,8 @@
 package com.tobot.map.module.main.action;
 
 import com.slamtec.slamware.action.MoveDirection;
-import com.tobot.map.util.LogUtils;
-import com.tobot.map.util.ThreadPoolManager;
+import com.tobot.map.constant.BaseConstant;
+import com.tobot.map.module.log.Logger;
 import com.tobot.slam.SlamManager;
 
 import java.lang.ref.WeakReference;
@@ -14,10 +14,10 @@ import java.lang.ref.WeakReference;
 class RockerControlHelper implements RockerView.OnShakeListener {
     private static final int TIME_CONTROL_MOVE_INTERVAL = 80;
     private static final int TIME_CONTROL_ROTATE_INTERVAL = 100;
-    private boolean isStart;
     private RockerView.Direction mDirection;
     private int mClickCount;
-    private MoveRunnable mMoveRunnable;
+    private boolean isStart;
+    private MoveThread mMoveThread;
 
     RockerControlHelper(WeakReference<RockerView> rockerViewWeakReference) {
         RockerView rockerView = rockerViewWeakReference.get();
@@ -27,24 +27,29 @@ class RockerControlHelper implements RockerView.OnShakeListener {
 
     @Override
     public void onStart() {
-        LogUtils.i("onStart");
+        Logger.i(BaseConstant.TAG, "onStart");
     }
 
     @Override
     public void direction(RockerView.Direction direction) {
-        LogUtils.i("direction=" + direction);
+        Logger.i(BaseConstant.TAG, "direction=" + direction);
         mDirection = direction;
-        mClickCount = 0;
-        isStart = true;
-        mMoveRunnable = new MoveRunnable();
-        ThreadPoolManager.getInstance().execute(mMoveRunnable);
+        if (mMoveThread == null) {
+            mClickCount = 0;
+            isStart = true;
+            mMoveThread = new MoveThread();
+            mMoveThread.start();
+        }
     }
 
     @Override
     public void onFinish() {
-        LogUtils.i("onFinish");
+        Logger.i(BaseConstant.TAG, "onFinish");
         isStart = false;
-        ThreadPoolManager.getInstance().cancel(mMoveRunnable);
+        if (mMoveThread != null) {
+            mMoveThread.interrupt();
+            mMoveThread = null;
+        }
     }
 
     private void controlMove(RockerView.Direction direction) {
@@ -66,7 +71,8 @@ class RockerControlHelper implements RockerView.OnShakeListener {
         }
     }
 
-    private class MoveRunnable implements Runnable {
+    private class MoveThread extends Thread {
+
         @Override
         public void run() {
             while (isStart) {
@@ -95,7 +101,7 @@ class RockerControlHelper implements RockerView.OnShakeListener {
                 }
             }
 
-            LogUtils.i("cancel");
+            Logger.i(BaseConstant.TAG, "cancel");
             SlamManager.getInstance().cancelMove();
         }
     }

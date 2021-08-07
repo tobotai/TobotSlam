@@ -42,8 +42,18 @@ public abstract class BasePopupWindow extends PopupWindow implements View.OnClic
         mPopupHeight = view.getMeasuredHeight();
     }
 
+    /**
+     * 获取页面布局资源
+     *
+     * @return
+     */
     public abstract int getLayoutResId();
 
+    /**
+     * 初始化
+     *
+     * @param view
+     */
     public abstract void initView(View view);
 
     public void show(View parent) {

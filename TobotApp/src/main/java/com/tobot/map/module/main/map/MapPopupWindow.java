@@ -72,6 +72,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
             mConfirmDialog.getDialog().dismiss();
             mConfirmDialog = null;
         }
+
         if (isResetChargeDialogShow()) {
             mResetChargeDialog.getDialog().dismiss();
             mResetChargeDialog = null;
@@ -88,11 +89,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_build_map:
-                if (tvBuildMap.isSelected()) {
-                    tvBuildMap.setSelected(false);
-                } else {
-                    tvBuildMap.setSelected(true);
-                }
+                tvBuildMap.setSelected(!tvBuildMap.isSelected());
                 SlamManager.getInstance().setMapUpdateInThread(tvBuildMap.isSelected(), null);
                 break;
             case R.id.tv_add_point:
@@ -129,9 +126,10 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     @Override
     public void onName(String name) {
         if (TextUtils.isEmpty(name)) {
-            ToastUtils.getInstance(mContext).show(mContext.getString(R.string.map_name_empty_tips));
+            ToastUtils.getInstance(mContext).show(R.string.map_name_empty_tips);
             return;
         }
+
         closeNumberInputDialog();
         showDialogTips(mContext.getString(R.string.map_save_tips));
         saveMap(name);
@@ -190,7 +188,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                     @Override
                     public void run() {
                         closeLoadTipsDialog();
-                        ToastUtils.getInstance(mContext).show(mContext.getString(data ? R.string.relocation_map_success : R.string.relocation_map_fail));
+                        ToastUtils.getInstance(mContext).show(data ? R.string.relocation_map_success : R.string.relocation_map_fail);
                     }
                 });
             }
@@ -211,7 +209,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                     public void run() {
                         mActivity.cleanMapResult(data);
                         closeLoadTipsDialog();
-                        ToastUtils.getInstance(mContext).show(mContext.getString(data ? R.string.map_clean_success_tips : R.string.map_clean_fail_tips));
+                        ToastUtils.getInstance(mContext).show(data ? R.string.map_clean_success_tips : R.string.map_clean_fail_tips);
                     }
                 });
             }
@@ -227,7 +225,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                     @Override
                     public void run() {
                         closeLoadTipsDialog();
-                        ToastUtils.getInstance(mContext).show(mContext.getString(data ? R.string.map_save_success_tips : R.string.map_save_fail_tips));
+                        ToastUtils.getInstance(mContext).show(data ? R.string.map_save_success_tips : R.string.map_save_fail_tips);
                     }
                 });
             }
@@ -311,6 +309,8 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
 
         /**
          * 提示dialog
+         *
+         * @param tips
          */
         void onMapShowTipsDialog(String tips);
 

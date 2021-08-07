@@ -14,6 +14,7 @@ import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.entity.RouteBean;
+import com.tobot.map.module.common.GridItemDecoration;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.data.LocationBean;
 
@@ -89,6 +90,7 @@ public class TaskPointSelectActivity extends BaseActivity implements BaseRecycle
                 setSelect(true);
             }
         }
+
         mAdapter.setSelectData(mSelectList);
     }
 
@@ -106,6 +108,7 @@ public class TaskPointSelectActivity extends BaseActivity implements BaseRecycle
             finish();
             return;
         }
+
         ToastUtils.getInstance(this).show(R.string.task_name_exist_tips);
     }
 
@@ -141,7 +144,7 @@ public class TaskPointSelectActivity extends BaseActivity implements BaseRecycle
         if (!isTaskSaveDialogShow()) {
             mTaskSaveDialog = TaskSaveDialog.newInstance(title, contentTips, hint);
             mTaskSaveDialog.setOnNameListener(this);
-            mTaskSaveDialog.show(getFragmentManager(), "TASK_DIALOG");
+            mTaskSaveDialog.show(getSupportFragmentManager(), "TASK_DIALOG");
         }
     }
 

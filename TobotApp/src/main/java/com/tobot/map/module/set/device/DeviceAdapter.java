@@ -27,7 +27,7 @@ public class DeviceAdapter extends BaseRecyclerAdapter<DeviceBean> {
             tvName.setText(data.getName());
             String content = data.getContent();
             // 默认未知
-            tvContent.setText(TextUtils.isEmpty(content) ? mContext.getString(R.string.tv_unknown) : content);
+            tvContent.setText(TextUtils.isEmpty(content) ? mContext.getString(R.string.unknown) : content);
         }
     }
 }

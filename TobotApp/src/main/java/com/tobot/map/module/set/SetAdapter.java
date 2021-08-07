@@ -43,6 +43,7 @@ public class SetAdapter extends BaseRecyclerAdapter<SetBean> {
         if (mSelectPosition == position) {
             return;
         }
+
         mSelectPosition = position;
         notifyDataSetChanged();
     }

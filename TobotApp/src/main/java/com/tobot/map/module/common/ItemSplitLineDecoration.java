@@ -37,9 +37,10 @@ public class ItemSplitLineDecoration extends RecyclerView.ItemDecoration {
         super.onDraw(c, parent, state);
         if (mOrientation == VERTICAL) {
             drawVertical(c, parent);
-        } else {
-            drawHorizontal(c, parent);
+            return;
         }
+
+        drawHorizontal(c, parent);
     }
 
     private void drawVertical(Canvas c, RecyclerView parent) {
@@ -79,6 +80,7 @@ public class ItemSplitLineDecoration extends RecyclerView.ItemDecoration {
             }
             return;
         }
+
         if (isLastDraw) {
             outRect.right = mSplitLineHeight;
         }

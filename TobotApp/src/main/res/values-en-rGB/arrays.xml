@@ -4,6 +4,9 @@
         <item>S/N</item>
         <item>firmware version</item>
         <item>system version</item>
+        <item>control panel hardware version</item>
+        <item>control panel software version</item>
+        <item>control panel serial</item>
         <item>mode</item>
         <item>SSID</item>
         <item>IP</item>

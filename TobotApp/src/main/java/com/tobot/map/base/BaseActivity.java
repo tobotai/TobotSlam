@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.view.WindowManager;
 
+import com.tobot.map.module.common.ConfirmDialog;
 import com.tobot.map.module.common.LoadTipsDialog;
 import com.tobot.map.util.ToastUtils;
 
@@ -15,9 +16,10 @@ import butterknife.ButterKnife;
  * @author houdeming
  * @date 2018/7/20
  */
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends FragmentActivity implements ConfirmDialog.OnConfirmListener {
     protected boolean isFinish;
     private LoadTipsDialog mLoadTipsDialog;
+    private ConfirmDialog mConfirmDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,10 @@ public abstract class BaseActivity extends FragmentActivity {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
+    @Override
+    public void onConfirm() {
+    }
+
     /**
      * 获取布局ID
      *
@@ -65,6 +71,7 @@ public abstract class BaseActivity extends FragmentActivity {
             ToastUtils.getInstance(this).show(content);
             return;
         }
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -89,8 +96,28 @@ public abstract class BaseActivity extends FragmentActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             mLoadTipsDialog = null;
         }
+    }
+
+    protected void showConfirmDialog(String tips) {
+        if (!isConfirmDialogShow()) {
+            mConfirmDialog = ConfirmDialog.newInstance(tips);
+            mConfirmDialog.setOnConfirmListener(this);
+            mConfirmDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
+        }
+    }
+
+    protected void closeConfirmDialog() {
+        if (isConfirmDialogShow()) {
+            mConfirmDialog.dismiss();
+            mConfirmDialog = null;
+        }
+    }
+
+    private boolean isConfirmDialogShow() {
+        return mConfirmDialog != null && mConfirmDialog.getDialog() != null && mConfirmDialog.getDialog().isShowing();
     }
 
     private boolean isLoadTipsDialogShow() {

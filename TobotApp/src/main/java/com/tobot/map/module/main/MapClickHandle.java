@@ -6,8 +6,9 @@ import android.view.MotionEvent;
 import com.slamtec.slamware.geometry.Line;
 import com.slamtec.slamware.geometry.PointF;
 import com.slamtec.slamware.robot.ArtifactUsage;
+import com.tobot.map.constant.BaseConstant;
+import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.edit.OnEditListener;
-import com.tobot.map.util.LogUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.view.MapView;
 
@@ -21,7 +22,7 @@ public class MapClickHandle {
     private MainActivity mMainActivity;
     private MapView mMapView;
     private boolean isStart;
-    private PointF mPointFStart, mPointFEnd;
+    private PointF mPointStart, mPointEnd;
 
     public MapClickHandle(WeakReference<MainActivity> activityWeakReference, WeakReference<MapView> mapViewWeakReference) {
         mMainActivity = activityWeakReference.get();
@@ -32,6 +33,7 @@ public class MapClickHandle {
         if (mMapView == null) {
             return;
         }
+
         float x = event.getX();
         float y = event.getY();
         switch (option) {
@@ -68,23 +70,25 @@ public class MapClickHandle {
         if (pointF == null) {
             return;
         }
+
         if (isStart) {
             isStart = false;
-            mPointFEnd = pointF;
+            mPointEnd = pointF;
         } else {
             isStart = true;
-            mPointFStart = pointF;
+            mPointStart = pointF;
         }
+
         mMapView.setLine(getArtifactUsage(editTyp), pointF);
         if (!isStart) {
-            SlamManager.getInstance().addLineInThread(getArtifactUsage(editTyp), new Line(mPointFStart, mPointFEnd), null);
+            SlamManager.getInstance().addLineInThread(getArtifactUsage(editTyp), new Line(mPointStart, mPointEnd), null);
         }
     }
 
     private void removeLine(int editTyp, Point point) {
         isStart = false;
         int lineId = mMapView.removeLine(getArtifactUsage(editTyp), point);
-        LogUtils.i("remove lineId=" + lineId);
+        Logger.i(BaseConstant.TAG, "remove lineId=" + lineId);
         // id不为-1的话，则代表有虚拟墙
         if (lineId != -1) {
             SlamManager.getInstance().removeLineByIdInThread(getArtifactUsage(editTyp), lineId, null);

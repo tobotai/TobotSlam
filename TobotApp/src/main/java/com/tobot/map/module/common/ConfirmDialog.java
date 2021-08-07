@@ -6,13 +6,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseV4Dialog;
+import com.tobot.map.base.BaseDialog;
 
 /**
  * @author houdeming
  * @date 2018/8/16
  */
-public class ConfirmDialog extends BaseV4Dialog implements View.OnClickListener {
+public class ConfirmDialog extends BaseDialog implements View.OnClickListener {
     private TextView tvTips;
     private OnConfirmListener mListener;
 
@@ -42,17 +42,17 @@ public class ConfirmDialog extends BaseV4Dialog implements View.OnClickListener 
     }
 
     @Override
+    protected double getScreenWidthPercentage() {
+        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
             tvTips.setText(bundle.getString(DATA_KEY));
         }
-    }
-
-    @Override
-    protected double getScreenWidthPercentage() {
-        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
     }
 
     @Override

@@ -15,12 +15,14 @@ public class DeviceBean implements Cloneable {
     }
 
     @NonNull
+    @Override
     public DeviceBean clone() {
         try {
             return (DeviceBean) super.clone();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return new DeviceBean();
     }
 

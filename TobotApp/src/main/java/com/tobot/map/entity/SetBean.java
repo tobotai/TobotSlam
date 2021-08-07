@@ -19,12 +19,14 @@ public class SetBean implements Cloneable {
     }
 
     @NonNull
+    @Override
     public SetBean clone() {
         try {
             return (SetBean) super.clone();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return new SetBean();
     }
 

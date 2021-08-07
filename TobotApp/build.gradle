@@ -9,22 +9,28 @@ android {
         applicationId "com.tobot.map"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 18
-        versionName "2.3.6"
+        versionCode 44
+        versionName "3.0.8"
         multiDexEnabled true // dex突破65535的限制
+        // 自定义配置信息
+        buildConfigField("String", "BASE_URL", "${BASE_URL}")
+        buildConfigField("String", "VERSION_TXT_URL", "${VERSION_TXT_URL}")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
-            abiFilters "armeabi-v7a"
+            abiFilters "arm64-v8a", "armeabi-v7a"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     lintOptions {
         disable 'MissingTranslation'
     }
+
     buildTypes {
         release {
             buildConfigField "boolean", "LOG_DEBUG", "false"
@@ -33,6 +39,7 @@ android {
             shrinkResources true // 移出无用资源
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         debug {
             buildConfigField "boolean", "LOG_DEBUG", "true"
             minifyEnabled true // 开启混淆
@@ -41,12 +48,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
             assets.srcDirs = ['assets', 'src/main/assets', 'src/main/assets/']
         }
     }
+
     repositories {
         flatDir {
             dirs 'libs'
@@ -78,5 +87,6 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation(name: 'TobotBar-1.1.5', ext: 'aar')
     implementation(name: 'TobotWheelView-1.2.1', ext: 'aar')
-    implementation files('libs/TobotSlam-2.8.2.jar')
+    implementation files('libs/TobotNet-1.2.0.jar')
+    implementation files('libs/TobotSlam-2.9.2.jar')
 }

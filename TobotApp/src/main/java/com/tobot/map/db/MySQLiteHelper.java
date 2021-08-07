@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.tobot.map.util.LogUtils;
+import com.tobot.map.constant.BaseConstant;
+import com.tobot.map.module.log.Logger;
 
 /**
  * @author houdeming
@@ -31,10 +32,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "map.db";
     private static final int DATABASE_VERSION = 2;
-    public static final String TABLE_LOCATION = "location";
     public static final String TABLE_IP = "ip";
+    public static final String TABLE_LOCATION = "location";
     public static final String TABLE_ROUTE = "route";
     public static final String TABLE_ROUTE_DETAIL = "routeDetail";
+
+    private static final String IP_CREATE = "create table " + TABLE_IP +
+            "("
+            + ID + " integer primary key autoincrement,"
+            + IP + " text"
+            + " );";
 
     private static final String LOCATION_CREATE = "create table " + TABLE_LOCATION +
             "("
@@ -53,12 +60,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + START_Y + " real,"
             + END_X + " real,"
             + END_Y + " real"
-            + " );";
-
-    private static final String IP_CREATE = "create table " + TABLE_IP +
-            "("
-            + ID + " integer primary key autoincrement,"
-            + IP + " text"
             + " );";
 
     private static final String ROUTE_CREATE = "create table " + TABLE_ROUTE +
@@ -95,17 +96,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // 这个版本号固定不能改变
-        int initDBVersion = 1;
-        db.execSQL(LOCATION_CREATE);
         db.execSQL(IP_CREATE);
-        onUpgrade(db, initDBVersion, DATABASE_VERSION);
+        db.execSQL(LOCATION_CREATE);
+        // 默认版本从1开始
+        onUpgrade(db, 1, DATABASE_VERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // 数据库升级
-        LogUtils.i("oldVersion=" + oldVersion + ",newVersion=" + newVersion);
+        Logger.i(BaseConstant.TAG, "oldVersion=" + oldVersion + ",newVersion=" + newVersion);
         for (int i = oldVersion; i < newVersion; i++) {
             if (i == oldVersion) {
                 addTaskTab(db);

@@ -16,9 +16,20 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/view_margin_top"
         android:layout_marginRight="@dimen/view_margin_top"
-        android:text="@string/tv_status_show"
         android:textColor="@color/tv_pose_show"
         android:textSize="@dimen/tv_mode_tips" />
+
+    <TextView
+        android:id="@+id/tv_socket_connect_success_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:layout_toLeftOf="@id/tv_status"
+        android:text="@string/tv_socket_connect_success_tips"
+        android:textColor="@color/tv_socket_connect_success_tips"
+        android:textSize="@dimen/tv_mode_tips"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_pose_show"
@@ -27,7 +38,6 @@
         android:layout_below="@id/tv_status"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/view_margin_top"
-        android:text="@string/tv_pose_show"
         android:textColor="@color/tv_pose_show"
         android:textSize="@dimen/tv_mode_tips" />
 
@@ -40,6 +50,25 @@
         android:layout_toLeftOf="@id/tv_pose_show"
         android:textColor="@color/tv_rssi_tips"
         android:textSize="@dimen/tv_mode_tips" />
+
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_pose_show"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:textColor="@color/tv_rssi_tips"
+        android:textSize="@dimen/tv_mode_tips" />
+
+    <ImageView
+        android:id="@+id/iv_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_status"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:layout_toLeftOf="@id/tv_rssi"
+        android:src="@drawable/ic_warning" />
 
     <ImageView
         android:id="@+id/iv_set"

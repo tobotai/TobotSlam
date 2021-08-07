@@ -1,5 +1,7 @@
 package com.tobot.map.module.set;
 
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,8 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
 import com.tobot.map.base.BaseRecyclerAdapter;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.entity.SetBean;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
+import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.set.device.DeviceInfoFragment;
 
 import java.util.ArrayList;
@@ -28,11 +32,13 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
     private static final int TAG_CONFIG = 1;
     private static final int TAG_MAP_LIST = 2;
     private static final int TAG_TEST = 3;
+    private static final int TAG_APP = 4;
     private SetAdapter mAdapter;
     private DeviceInfoFragment mDeviceInfoFragment;
     private ConfigFragment mConfigFragment;
     private MapListFragment mMapListFragment;
     private TestFragment mTestFragment;
+    private AboutAppFragment mAboutAppFragment;
 
     @Override
     protected int getLayoutResId() {
@@ -52,19 +58,37 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.i(BaseConstant.TAG, "SetActivity onActivityResult() resultCode=" + resultCode);
+        if (resultCode == BaseConstant.CODE_UPDATE_DEVICE_DATA) {
+            if (mDeviceInfoFragment != null) {
+                mDeviceInfoFragment.updateData();
+            }
+        }
+    }
+
+    @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
         if (mDeviceInfoFragment == null && fragment instanceof DeviceInfoFragment) {
             mDeviceInfoFragment = (DeviceInfoFragment) fragment;
         }
+
         if (mConfigFragment == null && fragment instanceof ConfigFragment) {
             mConfigFragment = (ConfigFragment) fragment;
         }
+
         if (mMapListFragment == null && fragment instanceof MapListFragment) {
             mMapListFragment = (MapListFragment) fragment;
         }
+
         if (mTestFragment == null && fragment instanceof TestFragment) {
             mTestFragment = (TestFragment) fragment;
+        }
+
+        if (mAboutAppFragment == null && fragment instanceof AboutAppFragment) {
+            mAboutAppFragment = (AboutAppFragment) fragment;
         }
     }
 
@@ -94,6 +118,11 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
         bean = bean.clone();
         bean.setId(TAG_TEST);
         bean.setName(getString(R.string.tv_test));
+        titles.add(bean);
+
+        bean = bean.clone();
+        bean.setId(TAG_APP);
+        bean.setName(getString(R.string.tv_about_app));
         titles.add(bean);
         return titles;
     }
@@ -134,9 +163,18 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
                     transaction.show(mTestFragment);
                 }
                 break;
+            case TAG_APP:
+                if (mAboutAppFragment == null) {
+                    mAboutAppFragment = AboutAppFragment.newInstance();
+                    transaction.add(R.id.fl, mAboutAppFragment);
+                } else {
+                    transaction.show(mAboutAppFragment);
+                }
+                break;
             default:
                 break;
         }
+
         transaction.commit();
     }
 
@@ -144,14 +182,21 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
         if (mDeviceInfoFragment != null) {
             transaction.hide(mDeviceInfoFragment);
         }
+
         if (mConfigFragment != null) {
             transaction.hide(mConfigFragment);
         }
+
         if (mMapListFragment != null) {
             transaction.hide(mMapListFragment);
         }
+
         if (mTestFragment != null) {
             transaction.hide(mTestFragment);
+        }
+
+        if (mAboutAppFragment != null) {
+            transaction.hide(mAboutAppFragment);
         }
     }
 }

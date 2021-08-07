@@ -4,6 +4,9 @@
         <item>S/N</item>
         <item>固件版本</item>
         <item>系統版本</item>
+        <item>控制板硬件版本</item>
+        <item>控制板軟件版本</item>
+        <item>控制板序列號</item>
         <item>模式</item>
         <item>SSID</item>
         <item>IP</item>

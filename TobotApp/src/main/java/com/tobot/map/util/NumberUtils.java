@@ -46,17 +46,15 @@ public class NumberUtils {
                                 result += temp;
                                 count = 0;
                             }
+
                             // 下标+1，就是对应的值
-                            if (j == cnArrLength - 1) {
-                                temp = 2;
-                            } else {
-                                temp = j + 1;
-                            }
+                            temp = j == cnArrLength - 1 ? 2 : j + 1;
                             b = false;
                             strNum = 1;
                             break;
                         }
                     }
+
                     // 单位{'十','百','千','万','亿'}
                     if (b) {
                         for (int j = 0; j < chArrLength; j++) {
@@ -80,11 +78,13 @@ public class NumberUtils {
                                     default:
                                         break;
                                 }
+
                                 count++;
                                 strNum = 1;
                             }
                         }
                     }
+
                     // 遍历到最后一个字符
                     if (i == str.length() - 1) {
                         if (strNum != 0) {
@@ -93,6 +93,7 @@ public class NumberUtils {
                     }
                 }
             }
+
             String tempDistance = builder.toString();
             if (!TextUtils.isEmpty(tempDistance)) {
                 if (TextUtils.isDigitsOnly(tempDistance)) {
@@ -100,6 +101,7 @@ public class NumberUtils {
                 }
             }
         }
+
         return result;
     }
 
@@ -114,6 +116,7 @@ public class NumberUtils {
             String regex = "-[0-9]+(.[0-9]+)?|[0-9]+(.[0-9]+)?";
             return str.matches(regex);
         }
+
         return false;
     }
 
@@ -128,6 +131,7 @@ public class NumberUtils {
             Pattern pattern = Pattern.compile("^[-\\+]?[.\\d]*$");
             return pattern.matcher(str).matches();
         }
+
         return false;
     }
 }

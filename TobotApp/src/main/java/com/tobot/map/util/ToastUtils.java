@@ -38,6 +38,7 @@ public class ToastUtils {
                 }
             }
         }
+
         return sInstance;
     }
 

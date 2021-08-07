@@ -25,7 +25,7 @@ public class ConnectIpAdapter extends BaseRecyclerAdapter<String> {
 
         if (!TextUtils.isEmpty(data)) {
             tvIp.setText(data);
-            
+
             tvIp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

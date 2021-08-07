@@ -6,13 +6,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseV4Dialog;
+import com.tobot.map.base.BaseDialog;
 
 /**
  * @author houdeming
  * @date 2019/10/19
  */
-public class LoadTipsDialog extends BaseV4Dialog {
+public class LoadTipsDialog extends BaseDialog {
     private TextView tvTips;
 
     public static LoadTipsDialog newInstance(String tips) {
@@ -39,16 +39,16 @@ public class LoadTipsDialog extends BaseV4Dialog {
     }
 
     @Override
+    protected double getScreenWidthPercentage() {
+        return getResources().getInteger(R.integer.dialog_progress_width_weight) / 10.0;
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
             tvTips.setText(bundle.getString(DATA_KEY));
         }
-    }
-
-    @Override
-    protected double getScreenWidthPercentage() {
-        return getResources().getInteger(R.integer.dialog_progress_width_weight) / 10.0;
     }
 }

@@ -23,6 +23,7 @@ public class AppUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return info;
     }
 
@@ -33,6 +34,7 @@ public class AppUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return drawable;
     }
 
@@ -56,6 +58,7 @@ public class AppUtils {
             } else {
                 uri = Uri.fromFile(file);
             }
+
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
             context.startActivity(intent);
         }

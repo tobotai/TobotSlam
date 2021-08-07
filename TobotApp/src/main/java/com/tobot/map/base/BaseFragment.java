@@ -52,6 +52,7 @@ public abstract class BaseFragment extends Fragment implements ConfirmDialog.OnC
             ToastUtils.getInstance(getActivity()).show(content);
             return;
         }
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {

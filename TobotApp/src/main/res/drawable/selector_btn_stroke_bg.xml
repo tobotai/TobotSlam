@@ -14,6 +14,13 @@
         </shape>
     </item>
 
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/shape_btn_corners" />
+            <solid android:color="@color/shape_btn_normal" />
+        </shape>
+    </item>
+
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/shape_btn_corners" />

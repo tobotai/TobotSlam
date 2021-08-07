@@ -6,6 +6,9 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.tobot.map.constant.BaseConstant;
+import com.tobot.map.module.log.Logger;
+
 import java.io.File;
 import java.util.List;
 
@@ -22,6 +25,40 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
     private int mScanCount;
 
     public MediaScanner() {
+    }
+
+    @Override
+    public void onMediaScannerConnected() {
+        Logger.i(BaseConstant.TAG, "onMediaScannerConnected()");
+        if (mConnection != null) {
+            // 扫描单个文件
+            if (!TextUtils.isEmpty(mFilePath)) {
+                mScanCount = 1;
+                mConnection.scanFile(mFilePath, null);
+                return;
+            }
+
+            // 扫描多个文件
+            if (mFilePathArray != null && mFilePathArray.length > 0) {
+                mScanCount = mFilePathArray.length;
+                for (String path : mFilePathArray) {
+                    mConnection.scanFile(path, null);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScanCompleted(String path, Uri uri) {
+        Logger.i(BaseConstant.TAG, "onScanCompleted()");
+        // 该方法会多次回调，完成后要断开连接
+        mScanCount--;
+        if (mScanCount <= 0) {
+            Logger.i(BaseConstant.TAG, "MediaScanner disconnect");
+            if (mConnection != null) {
+                mConnection.disconnect();
+            }
+        }
     }
 
     public void scanFile(Context context, String filePath) {
@@ -55,38 +92,5 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         mFilePathArray = filePaths;
         mConnection = new MediaScannerConnection(context, this);
         mConnection.connect();
-    }
-
-    @Override
-    public void onMediaScannerConnected() {
-        LogUtils.i("onMediaScannerConnected()");
-        if (mConnection != null) {
-            // 扫描单个文件
-            if (!TextUtils.isEmpty(mFilePath)) {
-                mScanCount = 1;
-                mConnection.scanFile(mFilePath, null);
-                return;
-            }
-            // 扫描多个文件
-            if (mFilePathArray != null && mFilePathArray.length > 0) {
-                mScanCount = mFilePathArray.length;
-                for (String path : mFilePathArray) {
-                    mConnection.scanFile(path, null);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onScanCompleted(String path, Uri uri) {
-        LogUtils.i("onScanCompleted()");
-        // 该方法会多次回调，完成后要断开连接
-        mScanCount--;
-        if (mScanCount <= 0) {
-            LogUtils.i("MediaScanner disconnect");
-            if (mConnection != null) {
-                mConnection.disconnect();
-            }
-        }
     }
 }

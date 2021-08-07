@@ -33,6 +33,7 @@ public class MyDBSource {
                 }
             }
         }
+
         return sDBSource;
     }
 
@@ -63,6 +64,7 @@ public class MyDBSource {
         if (dataList == null || dataList.isEmpty()) {
             return;
         }
+
         SQLiteDatabase database = mHelper.getWritableDatabase();
         String sql = "insert into " + MySQLiteHelper.TABLE_LOCATION + "("
                 + MySQLiteHelper.MAP_NAME + ","
@@ -115,6 +117,21 @@ public class MyDBSource {
         }
     }
 
+    public synchronized void deleteLocation(String locationNumber) {
+        if (TextUtils.isEmpty(locationNumber)) {
+            return;
+        }
+
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        // 如果数据库中有该数据返回1，否则返回0
+        database.delete(MySQLiteHelper.TABLE_LOCATION, MySQLiteHelper.LOCATION_NUMBER + "=?", new String[]{locationNumber});
+        mHelper.close();
+    }
+
+    public synchronized void deleteAllLocation() {
+        deleteAll(MySQLiteHelper.TABLE_LOCATION);
+    }
+
     public synchronized void updateLocation(String locationNumber, LocationBean bean) {
         if (bean != null) {
             SQLiteDatabase database = mHelper.getWritableDatabase();
@@ -152,38 +169,7 @@ public class MyDBSource {
         return queryLocation(MySQLiteHelper.LOCATION_NAME_ENGLISH, locationName);
     }
 
-    private LocationBean queryLocation(String selection, String selectionArg) {
-        if (TextUtils.isEmpty(selectionArg)) {
-            return null;
-        }
-        LocationBean bean = null;
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, null, selection + "=?",
-                new String[]{selectionArg}, null, null, null);
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            bean = new LocationBean();
-            bean.setMapName(cursor.getString(1));
-            bean.setLocationNumber(cursor.getString(2));
-            bean.setLocationNameChina(cursor.getString(3));
-            bean.setLocationNameEnglish(cursor.getString(4));
-            bean.setContent(cursor.getString(5));
-            bean.setX(cursor.getFloat(6));
-            bean.setY(cursor.getFloat(7));
-            bean.setYaw(cursor.getFloat(8));
-            bean.setType(cursor.getInt(9));
-            bean.setSensorStatus(cursor.getInt(10));
-            bean.setStartX(cursor.getFloat(11));
-            bean.setStartY(cursor.getFloat(12));
-            bean.setEndX(cursor.getFloat(13));
-            bean.setEndY(cursor.getFloat(14));
-        }
-        cursor.close();
-        mHelper.close();
-        return bean;
-    }
-
-    public synchronized List<LocationBean> queryLocation() {
+    public synchronized List<LocationBean> queryLocationList() {
         SQLiteDatabase database = mHelper.getWritableDatabase();
         List<LocationBean> dataList = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, getColumns(), null, null, null, null, null);
@@ -213,7 +199,7 @@ public class MyDBSource {
         return dataList;
     }
 
-    public synchronized List<LocationBean> queryLocation(int type) {
+    public synchronized List<LocationBean> queryLocationList(int type) {
         SQLiteDatabase database = mHelper.getWritableDatabase();
         List<LocationBean> dataList = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, getColumns(), MySQLiteHelper.TYPE + "=?",
@@ -244,6 +230,38 @@ public class MyDBSource {
         return dataList;
     }
 
+    private LocationBean queryLocation(String selection, String selectionArg) {
+        if (TextUtils.isEmpty(selectionArg)) {
+            return null;
+        }
+
+        LocationBean bean = null;
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATION, null, selection + "=?",
+                new String[]{selectionArg}, null, null, null);
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            bean = new LocationBean();
+            bean.setMapName(cursor.getString(1));
+            bean.setLocationNumber(cursor.getString(2));
+            bean.setLocationNameChina(cursor.getString(3));
+            bean.setLocationNameEnglish(cursor.getString(4));
+            bean.setContent(cursor.getString(5));
+            bean.setX(cursor.getFloat(6));
+            bean.setY(cursor.getFloat(7));
+            bean.setYaw(cursor.getFloat(8));
+            bean.setType(cursor.getInt(9));
+            bean.setSensorStatus(cursor.getInt(10));
+            bean.setStartX(cursor.getFloat(11));
+            bean.setStartY(cursor.getFloat(12));
+            bean.setEndX(cursor.getFloat(13));
+            bean.setEndY(cursor.getFloat(14));
+        }
+        cursor.close();
+        mHelper.close();
+        return bean;
+    }
+
     private String[] getColumns() {
         return new String[]{
                 MySQLiteHelper.ID,
@@ -263,20 +281,6 @@ public class MyDBSource {
                 MySQLiteHelper.END_Y};
     }
 
-    public synchronized void deleteLocation(String locationNumber) {
-        if (TextUtils.isEmpty(locationNumber)) {
-            return;
-        }
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-        // 如果数据库中有该数据返回1，否则返回0
-        database.delete(MySQLiteHelper.TABLE_LOCATION, MySQLiteHelper.LOCATION_NUMBER + "=?", new String[]{locationNumber});
-        mHelper.close();
-    }
-
-    public synchronized void deleteAllLocation() {
-        deleteAll(MySQLiteHelper.TABLE_LOCATION);
-    }
-
     public synchronized void insertIp(String ip) {
         if (!TextUtils.isEmpty(ip)) {
             SQLiteDatabase database = mHelper.getWritableDatabase();
@@ -285,6 +289,24 @@ public class MyDBSource {
             database.insert(MySQLiteHelper.TABLE_IP, null, values);
             mHelper.close();
         }
+    }
+
+    public synchronized void deleteAllIp() {
+        deleteAll(MySQLiteHelper.TABLE_IP);
+    }
+
+    public synchronized List<String> queryIpList() {
+        List<String> dataList = new ArrayList<>();
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_IP, null, null, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            dataList.add(cursor.getString(1));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        mHelper.close();
+        return dataList;
     }
 
     public synchronized String queryIp(String ip) {
@@ -302,50 +324,57 @@ public class MyDBSource {
             mHelper.close();
             return content;
         }
+
         return ip;
     }
 
-    public synchronized List<String> queryAllIp() {
-        List<String> dataList = new ArrayList<>();
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_IP, null, null, null, null, null, null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            dataList.add(cursor.getString(1));
-            cursor.moveToNext();
+    public synchronized void insertRoute(RouteBean bean) {
+        if (bean != null) {
+            SQLiteDatabase database = mHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.ROUTE_NAME, bean.getRouteName());
+            values.put(MySQLiteHelper.TYPE, bean.getType());
+            values.put(MySQLiteHelper.CONTENT, bean.getContent());
+            database.insert(MySQLiteHelper.TABLE_ROUTE, null, values);
+            mHelper.close();
         }
-        cursor.close();
-        mHelper.close();
-        return dataList;
     }
 
-    public synchronized void deleteAllIp() {
-        deleteAll(MySQLiteHelper.TABLE_IP);
+    public synchronized void deleteAllRoute() {
+        deleteAll(MySQLiteHelper.TABLE_ROUTE);
     }
 
-    public synchronized RouteBean queryRoute(String routeName) {
+    public synchronized void deleteRoute(String routeName) {
+        deleteRoute(routeName, MySQLiteHelper.TABLE_ROUTE);
+    }
+
+    private void deleteRoute(String routeName, String tab) {
         if (TextUtils.isEmpty(routeName)) {
-            return null;
+            return;
         }
-        RouteBean bean = null;
+
         SQLiteDatabase database = mHelper.getWritableDatabase();
         String whereClause = MySQLiteHelper.ROUTE_NAME + "=?";
-        String[] selectionArgs = {routeName};
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE, null, whereClause,
-                selectionArgs, null, null, null);
-        if (cursor.getCount() == 1) {
-            cursor.moveToFirst();
-            bean = new RouteBean();
-            bean.setRouteName(cursor.getString(1));
-            bean.setType(cursor.getInt(2));
-            bean.setContent(cursor.getString(3));
-        }
-        cursor.close();
+        String[] whereArgs = {routeName};
+        database.delete(tab, whereClause, whereArgs);
         mHelper.close();
-        return bean;
     }
 
-    public synchronized List<RouteBean> queryRoute() {
+    public synchronized void updateRoute(String routeName, RouteBean bean) {
+        if (bean != null) {
+            SQLiteDatabase database = mHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.ROUTE_NAME, bean.getRouteName());
+            values.put(MySQLiteHelper.TYPE, bean.getType());
+            values.put(MySQLiteHelper.CONTENT, bean.getContent());
+            String whereClause = MySQLiteHelper.ROUTE_NAME + "=?";
+            String[] whereArgs = {routeName};
+            database.update(MySQLiteHelper.TABLE_ROUTE, values, whereClause, whereArgs);
+            mHelper.close();
+        }
+    }
+
+    public synchronized List<RouteBean> queryRouteList() {
         List<RouteBean> beanList = new ArrayList<>();
         SQLiteDatabase database = mHelper.getWritableDatabase();
         String orderBy = MySQLiteHelper.ID + " desc";
@@ -366,72 +395,27 @@ public class MyDBSource {
         return beanList;
     }
 
-    public synchronized void insertRoute(RouteBean bean) {
-        if (bean != null) {
-            SQLiteDatabase database = mHelper.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(MySQLiteHelper.ROUTE_NAME, bean.getRouteName());
-            values.put(MySQLiteHelper.TYPE, bean.getType());
-            values.put(MySQLiteHelper.CONTENT, bean.getContent());
-            database.insert(MySQLiteHelper.TABLE_ROUTE, null, values);
-            mHelper.close();
-        }
-    }
-
-    public synchronized void deleteRoute(String routeName) {
-        deleteRoute(routeName, MySQLiteHelper.TABLE_ROUTE);
-    }
-
-    public synchronized void deleteAllRoute() {
-        deleteAll(MySQLiteHelper.TABLE_ROUTE);
-    }
-
-    public synchronized void updateRoute(String routeName, RouteBean bean) {
-        if (bean != null) {
-            SQLiteDatabase database = mHelper.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(MySQLiteHelper.ROUTE_NAME, bean.getRouteName());
-            values.put(MySQLiteHelper.TYPE, bean.getType());
-            values.put(MySQLiteHelper.CONTENT, bean.getContent());
-            String whereClause = MySQLiteHelper.ROUTE_NAME + "=?";
-            String[] whereArgs = {routeName};
-            database.update(MySQLiteHelper.TABLE_ROUTE, values, whereClause, whereArgs);
-            mHelper.close();
-        }
-    }
-
-    public synchronized List<LocationBean> queryRouteDetail(String routeName) {
-        List<LocationBean> beanList = new ArrayList<>();
+    public synchronized RouteBean queryRoute(String routeName) {
         if (TextUtils.isEmpty(routeName)) {
-            return beanList;
+            return null;
         }
+
+        RouteBean bean = null;
         SQLiteDatabase database = mHelper.getWritableDatabase();
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE_DETAIL, null, MySQLiteHelper.ROUTE_NAME + "=?",
-                new String[]{routeName}, null, null, null);
-        cursor.moveToFirst();
-        LocationBean bean = new LocationBean();
-        while (!cursor.isAfterLast()) {
-            bean = bean.clone();
-            bean.setMapName(cursor.getString(2));
-            bean.setLocationNumber(cursor.getString(3));
-            bean.setLocationNameChina(cursor.getString(4));
-            bean.setLocationNameEnglish(cursor.getString(5));
-            bean.setContent(cursor.getString(6));
-            bean.setX(cursor.getFloat(7));
-            bean.setY(cursor.getFloat(8));
-            bean.setYaw(cursor.getFloat(9));
-            bean.setType(cursor.getInt(10));
-            bean.setSensorStatus(cursor.getInt(11));
-            bean.setStartX(cursor.getFloat(12));
-            bean.setStartY(cursor.getFloat(13));
-            bean.setEndX(cursor.getFloat(14));
-            bean.setEndY(cursor.getFloat(15));
-            beanList.add(bean);
-            cursor.moveToNext();
+        String whereClause = MySQLiteHelper.ROUTE_NAME + "=?";
+        String[] selectionArgs = {routeName};
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE, null, whereClause,
+                selectionArgs, null, null, null);
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            bean = new RouteBean();
+            bean.setRouteName(cursor.getString(1));
+            bean.setType(cursor.getInt(2));
+            bean.setContent(cursor.getString(3));
         }
         cursor.close();
         mHelper.close();
-        return beanList;
+        return bean;
     }
 
     public synchronized void insertRouteDetail(String routeName, List<LocationBean> data) {
@@ -491,23 +475,47 @@ public class MyDBSource {
         }
     }
 
+    public synchronized void deleteAllRouteDetail() {
+        deleteAll(MySQLiteHelper.TABLE_ROUTE_DETAIL);
+    }
+
     public synchronized void deleteRouteDetail(String routeName) {
         deleteRoute(routeName, MySQLiteHelper.TABLE_ROUTE_DETAIL);
     }
 
-    private void deleteRoute(String routeName, String tab) {
+    public synchronized List<LocationBean> queryRouteDetailList(String routeName) {
+        List<LocationBean> beanList = new ArrayList<>();
         if (TextUtils.isEmpty(routeName)) {
-            return;
+            return beanList;
         }
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-        String whereClause = MySQLiteHelper.ROUTE_NAME + "=?";
-        String[] whereArgs = {routeName};
-        database.delete(tab, whereClause, whereArgs);
-        mHelper.close();
-    }
 
-    public synchronized void deleteAllRouteDetail() {
-        deleteAll(MySQLiteHelper.TABLE_ROUTE_DETAIL);
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_ROUTE_DETAIL, null, MySQLiteHelper.ROUTE_NAME + "=?",
+                new String[]{routeName}, null, null, null);
+        cursor.moveToFirst();
+        LocationBean bean = new LocationBean();
+        while (!cursor.isAfterLast()) {
+            bean = bean.clone();
+            bean.setMapName(cursor.getString(2));
+            bean.setLocationNumber(cursor.getString(3));
+            bean.setLocationNameChina(cursor.getString(4));
+            bean.setLocationNameEnglish(cursor.getString(5));
+            bean.setContent(cursor.getString(6));
+            bean.setX(cursor.getFloat(7));
+            bean.setY(cursor.getFloat(8));
+            bean.setYaw(cursor.getFloat(9));
+            bean.setType(cursor.getInt(10));
+            bean.setSensorStatus(cursor.getInt(11));
+            bean.setStartX(cursor.getFloat(12));
+            bean.setStartY(cursor.getFloat(13));
+            bean.setEndX(cursor.getFloat(14));
+            bean.setEndY(cursor.getFloat(15));
+            beanList.add(bean);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        mHelper.close();
+        return beanList;
     }
 
     public synchronized void clearRouteId() {

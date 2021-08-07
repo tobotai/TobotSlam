@@ -1,6 +1,7 @@
 package com.tobot.map.module.task;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
@@ -49,7 +50,17 @@ public class TaskSaveDialog extends BaseDialog implements View.OnClickListener {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    protected boolean isCanCancelByBack() {
+        return true;
+    }
+
+    @Override
+    protected double getScreenWidthPercentage() {
+        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -57,11 +68,6 @@ public class TaskSaveDialog extends BaseDialog implements View.OnClickListener {
             tvTips.setText(bundle.getString(CONTENT_KEY));
             editText.setHint(bundle.getString(HINT_KEY));
         }
-    }
-
-    @Override
-    protected double getScreenWidthPercentage() {
-        return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
     }
 
     @Override
@@ -75,9 +81,10 @@ public class TaskSaveDialog extends BaseDialog implements View.OnClickListener {
         if (id == R.id.btn_confirm) {
             String content = editText.getText().toString().trim();
             if (TextUtils.isEmpty(content)) {
-                ToastUtils.getInstance(getActivity()).show(getString(R.string.task_empty_tips));
+                ToastUtils.getInstance(getActivity()).show(R.string.task_empty_tips);
                 return;
             }
+
             if (mOnNameListener != null) {
                 mOnNameListener.onName(content);
             }

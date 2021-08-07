@@ -1,6 +1,9 @@
 package com.tobot.map.module.set;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -12,13 +15,14 @@ import android.widget.TextView;
 import com.tobot.bar.base.BaseBar;
 import com.tobot.bar.seekbar.StripSeekBar;
 import com.tobot.map.R;
-import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.BaseFragment;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.common.TipsDialog;
+import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.DataHelper;
-import com.tobot.map.module.set.wifi.WifiConfigDialog;
-import com.tobot.map.util.LogUtils;
+import com.tobot.map.module.set.firmware.FirmwareUpgradeActivity;
+import com.tobot.map.module.set.firmware.SetSensorDataReportedActivity;
 import com.tobot.map.util.NumberUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnResultListener;
@@ -32,7 +36,7 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2019/10/21
  */
-public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarChangeListener, WifiConfigDialog.OnWifiListener {
+public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarChangeListener {
     private static final int MSG_REQUEST_SPEED = 1;
     private static final int MSG_SET_SPEED = 2;
     private static final int MSG_REQUEST_ROTATE_SPEED = 3;
@@ -66,11 +70,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     @BindView(R.id.sb_try_time)
     StripSeekBar sbTryTime;
     private MainHandler mMainHandler;
-    private WifiConfigDialog mWifiConfigDialog;
     private TipsDialog mTipsDialog;
     private boolean isConfigApMode;
-    private float mMaxSpeed = 0.7f;
-    private float mMaxRotateSpeed = 2f;
     private float mSpeed;
     private int mTime;
 
@@ -103,14 +104,23 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         if (mMainHandler != null) {
             mMainHandler.removeCallbacksAndMessages(null);
         }
-        if (isWifiConfigDialogShow()) {
-            mWifiConfigDialog.getDialog().dismiss();
-            mWifiConfigDialog = null;
-        }
+
         closeConfirmDialog();
         if (isTipsDialogShow()) {
             mTipsDialog.getDialog().dismiss();
             mTipsDialog = null;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == BaseConstant.CODE_EXIT) {
+            Activity activity = getActivity();
+            if (activity != null) {
+                activity.setResult(BaseConstant.CODE_EXIT);
+                activity.finish();
+            }
         }
     }
 
@@ -142,21 +152,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     @Override
-    public void onWifi(String wifiName, String wifiPwd) {
-        LogUtils.i("wifiName=" + wifiName + ",wifiPwd=" + wifiPwd);
-        showLoadTipsDialog(getString(R.string.set_ing_tips));
-        isConfigApMode = false;
-        SlamManager.getInstance().configWifiInThread(wifiName, wifiPwd, new OnResultListener<Boolean>() {
-            @Override
-            public void onResult(Boolean data) {
-                if (mMainHandler != null) {
-                    mMainHandler.obtainMessage(MSG_MODE_CONFIG, data).sendToTarget();
-                }
-            }
-        });
-    }
-
-    @Override
     public void onConfirm() {
         super.onConfirm();
         showLoadTipsDialog(getString(R.string.set_ing_tips));
@@ -172,7 +167,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     @OnClick({R.id.rb_navigate_free, R.id.rb_navigate_track, R.id.rb_navigate_track_first, R.id.rb_motion_exact, R.id.rb_motion_ordinary,
-            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_config_ap, R.id.rl_config_wifi})
+            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade})
     public void onClickView(View v) {
         switch (v.getId()) {
             case R.id.rb_navigate_free:
@@ -198,11 +193,11 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                 MoveData.getInstance().setObstacleMode(MoveData.MEET_OBSTACLE_SUSPEND);
                 llTryTime.setVisibility(View.GONE);
                 break;
-            case R.id.rl_config_ap:
-                configAp();
+            case R.id.rl_set_sensor_status:
+                startActivity(new Intent(getActivity(), SetSensorDataReportedActivity.class));
                 break;
-            case R.id.rl_config_wifi:
-                configWifi();
+            case R.id.rl_firmware_upgrade:
+                startActivityForResult(new Intent(getActivity(), FirmwareUpgradeActivity.class), 1);
                 break;
             default:
                 break;
@@ -213,7 +208,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         private ConfigFragment mFragment;
 
         private MainHandler(WeakReference<ConfigFragment> reference) {
-            super();
+            super(Looper.getMainLooper());
             mFragment = reference.get();
         }
 
@@ -254,14 +249,29 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     private void setSpeed(View view, float progress) {
+        float value;
         switch (view.getId()) {
             case R.id.sb_speed:
-                mSpeed = progress * mMaxSpeed;
-                tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, mSpeed));
+                value = progress * BaseConstant.MAX_NAVIGATE_SPEED;
+                // 限制最小速度
+                if (value < BaseConstant.MIN_NAVIGATE_SPEED) {
+                    value = BaseConstant.MIN_NAVIGATE_SPEED;
+                    sbSpeed.setProgress(value / BaseConstant.MAX_NAVIGATE_SPEED);
+                }
+
+                mSpeed = value;
+                tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, value));
                 break;
             case R.id.sb_rotate_speed:
-                mSpeed = progress * mMaxRotateSpeed;
-                tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, mSpeed));
+                value = progress * BaseConstant.MAX_ROTATE_SPEED;
+                // 限制最小速度
+                if (value < BaseConstant.MIN_ROTATE_SPEED) {
+                    value = BaseConstant.MIN_ROTATE_SPEED;
+                    sbRotateSpeed.setProgress(value / BaseConstant.MAX_ROTATE_SPEED);
+                }
+
+                mSpeed = value;
+                tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
                 break;
             case R.id.sb_try_time:
                 mTime = (int) (progress * BaseConstant.TRY_TIME_MAX);
@@ -293,6 +303,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             rbMotionExact.setChecked(true);
             return;
         }
+
         rbMotionOrdinary.setChecked(true);
     }
 
@@ -302,6 +313,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             setTryTime();
             return;
         }
+
         rbObstacleSuspend.setChecked(true);
         llTryTime.setVisibility(View.GONE);
     }
@@ -315,12 +327,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     private void updateSpeedView(float value) {
-        sbSpeed.setProgress(value / mMaxSpeed);
+        sbSpeed.setProgress(value / BaseConstant.MAX_NAVIGATE_SPEED);
         tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, value));
     }
 
     private void updateRotateSpeedView(float value) {
-        sbRotateSpeed.setProgress(value / mMaxRotateSpeed);
+        sbRotateSpeed.setProgress(value / BaseConstant.MAX_ROTATE_SPEED);
         tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
     }
 
@@ -329,7 +341,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             SlamManager.getInstance().requestSpeedInThread(new OnResultListener<String>() {
                 @Override
                 public void onResult(String speed) {
-                    LogUtils.i("speed=" + speed);
+                    Logger.i(BaseConstant.TAG, "speed=" + speed);
                     if (mMainHandler != null) {
                         mMainHandler.obtainMessage(MSG_REQUEST_SPEED, speed).sendToTarget();
                     }
@@ -337,6 +349,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             });
             return;
         }
+
         // 显示默认速度
         updateSpeedView(MoveData.DEFAULT_SPEED);
     }
@@ -353,6 +366,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             });
             return;
         }
+
         showToastTips(getString(R.string.slam_not_connect_tips));
     }
 
@@ -361,7 +375,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             SlamManager.getInstance().requestRotateSpeedInThread(new OnResultListener<String>() {
                 @Override
                 public void onResult(String speed) {
-                    LogUtils.i("rotate speed=" + speed);
+                    Logger.i(BaseConstant.TAG, "rotate speed=" + speed);
                     if (mMainHandler != null) {
                         mMainHandler.obtainMessage(MSG_REQUEST_ROTATE_SPEED, speed).sendToTarget();
                     }
@@ -369,6 +383,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             });
             return;
         }
+
         // 显示默认速度
         updateRotateSpeedView(MoveData.DEFAULT_ROTATE_SPEED);
     }
@@ -385,34 +400,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             });
             return;
         }
+
         showToastTips(getString(R.string.slam_not_connect_tips));
     }
 
     private void handleSpeedSetResult(boolean isSuccess) {
         showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
-    }
-
-    private void configAp() {
-        if (SlamManager.getInstance().isConnected()) {
-            showConfirmDialog(getString(R.string.set_ap_confirm_tips));
-            return;
-        }
-        showToastTips(getString(R.string.slam_not_connect_tips));
-    }
-
-    private void configWifi() {
-        if (SlamManager.getInstance().isConnected()) {
-            if (!isWifiConfigDialogShow()) {
-                mWifiConfigDialog = WifiConfigDialog.newInstance();
-                mWifiConfigDialog.setOnWifiListener(this);
-                FragmentManager fragmentManager = getFragmentManager();
-                if (fragmentManager != null) {
-                    mWifiConfigDialog.show(fragmentManager, "STA_DIALOG");
-                }
-            }
-            return;
-        }
-        showToastTips(getString(R.string.slam_not_connect_tips));
     }
 
     private void handleModeConfigResult(boolean isSuccess) {
@@ -426,10 +419,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                 mTipsDialog.show(fragmentManager, "TIPS_DIALOG");
             }
         }
-    }
-
-    private boolean isWifiConfigDialogShow() {
-        return mWifiConfigDialog != null && mWifiConfigDialog.getDialog() != null && mWifiConfigDialog.getDialog().isShowing();
     }
 
     private boolean isTipsDialogShow() {

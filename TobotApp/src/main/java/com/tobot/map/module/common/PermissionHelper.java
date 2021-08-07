@@ -29,6 +29,7 @@ public class PermissionHelper {
             ActivityCompat.requestPermissions(activity, REQUESTED_PERMISSIONS, 0);
             return true;
         }
+
         return false;
     }
 }

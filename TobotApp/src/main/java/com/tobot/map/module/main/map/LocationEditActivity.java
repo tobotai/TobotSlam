@@ -91,18 +91,14 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
                 ThreadPoolManager.getInstance().execute(new LocationRunnable());
                 break;
             case R.id.tv_config_ultrasonic:
-                if (tvUltrasonicSwitch.isSelected()) {
-                    mUltrasonicStatus = SlamCode.ULTRASONIC_STATUS_CLOSE;
-                } else {
-                    mUltrasonicStatus = SlamCode.ULTRASONIC_STATUS_OPEN;
-                }
+                mUltrasonicStatus = tvUltrasonicSwitch.isSelected() ? SlamCode.ULTRASONIC_STATUS_CLOSE : SlamCode.ULTRASONIC_STATUS_OPEN;
                 tvUltrasonicSwitch.setSelected(mUltrasonicStatus == SlamCode.ULTRASONIC_STATUS_OPEN);
                 break;
             case R.id.btn_ultrasonic_area:
                 if (!isSensorAreaDialogShow()) {
                     mSensorAreaDialog = SensorAreaDialog.newInstance(mLocationBean);
                     mSensorAreaDialog.setOnSensorAreaListener(this);
-                    mSensorAreaDialog.show(getFragmentManager(), "SENSOR_AREA_DIALOG");
+                    mSensorAreaDialog.show(getSupportFragmentManager(), "SENSOR_AREA_DIALOG");
                 }
                 break;
             case R.id.btn_confirm:
@@ -121,6 +117,7 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
             showToastTips(getString(R.string.name_empty_tips));
             return;
         }
+
         // 如果修改编号，则不能与存在的编号一样
         if (!TextUtils.equals(number, mNumber)) {
             LocationBean bean = MyDBSource.getInstance(this).queryLocation(number);
@@ -130,6 +127,7 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
                 return;
             }
         }
+
         // 中文名称不为空的情况
         if (!TextUtils.isEmpty(nameChina)) {
             LocationBean bean = MyDBSource.getInstance(this).queryLocationByChineseName(nameChina);
@@ -141,6 +139,7 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
                 }
             }
         }
+
         // 英文名称不为空的情况
         if (!TextUtils.isEmpty(nameEnglish)) {
             LocationBean bean = MyDBSource.getInstance(this).queryLocationByEnglishName(nameEnglish);
@@ -152,6 +151,7 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
                 }
             }
         }
+
         // 更新点位置的情况
         if (isRequestPose && mPose == null) {
             isRequestPose = false;

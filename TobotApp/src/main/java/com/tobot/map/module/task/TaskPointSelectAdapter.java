@@ -24,11 +24,6 @@ public class TaskPointSelectAdapter extends BaseRecyclerAdapter<LocationBean> {
         super(context, itemLayoutId);
     }
 
-    public void setSelectData(List<LocationBean> data) {
-        mSelectList = data;
-        notifyDataSetChanged();
-    }
-
     @Override
     public void convert(BaseRecyclerHolder viewHolder, final LocationBean data, final int position) {
         LinearLayout llRoot = (LinearLayout) viewHolder.getView(R.id.ll_root);
@@ -45,6 +40,7 @@ public class TaskPointSelectAdapter extends BaseRecyclerAdapter<LocationBean> {
             } else {
                 tvName.setVisibility(View.GONE);
             }
+
             if (mSelectList != null && !mSelectList.isEmpty()) {
                 if (mSelectList.contains(data)) {
                     // 设置选中的背景
@@ -61,5 +57,10 @@ public class TaskPointSelectAdapter extends BaseRecyclerAdapter<LocationBean> {
                 }
             });
         }
+    }
+
+    public void setSelectData(List<LocationBean> data) {
+        mSelectList = data;
+        notifyDataSetChanged();
     }
 }

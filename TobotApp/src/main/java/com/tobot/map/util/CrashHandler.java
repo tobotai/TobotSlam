@@ -24,6 +24,8 @@ import java.util.Date;
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private Context mContext;
+    private boolean isKillProcess;
+    private OnUncaughtExceptionListener mOnUncaughtExceptionListener;
 
     private CrashHandler() {
     }
@@ -37,18 +39,26 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         return CrashHandlerHolder.INSTANCE;
     }
 
-    public void init(Context context) {
-        mContext = context.getApplicationContext();
-        Thread.setDefaultUncaughtExceptionHandler(this);
-    }
-
     @Override
     public void uncaughtException(@NonNull Thread t, Throwable e) {
-        LogUtils.i("errorMsg=" + e.getMessage());
-        exportExceptionToSDCard(e);
+        String error = e.getMessage();
+        exportExceptionToSdCard(e);
         e.printStackTrace();
+        if (mOnUncaughtExceptionListener != null) {
+            mOnUncaughtExceptionListener.onUncaughtException(error);
+        }
+
         // 结束当前应用进程
-        android.os.Process.killProcess(android.os.Process.myPid());
+        if (isKillProcess) {
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+    }
+
+    public void init(Context context, boolean isKillProcess, OnUncaughtExceptionListener listener) {
+        mContext = context.getApplicationContext();
+        this.isKillProcess = isKillProcess;
+        mOnUncaughtExceptionListener = listener;
+        Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     /**
@@ -57,11 +67,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * @param throwable
      */
     @SuppressLint("SimpleDateFormat")
-    private void exportExceptionToSDCard(Throwable throwable) {
+    private void exportExceptionToSdCard(Throwable throwable) {
         // 判断SD卡是否存在
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return;
         }
+
         String fileName = getFileName();
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
@@ -82,6 +93,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         if (!file.exists()) {
             file.mkdirs();
         }
+
         try {
             PackageManager pm = mContext.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
@@ -90,6 +102,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return "";
     }
 
@@ -112,7 +125,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             sb.append("App Version: ");
             sb.append(pi.versionName);
             sb.append("_");
-            sb.append(pi.versionCode);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                sb.append(pi.getLongVersionCode());
+            } else {
+                sb.append(pi.versionCode);
+            }
             sb.append("\n");
             // Android版本号
             sb.append("OS Version: ");
@@ -139,6 +156,16 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
         return result;
+    }
+
+    public interface OnUncaughtExceptionListener {
+        /**
+         * 未捕获的异常监听
+         *
+         * @param error
+         */
+        void onUncaughtException(String error);
     }
 }

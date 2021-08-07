@@ -86,7 +86,7 @@ public class EditLineView extends LinearLayout implements View.OnClickListener {
     private void showAddLineView() {
         // 只有添加虚拟轨道的时候显示
         if (mEditType == OnEditListener.TYPE_VIRTUAL_TRACK && mAddLineView != null && mAddLineView.getVisibility() != VISIBLE) {
-            List<LocationBean> dataList = MyDBSource.getInstance(getContext()).queryLocation();
+            List<LocationBean> dataList = MyDBSource.getInstance(getContext()).queryLocationList();
             // 有位置点的话才显示，否则不显示
             if (dataList != null && !dataList.isEmpty()) {
                 mAddLineView.init(dataList, mOnEditListener);

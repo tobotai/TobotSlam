@@ -24,6 +24,7 @@ public class DeviceInfoFragment extends BaseFragment {
     @BindView(R.id.recycler_device)
     RecyclerView recyclerView;
     private DeviceAdapter mDeviceAdapter;
+    private boolean isUpdateData;
 
     public static DeviceInfoFragment newInstance() {
         return new DeviceInfoFragment();
@@ -44,7 +45,17 @@ public class DeviceInfoFragment extends BaseFragment {
             ThreadPoolManager.getInstance().execute(new DeviceRunnable());
             return;
         }
+
         mDeviceAdapter.setData(getData());
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden && isUpdateData) {
+            isUpdateData = false;
+            ThreadPoolManager.getInstance().execute(new DeviceRunnable());
+        }
     }
 
     private List<DeviceBean> getData() {
@@ -56,7 +67,12 @@ public class DeviceInfoFragment extends BaseFragment {
             bean.setName(name);
             data.add(bean);
         }
+
         return data;
+    }
+
+    public void updateData() {
+        isUpdateData = true;
     }
 
     private class DeviceRunnable implements Runnable {
@@ -66,6 +82,9 @@ public class DeviceInfoFragment extends BaseFragment {
                 final String deviceId = SlamManager.getInstance().getDeviceId();
                 final String slamVersion = SlamManager.getInstance().getSlamVersion();
                 final String sdkVersion = SlamManager.getInstance().getSDKVersion();
+                final String hardwareVersion = SlamManager.getInstance().getControlPanelHardwareVersion();
+                final String softwareVersion = SlamManager.getInstance().getControlPanelSoftwareVersion();
+                final String controlPanelSerial = SlamManager.getInstance().getControlPanelSerial();
                 final NetBean netBean = SlamManager.getInstance().getNet();
                 final boolean isDockingStatus = SlamManager.getInstance().isDockingStatus();
                 final boolean isBatteryCharging = SlamManager.getInstance().isBatteryCharging();
@@ -74,11 +93,13 @@ public class DeviceInfoFragment extends BaseFragment {
                 if (getActivity() == null) {
                     return;
                 }
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         List<DeviceBean> data = new ArrayList<>();
                         String[] deviceArray = getResources().getStringArray(R.array.device_list);
+                        String unknown = getString(R.string.unknown);
                         DeviceBean bean = new DeviceBean();
                         for (int i = 0, length = deviceArray.length; i < length; i++) {
                             bean = bean.clone();
@@ -95,28 +116,39 @@ public class DeviceInfoFragment extends BaseFragment {
                                     bean.setContent(sdkVersion);
                                     break;
                                 case 3:
-                                    bean.setContent(netBean != null ? netBean.getMode() : getString(R.string.tv_unknown));
+                                    bean.setContent(hardwareVersion);
                                     break;
                                 case 4:
-                                    bean.setContent(netBean != null ? netBean.getSsid() : getString(R.string.tv_unknown));
+                                    bean.setContent(softwareVersion);
                                     break;
                                 case 5:
-                                    bean.setContent(netBean != null ? netBean.getIp() : getString(R.string.tv_unknown));
+                                    bean.setContent(controlPanelSerial);
                                     break;
                                 case 6:
+                                    bean.setContent(netBean != null ? netBean.getMode() : unknown);
+                                    break;
+                                case 7:
+                                    bean.setContent(netBean != null ? netBean.getSsid() : unknown);
+                                    break;
+                                case 8:
+                                    bean.setContent(netBean != null ? netBean.getIp() : unknown);
+                                    break;
+                                case 9:
                                     String docking = isDockingStatus ? getString(R.string.tv_docking_true) : getString(R.string.tv_docking_false);
                                     String charge = isBatteryCharging ? getString(R.string.tv_charge_true) : getString(R.string.tv_charge_false);
                                     bean.setContent(getString(R.string.tv_charge_status_tips, docking, charge));
                                     break;
-                                case 7:
+                                case 10:
                                     // 默认保留小数点后3位数
                                     bean.setContent(getString(R.string.tv_map_size_tips, getString(R.string.float_format, rectF.width()), getString(R.string.float_format, rectF.height())));
                                     break;
                                 default:
                                     break;
                             }
+
                             data.add(bean);
                         }
+
                         mDeviceAdapter.setData(data);
                     }
                 });

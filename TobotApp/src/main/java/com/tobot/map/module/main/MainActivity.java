@@ -3,8 +3,6 @@ package com.tobot.map.module.main;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +22,7 @@ import com.tobot.map.base.OnDialogBackEventListener;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.common.TipsDialog;
+import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.action.ActionPopupWindow;
 import com.tobot.map.module.main.action.Charge;
 import com.tobot.map.module.main.edit.AddLineView;
@@ -34,11 +33,13 @@ import com.tobot.map.module.main.edit.RubberEditView;
 import com.tobot.map.module.main.map.AddPointViewDialog;
 import com.tobot.map.module.main.map.MapPopupWindow;
 import com.tobot.map.module.main.map.Navigate;
+import com.tobot.map.module.main.warning.SensorWarningDialog;
+import com.tobot.map.module.main.warning.WarningInfo;
 import com.tobot.map.module.set.SetActivity;
 import com.tobot.map.module.task.Task;
 import com.tobot.map.module.task.TaskActivity;
-import com.tobot.map.util.LogUtils;
 import com.tobot.slam.SlamManager;
+import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnSlamExceptionListener;
 import com.tobot.slam.data.LocationBean;
 import com.tobot.slam.data.Rubber;
@@ -70,6 +71,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     TextView tvPoseShow;
     @BindView(R.id.tv_rssi)
     TextView tvRssi;
+    @BindView(R.id.tv_count)
+    TextView tvCount;
+    @BindView(R.id.tv_socket_connect_success_tips)
+    TextView tvSocketConnectTips;
     @BindView(R.id.ll_control)
     LinearLayout llControl;
     @BindView(R.id.iv_set)
@@ -90,14 +95,13 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     private ActionPopupWindow mActionPopupWindow;
     private MapPopupWindow mMapPopupWindow;
     private EditPopupWindow mEditPopupWindow;
-    private int mEditType, mOption;
+    private int mEditType, mOption, mLowBatteryStatus, mLocationQuality;
     private MapClickHandle mMapClickHandle;
-    private boolean isHandleMove, isShowTips, isUpdateMap;
+    private boolean isHandleMove, isShowTips, isUpdateMap, isDisconnect;
     private Charge mCharge;
     private static final int LOW_BATTERY = 1;
-    private int mLowBatteryStatus;
     private TipsDialog mTipsDialog;
-    private boolean isDisconnect;
+    private SensorWarningDialog mSensorWarningDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,24 +118,29 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     @Override
     protected void init() {
+        SlamManager.getInstance().setOnSlamExceptionListener(this);
         mapView.setOnMapListener(this);
         mMapHelper = new MapHelper(new WeakReference<>(this), new WeakReference<>(this), new WeakReference<>(mapView));
         mMapClickHandle = new MapClickHandle(new WeakReference<>(this), new WeakReference<>(mapView));
         mNavigate = new Navigate(new WeakReference<>(this), new WeakReference<>(this));
         mTask = new Task(new WeakReference<>(this), new WeakReference<>(this));
         mCharge = new Charge(new WeakReference<>(this), new WeakReference<>(this));
-        SlamManager.getInstance().setOnSlamExceptionListener(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogUtils.i("MainActivity requestCode=" + requestCode + ",resultCode=" + resultCode);
+        Logger.i(BaseConstant.TAG, "MainActivity requestCode=" + requestCode + ",resultCode=" + resultCode);
+        if (resultCode == BaseConstant.CODE_EXIT) {
+            finish();
+            return;
+        }
+
         if (resultCode == Activity.RESULT_OK) {
             // 切换地图
             if (requestCode == CODE_SET) {
                 // 地图界面上的位置点提示
-                mapView.addLocationLabel(true, MyDBSource.getInstance(this).queryLocation());
+                mapView.addLocationLabel(true, MyDBSource.getInstance(this).queryLocationList());
                 // 切换后要更新一下地图界面
                 if (mMapHelper != null) {
                     mMapHelper.updateMap();
@@ -142,9 +151,11 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             // 执行任务
             if (requestCode == CODE_TASK && data != null) {
                 List<LocationBean> locationBeanList = data.getParcelableArrayListExtra(BaseConstant.DATA_KEY);
+                boolean isAddCharge = data.getBooleanExtra(BaseConstant.CONTENT_KEY, false);
                 int loopCount = data.getIntExtra(BaseConstant.LOOP_KEY, 0);
+                DataHelper.getInstance().clearWarningList();
                 if (mTask != null) {
-                    mTask.execute(locationBeanList, loopCount);
+                    mTask.execute(locationBeanList, isAddCharge, loopCount);
                 }
             }
         }
@@ -157,13 +168,16 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             removeEditLineView();
             return;
         }
+
         if (rubberEditView.getVisibility() == View.VISIBLE) {
             removeRubberView();
             return;
         }
+
         if (isClosePopupWindow()) {
             return;
         }
+
         super.onBackPressed();
     }
 
@@ -192,9 +206,15 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             mTipsDialog.getDialog().dismiss();
             mTipsDialog = null;
         }
+
         isUpdateMap = true;
         if (mMapHelper != null) {
             mMapHelper.stopUpdateMap();
+        }
+
+        if (isSensorWarningDialogShow()) {
+            mSensorWarningDialog.getDialog().dismiss();
+            mSensorWarningDialog = null;
         }
     }
 
@@ -205,6 +225,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             mMapHelper.destroy();
             mMapHelper = null;
         }
+
         isClosePopupWindow();
         stopService(new Intent(getApplicationContext(), MapService.class));
     }
@@ -219,22 +240,17 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onSensorStatus(SensorType sensorType, int id, boolean isTrigger) {
         if (isTrigger && sensorType != null) {
-            String tips = DataHelper.getInstance().getSensorTips(this, sensorType, id);
-            if (!TextUtils.isEmpty(tips)) {
-                isDisconnect = false;
-                if (Looper.myLooper() == Looper.getMainLooper()) {
-                    showTipsDialog(tips);
-                    return;
-                }
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showTipsDialog(tips);
-                    }
-                });
-            }
+            Logger.i(BaseConstant.TAG, "sensorType=" + sensorType.toString() + ",id=" + id);
+            // 记录警告信息
+            recordWarningInfo(id, sensorType.toString());
+            showTipsDialog(DataHelper.getInstance().getSensorTips(this, sensorType, id));
         }
+    }
+
+    @Override
+    public void onHealthInfo(int code, String info) {
+        recordWarningInfo(code, info);
+        showTipsDialog(info);
     }
 
     @Override
@@ -303,6 +319,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             rubberEditView.init(this);
             return;
         }
+
         editLineView.init(type, addLineView, this);
     }
 
@@ -315,6 +332,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                     removeEditLineView();
                     return;
                 }
+
                 removeRubberView();
                 break;
             case OnEditListener.OPTION_WIPE_WHITE:
@@ -363,19 +381,22 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onSlamException(Exception e) {
         String error = e.getMessage();
-        LogUtils.i("slam error=" + error);
+        Logger.i(BaseConstant.TAG, "slam error=" + error);
         if (!TextUtils.isEmpty(error)) {
-            if (error.contains("Operation Failed")) {
-                handleOperationFailed();
+            String operationError = "Operation Failed";
+            if (error.contains(operationError)) {
+//                handleOperationFailed();
                 return;
             }
-            if (error.contains("Connection Failed")) {
-                handleConnectionFailed();
+
+            String[] connectionFailArray = {"Connection Failed", "Connection Lost"};
+            if (error.contains(connectionFailArray[0]) || error.contains(connectionFailArray[1])) {
+                handleConnectionFailed(error);
             }
         }
     }
 
-    @OnClick({R.id.tv_map, R.id.tv_action, R.id.tv_edit, R.id.tv_stop, R.id.tv_task, R.id.tv_navigate, R.id.iv_set})
+    @OnClick({R.id.tv_map, R.id.tv_action, R.id.tv_edit, R.id.tv_stop, R.id.tv_task, R.id.tv_navigate, R.id.iv_set, R.id.iv_warning})
     public void onClickView(View view) {
         switch (view.getId()) {
             case R.id.tv_map:
@@ -399,23 +420,25 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             case R.id.iv_set:
                 startActivityForResult(new Intent(this, SetActivity.class), CODE_SET);
                 break;
+            case R.id.iv_warning:
+                if (!isSensorWarningDialogShow()) {
+                    mSensorWarningDialog = SensorWarningDialog.newInstance(DataHelper.getInstance().getWarningList());
+                    mSensorWarningDialog.show(getSupportFragmentManager(), "SENSOR_WARNING_DIALOG");
+                }
+                break;
             default:
                 break;
         }
     }
 
-    private void handleConnectionFailed() {
+    private void handleConnectionFailed(String error) {
         if (isFinish) {
             return;
         }
+
         if (!isDisconnect) {
             isDisconnect = true;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showTipsDialog(getString(R.string.slam_disconnect_tips));
-                }
-            });
+            showTipsDialog(getString(R.string.slam_disconnect_tips, error));
         }
     }
 
@@ -423,6 +446,14 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (!isFinish) {
             showToastTips(getString(R.string.operate_error_tips));
         }
+    }
+
+    private void recordWarningInfo(int id, String content) {
+        WarningInfo info = WarningInfo.getWarningInfo();
+        info.setId(id);
+        info.setType(content);
+        info.setCount(1);
+        DataHelper.getInstance().setWarningData(info);
     }
 
     public void moveTo(float x, float y, float yaw) {
@@ -447,8 +478,9 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     public void updateStatus(int battery, boolean isCharge, int locationQuality, ActionStatus actionStatus) {
+        mLocationQuality = locationQuality;
         String chargeStatus = isCharge ? getString(R.string.tv_charge_true) : getString(R.string.tv_charge_false);
-        String status = actionStatus != null ? actionStatus.toString() : getString(R.string.tv_unknown);
+        String status = actionStatus != null ? actionStatus.toString() : getString(R.string.unknown);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -469,12 +501,28 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (isFinish) {
             return;
         }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tvRssi.setText(getString(R.string.tv_signal_tips, rssiId, tips));
             }
         });
+    }
+
+    public void setTaskCount(String content) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvCount.setText(content);
+            }
+        });
+    }
+
+    public void handleMoveResult(boolean isSuccess) {
+        if (!isSuccess && mLocationQuality < SlamCode.RECOVER_QUALITY_MIN) {
+            showTipsDialog(getString(R.string.move_recover_quality_low_tips, SlamCode.RECOVER_QUALITY_MIN));
+        }
     }
 
     private void handleLowBattery(int battery, boolean isCharge) {
@@ -491,6 +539,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             }
             return;
         }
+
         mLowBatteryStatus = 0;
     }
 
@@ -498,10 +547,12 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (mMapPopupWindow == null) {
             mMapPopupWindow = new MapPopupWindow(this, new WeakReference<>(this), this);
         }
+
         if (mMapPopupWindow.isShowing()) {
             mMapPopupWindow.dismiss();
             return;
         }
+
         mMapPopupWindow.show(tvMap);
     }
 
@@ -509,10 +560,12 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (mActionPopupWindow == null) {
             mActionPopupWindow = new ActionPopupWindow(this, this);
         }
+
         if (mActionPopupWindow.isShowing()) {
             mActionPopupWindow.dismiss();
             return;
         }
+
         mActionPopupWindow.show(tvAction);
     }
 
@@ -520,10 +573,12 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (mEditPopupWindow == null) {
             mEditPopupWindow = new EditPopupWindow(this, this);
         }
+
         if (mEditPopupWindow.isShowing()) {
             mEditPopupWindow.dismiss();
             return;
         }
+
         mEditPopupWindow.show(tvEdit);
     }
 
@@ -531,12 +586,15 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (mTask != null) {
             mTask.stop();
         }
+
         if (mNavigate != null) {
             mNavigate.stop();
         }
+
         if (mCharge != null) {
             mCharge.stop();
         }
+
         if (mMapHelper != null) {
             mMapHelper.cancelAction();
         }
@@ -549,6 +607,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             isHandleMove = false;
             return;
         }
+
         tvNavigate.setSelected(true);
         isHandleMove = true;
     }
@@ -574,28 +633,45 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             mMapPopupWindow.dismiss();
             isFlag = true;
         }
+
         if (mActionPopupWindow != null && mActionPopupWindow.isShowing()) {
             mActionPopupWindow.dismiss();
             isFlag = true;
         }
+
         if (mEditPopupWindow != null && mEditPopupWindow.isShowing()) {
             mEditPopupWindow.dismiss();
             isFlag = true;
         }
+
         return isFlag;
     }
 
-    private void showTipsDialog(String tips) {
-        if (isTipsDialogShow()) {
-            mTipsDialog.setContent(tips);
+    public void showTipsDialog(String tips) {
+        if (TextUtils.isEmpty(tips)) {
             return;
         }
-        mTipsDialog = TipsDialog.newInstance(tips);
-        mTipsDialog.setOnConfirmListener(this);
-        mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isTipsDialogShow()) {
+                    mTipsDialog.setContent(tips);
+                    return;
+                }
+
+                mTipsDialog = TipsDialog.newInstance(tips);
+                mTipsDialog.setOnConfirmListener(MainActivity.this);
+                mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
+            }
+        });
     }
 
     private boolean isTipsDialogShow() {
         return mTipsDialog != null && mTipsDialog.getDialog() != null && mTipsDialog.getDialog().isShowing();
+    }
+
+    private boolean isSensorWarningDialogShow() {
+        return mSensorWarningDialog != null && mSensorWarningDialog.getDialog() != null && mSensorWarningDialog.getDialog().isShowing();
     }
 }

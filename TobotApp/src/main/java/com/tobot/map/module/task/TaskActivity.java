@@ -10,11 +10,12 @@ import android.widget.TextView;
 
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
-import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.base.BaseRecyclerAdapter;
+import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.entity.RouteBean;
-import com.tobot.map.util.LogUtils;
+import com.tobot.map.module.common.GridItemDecoration;
+import com.tobot.map.module.log.Logger;
 import com.tobot.slam.data.LocationBean;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
             mTaskDetailDialog.getDialog().dismiss();
             mTaskDetailDialog = null;
         }
+
         if (isTaskExecuteConfirmDialogShow()) {
             mTaskExecuteConfirmDialog.getDialog().dismiss();
             mTaskExecuteConfirmDialog = null;
@@ -81,7 +83,7 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
         if (data != null && !isTaskExecuteConfirmDialogShow()) {
             mTaskExecuteConfirmDialog = TaskExecuteConfirmDialog.newInstance(data.getRouteName());
             mTaskExecuteConfirmDialog.setOnExecuteListener(this);
-            mTaskExecuteConfirmDialog.show(getFragmentManager(), "TASK_EXECUTE_CONFIRM_DIALOG");
+            mTaskExecuteConfirmDialog.show(getSupportFragmentManager(), "TASK_EXECUTE_CONFIRM_DIALOG");
         }
     }
 
@@ -90,7 +92,7 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
         if (data != null && !isTaskDetailDialogShow()) {
             mTaskDetailDialog = TaskDetailDialog.newInstance(data.getRouteName());
             mTaskDetailDialog.setOnDeleteListener(this);
-            mTaskDetailDialog.show(getFragmentManager(), "TASK_DETAIL_DIALOG");
+            mTaskDetailDialog.show(getSupportFragmentManager(), "TASK_DETAIL_DIALOG");
         }
     }
 
@@ -100,10 +102,11 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
     }
 
     @Override
-    public void onExecute(List<LocationBean> locationBeans, int loopCount) {
-        LogUtils.i("loopCount=" + loopCount);
+    public void onExecute(List<LocationBean> locationBeans, boolean isAddCharge, int loopCount) {
+        Logger.i(BaseConstant.TAG, "loopCount=" + loopCount);
         Intent data = new Intent();
         data.putParcelableArrayListExtra(BaseConstant.DATA_KEY, (ArrayList<? extends Parcelable>) locationBeans);
+        data.putExtra(BaseConstant.CONTENT_KEY, isAddCharge);
         data.putExtra(BaseConstant.LOOP_KEY, loopCount);
         setResult(Activity.RESULT_OK, data);
         finish();
@@ -115,13 +118,14 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
     }
 
     private void setData(boolean isDelete) {
-        List<RouteBean> beanList = MyDBSource.getInstance(this).queryRoute();
+        List<RouteBean> beanList = MyDBSource.getInstance(this).queryRouteList();
         mAdapter.setData(beanList);
         // 数据不为空的话显示提示
         if (beanList != null && !beanList.isEmpty()) {
             tvTips.setVisibility(View.VISIBLE);
             return;
         }
+
         tvTips.setVisibility(View.GONE);
         if (isDelete) {
             MyDBSource.getInstance(this).clearRouteId();
@@ -129,13 +133,14 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
     }
 
     private void createTask() {
-        List<LocationBean> data = MyDBSource.getInstance(this).queryLocation();
+        List<LocationBean> data = MyDBSource.getInstance(this).queryLocationList();
         if (data != null && !data.isEmpty()) {
             Intent intent = new Intent(this, TaskPointSelectActivity.class);
             intent.putParcelableArrayListExtra(BaseConstant.DATA_KEY, (ArrayList<? extends Parcelable>) data);
             startActivityForResult(intent, 1);
             return;
         }
+
         showToastTips(getString(R.string.task_point_empty_tips));
     }
 
