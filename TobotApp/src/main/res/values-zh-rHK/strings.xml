@@ -68,7 +68,6 @@
     <string name="tv_location_delete_tips">確認要刪除該位置點嗎？</string>
     <string name="tv_clean_map_tips">確認要清除地圖嗎？</string>
     <string name="btn_confirm">確認</string>
-    <string name="set_ing_tips">設置中…</string>
     <string name="set_success_tips">設置成功…</string>
     <string name="set_fail_tips">設置失敗…</string>
     <string name="name_empty_tips">位置點名稱不能為空，請輸入…</string>
@@ -139,9 +138,6 @@
     <string name="tv_docking_true">在充電樁</string>
     <string name="tv_docking_false">未在充電樁</string>
     <string name="tv_file_catalog">文件目錄：%1$s</string>
-    <string name="mode_config_success_tips">當前連接已斷開，請先退出當前應用，然後依次打開系統設置→打開WIFI→%1$s，最後重新打開當前應用並重新連接！</string>
-    <string name="ap_config_success">連接以“SLAMWARE”開頭的無線網絡</string>
-    <string name="sta_config_success">連接與配置底盤相同的無線網絡</string>
     <string name="tv_current_low_battery_tips">最低電量%1$d</string>
     <string name="log_file_out">Log文件輸出(%1$s)</string>
     <string name="log_no">無</string>
@@ -169,7 +165,7 @@
     <string name="slam_disconnect_tips">底盤連接斷開，請退出當前應用！(%1$s)</string>
     <string name="operate_error_tips">操作失敗…</string>
     <string name="tv_reset_charge_title">重置充電樁</string>
-    <string name="tv_reset_charge_tips">步驟如下\n1、將充電樁移至新的位置\n2、將機器導航到充電樁上並處於充電狀態\n3、點擊“重定位”，重定位成功後點擊“重置”\n4、將機器從充電樁導航出來，即重置成功</string>
+    <string name="tv_reset_charge_tips">步驟如下\n1、將充電樁移至新的位置\n2、將機器導航或推到充電樁上並處於充電狀態\n3、點擊“重定位”，重定位成功後點擊“重置”\n4、將機器從充電樁導航出來，即重置成功</string>
     <string name="reset_not_charge_tips">請先將機器移動至充電樁上</string>
     <string name="reset_fail_tips">重置失敗…</string>
     <string name="sensor_bumper_trigger">防碰撞傳感器觸發</string>
@@ -204,4 +200,8 @@
     <string name="tv_type">類型</string>
     <string name="tv_count">次數</string>
     <string name="control_software_version_not_match">控製板固件加載失敗，請更新…</string>
+    <string name="tv_chassis_radius_tips">底盤半徑：%1$sM</string>
+    <string name="et_chassis_radius_hint">請輸入底盤半徑(單位：米)</string>
+    <string name="chassis_radius_empty_tips">底盤半徑值不能為空，請輸入…</string>
+    <string name="btn_set">設置</string>
 </resources>

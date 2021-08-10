@@ -6,9 +6,10 @@ import android.view.View;
 
 import com.tobot.map.R;
 import com.tobot.map.base.BaseDialog;
-import com.tobot.map.util.ThreadPoolManager;
+import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
+import com.tobot.slam.agent.listener.OnResultListener;
 
 /**
  * @author houdeming
@@ -55,17 +56,19 @@ public class ResetChargeDialog extends BaseDialog implements View.OnClickListene
     }
 
     private void reset() {
-        ThreadPoolManager.getInstance().execute(new Runnable() {
+        SlamManager.getInstance().setHomePoseAsync(DataHelper.getInstance().getChassisRadius(getActivity()), new OnResultListener<Boolean>() {
             @Override
-            public void run() {
-                boolean isCharge = SlamManager.getInstance().isBatteryCharging();
-                if (isCharge) {
-                    boolean isSuccess = SlamManager.getInstance().setHomePose(SlamManager.getInstance().getPose());
-                    showTips(getString(isSuccess ? R.string.reset_success_tips : R.string.reset_fail_tips), true);
-                    return;
+            public void onResult(Boolean data) {
+                if (!data) {
+                    boolean isCharge = SlamManager.getInstance().isBatteryCharging();
+                    // 不在充电桩上的提示
+                    if (!isCharge) {
+                        showTips(getString(R.string.reset_not_charge_tips), false);
+                        return;
+                    }
                 }
 
-                showTips(getString(R.string.reset_not_charge_tips), false);
+                showTips(getString(data ? R.string.reset_success_tips : R.string.reset_fail_tips), true);
             }
         });
     }

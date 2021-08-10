@@ -520,8 +520,11 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     public void handleMoveResult(boolean isSuccess) {
-        if (!isSuccess && mLocationQuality < SlamCode.RECOVER_QUALITY_MIN) {
-            showTipsDialog(getString(R.string.move_recover_quality_low_tips, SlamCode.RECOVER_QUALITY_MIN));
+        if (!isSuccess) {
+            // 建图时定位质量为0
+            if (mLocationQuality > 0 && mLocationQuality < SlamCode.RECOVER_QUALITY_MIN) {
+                showTipsDialog(getString(R.string.move_recover_quality_low_tips, SlamCode.RECOVER_QUALITY_MIN));
+            }
         }
     }
 

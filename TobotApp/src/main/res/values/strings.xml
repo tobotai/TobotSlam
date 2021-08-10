@@ -86,7 +86,6 @@
     <string name="tv_clean_map_tips">确认要清除地图吗？</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_confirm">确认</string>
-    <string name="set_ing_tips">设置中…</string>
     <string name="set_success_tips">设置成功…</string>
     <string name="set_fail_tips">设置失败…</string>
     <string name="name_empty_tips">位置点名称不能为空，请输入…</string>
@@ -172,9 +171,6 @@
     <string name="tv_wipe_black">擦黑</string>
     <string name="tv_wipe_cancel">取消</string>
     <string name="point_sort_success">排序成功…</string>
-    <string name="mode_config_success_tips">当前连接已断开，请先退出当前应用，然后依次打开系统设置→打开WIFI→%1$s，最后重新打开当前应用并重新连接！</string>
-    <string name="ap_config_success">连接以“SLAMWARE”开头的无线网络</string>
-    <string name="sta_config_success">连接与配置底盘相同的无线网络</string>
     <string name="btn_known">我知道了</string>
     <string name="tv_current_low_battery_tips">最低电量%1$d</string>
     <string name="log_file_out">Log文件输出(%1$s)</string>
@@ -208,7 +204,7 @@
     <string name="slam_disconnect_tips">底盘连接断开，请退出当前应用！(%1$s)</string>
     <string name="operate_error_tips">操作失败…</string>
     <string name="tv_reset_charge_title">重置充电桩</string>
-    <string name="tv_reset_charge_tips">步骤如下\n1、将充电桩移至新的位置\n2、将机器导航到充电桩上并处于充电状态\n3、点击“重定位”，重定位成功后点击“重置”\n4、将机器从充电桩导航出来，即重置成功</string>
+    <string name="tv_reset_charge_tips">步骤如下\n1、将充电桩移至新的位置\n2、将机器导航或推到充电桩上并处于充电状态\n3、点击“重定位”，重定位成功后点击“重置”\n4、将机器从充电桩导航出来，即重置成功</string>
     <string name="btn_reset">重置</string>
     <string name="reset_not_charge_tips">请先将机器移动至充电桩上</string>
     <string name="reset_success_tips">重置成功…</string>
@@ -242,6 +238,7 @@
     <string name="upgrade_ing">升级中…</string>
     <string name="firmware_upgrade_success_tips">升级成功！请手动重启底盘，并退出当前应用！</string>
     <string name="firmware_upgrade_fail_tips">升级失败！请重新打开当前应用，等连接底盘后再执行升级！（失败后请多次尝试）</string>
+    <string name="et_float_num_format">1234567890.</string>
     <string name="trigger_true">触发</string>
     <string name="trigger_false">无触发</string>
     <string name="tv_query_frequency">查询频率</string>
@@ -255,4 +252,8 @@
     <string name="task_time_limited">%1$d/%2$d</string>
     <string name="task_time_infinite">%1$d/∞</string>
     <string name="control_software_version_not_match">控制板固件加载失败，请更新…</string>
+    <string name="tv_chassis_radius_tips">底盘半径：%1$sM</string>
+    <string name="et_chassis_radius_hint">请输入底盘半径(单位：米)</string>
+    <string name="chassis_radius_empty_tips">底盘半径值不能为空，请输入…</string>
+    <string name="btn_set">设置</string>
 </resources>

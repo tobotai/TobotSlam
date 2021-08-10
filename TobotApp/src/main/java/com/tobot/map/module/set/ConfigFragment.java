@@ -6,8 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -40,7 +41,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private static final int MSG_REQUEST_SPEED = 1;
     private static final int MSG_SET_SPEED = 2;
     private static final int MSG_REQUEST_ROTATE_SPEED = 3;
-    private static final int MSG_MODE_CONFIG = 4;
     @BindView(R.id.tv_current_speed_tips)
     TextView tvCurrentSpeed;
     @BindView(R.id.sb_speed)
@@ -69,9 +69,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     TextView tvTryTime;
     @BindView(R.id.sb_try_time)
     StripSeekBar sbTryTime;
+    @BindView(R.id.tv_chassis_radius)
+    TextView tvChassisRadius;
+    @BindView(R.id.et_chassis_radius)
+    EditText etChassisRadius;
     private MainHandler mMainHandler;
     private TipsDialog mTipsDialog;
-    private boolean isConfigApMode;
     private float mSpeed;
     private int mTime;
 
@@ -95,6 +98,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         setObstacleMode(MoveData.getInstance().getObstacleMode());
         requestSpeed();
         requestRotateSpeed();
+        setChassisRadiusTips(DataHelper.getInstance().getChassisRadius(getActivity()));
     }
 
     @Override
@@ -151,23 +155,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         }
     }
 
-    @Override
-    public void onConfirm() {
-        super.onConfirm();
-        showLoadTipsDialog(getString(R.string.set_ing_tips));
-        isConfigApMode = true;
-        SlamManager.getInstance().configApInThread(new OnResultListener<Boolean>() {
-            @Override
-            public void onResult(Boolean data) {
-                if (mMainHandler != null) {
-                    mMainHandler.obtainMessage(MSG_MODE_CONFIG, data).sendToTarget();
-                }
-            }
-        });
-    }
-
     @OnClick({R.id.rb_navigate_free, R.id.rb_navigate_track, R.id.rb_navigate_track_first, R.id.rb_motion_exact, R.id.rb_motion_ordinary,
-            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade})
+            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.btn_set_chassis_radius})
     public void onClickView(View v) {
         switch (v.getId()) {
             case R.id.rb_navigate_free:
@@ -198,6 +187,9 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                 break;
             case R.id.rl_firmware_upgrade:
                 startActivityForResult(new Intent(getActivity(), FirmwareUpgradeActivity.class), 1);
+                break;
+            case R.id.btn_set_chassis_radius:
+                setChassisRadius();
                 break;
             default:
                 break;
@@ -235,11 +227,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                         if (NumberUtils.isDoubleOrFloat(speed)) {
                             mFragment.updateRotateSpeedView(Float.parseFloat(speed));
                         }
-                    }
-                    break;
-                case MSG_MODE_CONFIG:
-                    if (mFragment != null) {
-                        mFragment.handleModeConfigResult((boolean) msg.obj);
                     }
                     break;
                 default:
@@ -338,7 +325,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void requestSpeed() {
         if (SlamManager.getInstance().isConnected()) {
-            SlamManager.getInstance().requestSpeedInThread(new OnResultListener<String>() {
+            SlamManager.getInstance().requestSpeedAsync(new OnResultListener<String>() {
                 @Override
                 public void onResult(String speed) {
                     Logger.i(BaseConstant.TAG, "speed=" + speed);
@@ -356,7 +343,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void setSpeed(float value) {
         if (SlamManager.getInstance().isConnected()) {
-            SlamManager.getInstance().setSpeedInThread(String.valueOf(value), new OnResultListener<Boolean>() {
+            SlamManager.getInstance().setSpeedAsync(String.valueOf(value), new OnResultListener<Boolean>() {
                 @Override
                 public void onResult(Boolean data) {
                     if (mMainHandler != null) {
@@ -372,7 +359,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void requestRotateSpeed() {
         if (SlamManager.getInstance().isConnected()) {
-            SlamManager.getInstance().requestRotateSpeedInThread(new OnResultListener<String>() {
+            SlamManager.getInstance().requestRotateSpeedAsync(new OnResultListener<String>() {
                 @Override
                 public void onResult(String speed) {
                     Logger.i(BaseConstant.TAG, "rotate speed=" + speed);
@@ -390,7 +377,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void setRotateSpeed(float value) {
         if (SlamManager.getInstance().isConnected()) {
-            SlamManager.getInstance().setRotateSpeedInThread(String.valueOf(value), new OnResultListener<Boolean>() {
+            SlamManager.getInstance().setRotateSpeedAsync(String.valueOf(value), new OnResultListener<Boolean>() {
                 @Override
                 public void onResult(Boolean data) {
                     if (mMainHandler != null) {
@@ -408,17 +395,25 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
     }
 
-    private void handleModeConfigResult(boolean isSuccess) {
-        closeLoadTipsDialog();
-        showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
-        if (!isTipsDialogShow()) {
-            String tips = isConfigApMode ? getString(R.string.mode_config_success_tips, getString(R.string.ap_config_success)) : getString(R.string.mode_config_success_tips, getString(R.string.sta_config_success));
-            mTipsDialog = TipsDialog.newInstance(tips);
-            FragmentManager fragmentManager = getFragmentManager();
-            if (fragmentManager != null) {
-                mTipsDialog.show(fragmentManager, "TIPS_DIALOG");
-            }
+    private void setChassisRadius() {
+        String content = etChassisRadius.getText().toString().trim();
+        if (TextUtils.isEmpty(content)) {
+            showToastTips(getString(R.string.chassis_radius_empty_tips));
+            return;
         }
+
+        if (NumberUtils.isDoubleOrFloat(content)) {
+            float value = Float.parseFloat(content);
+            DataHelper.getInstance().setChassisRadius(getActivity(), value);
+            setChassisRadiusTips(value);
+            showToastTips(getString(R.string.set_success_tips));
+            etChassisRadius.setText("");
+        }
+    }
+
+    private void setChassisRadiusTips(float value) {
+        Logger.i(BaseConstant.TAG, "chassisRadius=" + value);
+        tvChassisRadius.setText(getString(R.string.tv_chassis_radius_tips, String.valueOf(value)));
     }
 
     private boolean isTipsDialogShow() {

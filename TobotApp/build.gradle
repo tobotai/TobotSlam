@@ -9,8 +9,8 @@ android {
         applicationId "com.tobot.map"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 44
-        versionName "3.0.8"
+        versionCode 46
+        versionName "3.1.0"
         multiDexEnabled true // dex突破65535的限制
         // 自定义配置信息
         buildConfigField("String", "BASE_URL", "${BASE_URL}")
@@ -88,5 +88,5 @@ dependencies {
     implementation(name: 'TobotBar-1.1.5', ext: 'aar')
     implementation(name: 'TobotWheelView-1.2.1', ext: 'aar')
     implementation files('libs/TobotNet-1.2.0.jar')
-    implementation files('libs/TobotSlam-2.9.2.jar')
+    implementation files('libs/TobotSlam-2.9.3.jar')
 }

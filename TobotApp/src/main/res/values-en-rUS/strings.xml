@@ -83,7 +83,6 @@
     <string name="tv_clean_map_tips">are you sure you want to clear the map?</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_confirm">Confirm</string>
-    <string name="set_ing_tips">setting…</string>
     <string name="set_success_tips">set successfully…</string>
     <string name="set_fail_tips">setting failed…</string>
     <string name="name_empty_tips">The location point name cannot be empty, please enter…</string>
@@ -165,9 +164,6 @@
     <string name="tv_wipe_black">black</string>
     <string name="tv_wipe_cancel">Cancel</string>
     <string name="point_sort_success">sorting succeeded…</string>
-    <string name="mode_config_success_tips">the current connection has been disconnected. Please exit the current application first, then open system settings → open WiFi → %1$s, and finally reopen the current application and reconnect!</string>
-    <string name="ap_config_success">connect to a wireless network starting with "slamware"</string>
-    <string name="sta_config_success">connect to the same wireless network as the chassis</string>
     <string name="btn_known">I know</string>
     <string name="tv_current_low_battery_tips">minimum power %1$d</string>
     <string name="log_file_out">Log file out(%1$s)</string>
@@ -198,7 +194,7 @@
     <string name="slam_disconnect_tips">Chassis connection disconnects, please exit current application!(%1$s)</string>
     <string name="operate_error_tips">operation failed…</string>
     <string name="tv_reset_charge_title">reset charge</string>
-    <string name="tv_reset_charge_tips">The steps are as follows: n1, move the charging pile to a new position \n2, navigate the machine to the charging pile and stay in the charging state \n3, click "repositioning", click "reset" \n4, navigate the machine out of the charging pile, and the reset is successful</string>
+    <string name="tv_reset_charge_tips">The steps are as follows: n1, move the charging pile to a new position \n2, navigate or push the machine to the charging pile and it is in the charging state \n3, click "relocation", click "reset" \n4, navigate the machine out of the charging pile, and the reset is successful</string>
     <string name="btn_reset">reset</string>
     <string name="reset_not_charge_tips">please move the machine to the charging point first</string>
     <string name="reset_success_tips">reset success…</string>
@@ -241,4 +237,8 @@
     <string name="tv_type">type</string>
     <string name="tv_count">count</string>
     <string name="control_software_version_not_match">Control board firmware failed to load, please update…</string>
+    <string name="tv_chassis_radius_tips">Chassis radius: %1$sM</string>
+    <string name="et_chassis_radius_hint">enter chassis radius (unit: meter)</string>
+    <string name="chassis_radius_empty_tips">Chassis radius value cannot be empty, please enter…</string>
+    <string name="btn_set">Set</string>
 </resources>

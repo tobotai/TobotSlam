@@ -98,7 +98,7 @@ public class FirmwareUpgradeActivity extends BaseActivity implements UpgradeFile
 
         // 升级
         showUpgradeProgressDialog();
-        SlamManager.getInstance().upgradeControlPanelInThread(filePath, this);
+        SlamManager.getInstance().upgradeControlPanelAsync(filePath, this);
     }
 
     @Override

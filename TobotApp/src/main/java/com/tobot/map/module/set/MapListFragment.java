@@ -130,7 +130,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         if (mTipsStatus == MAP_SWITCH) {
             showLoadTipsDialog(getString(R.string.map_load_tips));
             DataHelper.getInstance().setCurrentMapName(mMapName);
-            SlamManager.getInstance().loadMapInThread(BaseConstant.getMapNamePath(getActivity(), mMapName), new OnFinishListener<List<LocationBean>>() {
+            SlamManager.getInstance().loadMapAsync(BaseConstant.getMapNamePath(getActivity(), mMapName), new OnFinishListener<List<LocationBean>>() {
                 @Override
                 public void onFinish(List<LocationBean> data) {
                     MyDBSource.getInstance(getActivity()).deleteAllLocation();

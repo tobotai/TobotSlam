@@ -63,7 +63,7 @@ public class MapClickHandle {
     public void clearLines(int editTyp) {
         isStart = false;
         mMapView.clearLines(getArtifactUsage(editTyp));
-        SlamManager.getInstance().clearLinesInThread(getArtifactUsage(editTyp), null);
+        SlamManager.getInstance().clearLinesAsync(getArtifactUsage(editTyp), null);
     }
 
     public void addLine(int editTyp, PointF pointF) {
@@ -81,7 +81,7 @@ public class MapClickHandle {
 
         mMapView.setLine(getArtifactUsage(editTyp), pointF);
         if (!isStart) {
-            SlamManager.getInstance().addLineInThread(getArtifactUsage(editTyp), new Line(mPointStart, mPointEnd), null);
+            SlamManager.getInstance().addLineAsync(getArtifactUsage(editTyp), new Line(mPointStart, mPointEnd), null);
         }
     }
 
@@ -91,7 +91,7 @@ public class MapClickHandle {
         Logger.i(BaseConstant.TAG, "remove lineId=" + lineId);
         // id不为-1的话，则代表有虚拟墙
         if (lineId != -1) {
-            SlamManager.getInstance().removeLineByIdInThread(getArtifactUsage(editTyp), lineId, null);
+            SlamManager.getInstance().removeLineByIdAsync(getArtifactUsage(editTyp), lineId, null);
         }
     }
 

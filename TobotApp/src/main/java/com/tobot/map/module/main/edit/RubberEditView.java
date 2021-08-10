@@ -65,7 +65,7 @@ public class RubberEditView extends LinearLayout implements View.OnClickListener
         radioGroup.clearCheck();
         setVisibility(VISIBLE);
         // 使用橡皮擦的时候，关闭更新地图
-        SlamManager.getInstance().setMapUpdateInThread(false, null);
+        SlamManager.getInstance().setMapUpdateAsync(false, null);
     }
 
     public void remove() {

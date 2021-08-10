@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <com.tobot.map.module.common.HorizontalConflictScrollView
@@ -280,6 +282,50 @@
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
+
+                <TextView
+                    android:id="@+id/tv_chassis_radius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:text="@string/tv_chassis_radius_tips"
+                    android:textColor="@color/tv_content"
+                    android:textSize="@dimen/tv_content" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_chassis_radius"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_weight="3"
+                        android:background="@drawable/shape_edit_bg"
+                        android:digits="@string/et_float_num_format"
+                        android:gravity="center"
+                        android:hint="@string/et_chassis_radius_hint"
+                        android:inputType="number|numberDecimal"
+                        android:textColor="@color/et_tv"
+                        android:textSize="@dimen/et_tv" />
+
+                    <Button
+                        android:id="@+id/btn_set_chassis_radius"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/btn_height"
+                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_btn_oval_bg"
+                        android:text="@string/btn_set"
+                        android:textColor="@color/tv_white"
+                        android:textSize="@dimen/btn_tv_size" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
             </LinearLayout>
         </LinearLayout>
     </com.tobot.map.module.common.HorizontalConflictScrollView>

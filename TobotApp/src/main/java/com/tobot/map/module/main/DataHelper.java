@@ -27,10 +27,11 @@ public class DataHelper {
     private static final String IP_SOCKET_KEY = "ip_socket_key";
     private static final String TRY_TIME_KEY = "try_time_key";
     private static final String LOG_KEY = "log_key";
-    private String mMapName;
+    private static final String CHASSIS_RADIUS_KEY = "chassis_radius_key";
+    private String mMapName, mIp;
     private int mLowBattery, mTryTime, mLogType;
-    private String mIp;
     private List<WarningInfo> mWarningList;
+    private float mChassisRadius;
 
     private static class BaseDataHolder {
         private static final DataHelper INSTANCE = new DataHelper();
@@ -287,6 +288,18 @@ public class DataHelper {
             mLogType = SharedPreferencesUtils.getInstance(context).getInt(LOG_KEY, BaseConstant.LOG_NO);
         }
         return mLogType;
+    }
+
+    public void setChassisRadius(Context context, float value) {
+        mChassisRadius = value;
+        SharedPreferencesUtils.getInstance(context).putFloat(CHASSIS_RADIUS_KEY, value);
+    }
+
+    public float getChassisRadius(Context context) {
+        if (mChassisRadius == 0) {
+            mChassisRadius = SharedPreferencesUtils.getInstance(context).getFloat(CHASSIS_RADIUS_KEY, BaseConstant.CHASSIS_RADIUS_DEFAULT);
+        }
+        return mChassisRadius;
     }
 
     public void setWarningData(WarningInfo info) {

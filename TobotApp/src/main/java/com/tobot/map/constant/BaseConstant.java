@@ -113,6 +113,11 @@ public class BaseConstant {
      */
     public static final float MIN_ROTATE_SPEED = 0.1f;
 
+    /**
+     * 默认底盘半径
+     */
+    public static final float CHASSIS_RADIUS_DEFAULT = 0.25f;
+
     public static final int LOG_NO = 0;
     public static final int LOG_LOGCAT = 1;
     public static final int LOG_ADB = 2;

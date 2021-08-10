@@ -90,7 +90,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         switch (v.getId()) {
             case R.id.tv_build_map:
                 tvBuildMap.setSelected(!tvBuildMap.isSelected());
-                SlamManager.getInstance().setMapUpdateInThread(tvBuildMap.isSelected(), null);
+                SlamManager.getInstance().setMapUpdateAsync(tvBuildMap.isSelected(), null);
                 break;
             case R.id.tv_add_point:
                 dismiss();
@@ -197,7 +197,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
 
     private void cleanMap() {
         showDialogTips(mContext.getString(R.string.map_clean_tips));
-        SlamManager.getInstance().clearMapInThread(new OnResultListener<Boolean>() {
+        SlamManager.getInstance().clearMapAsync(new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
                 if (data) {
@@ -218,7 +218,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
 
     private void saveMap(String number) {
         final List<LocationBean> beanList = DataHelper.getInstance().getLocationBeanList(mContext, number);
-        SlamManager.getInstance().saveMapInThread(BaseConstant.getMapDirectory(mContext), BaseConstant.getMapFileName(number), beanList, new OnResultListener<Boolean>() {
+        SlamManager.getInstance().saveMapAsync(BaseConstant.getMapDirectory(mContext), BaseConstant.getMapFileName(number), beanList, new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
                 mActivity.runOnUiThread(new Runnable() {
