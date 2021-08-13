@@ -35,10 +35,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         private static final CrashHandler INSTANCE = new CrashHandler();
     }
 
-    public static CrashHandler getInstance() {
-        return CrashHandlerHolder.INSTANCE;
-    }
-
     @Override
     public void uncaughtException(@NonNull Thread t, Throwable e) {
         String error = e.getMessage();
@@ -52,6 +48,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         if (isKillProcess) {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
+    }
+
+    public static CrashHandler getInstance() {
+        return CrashHandlerHolder.INSTANCE;
     }
 
     public void init(Context context, boolean isKillProcess, OnUncaughtExceptionListener listener) {

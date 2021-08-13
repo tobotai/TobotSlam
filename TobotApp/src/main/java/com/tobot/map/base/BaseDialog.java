@@ -17,7 +17,7 @@ import android.view.Window;
 
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.log.Logger;
-import com.tobot.map.util.DisplayUtils;
+import com.tobot.map.util.SystemUtils;
 
 /**
  * @author houdeming
@@ -70,11 +70,11 @@ public abstract class BaseDialog extends DialogFragment {
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 window.setGravity(Gravity.CENTER);
                 double percentage = getScreenWidthPercentage();
-                int width = (int) (DisplayUtils.getScreenWidthPixels(activity) * percentage);
+                int width = (int) (SystemUtils.getDisplayWidth(getActivity()) * percentage);
                 // 如果屏幕宽的百分比不是100%的话，再考虑横竖屏的问题
                 if (percentage != 1) {
                     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        width = (int) (DisplayUtils.getScreenHeightPixels(activity) * percentage);
+                        width = (int) (SystemUtils.getDisplayHeight(getActivity()) * percentage);
                     }
                 }
                 // 如果宽是全屏的话，则高也默认全屏

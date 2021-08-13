@@ -12,6 +12,7 @@ import com.tobot.map.module.main.MainActivity;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnChargeListener;
 import com.tobot.slam.agent.listener.OnNavigateListener;
+import com.tobot.slam.agent.listener.OnSystemStopListener;
 import com.tobot.slam.data.LocationBean;
 
 import java.lang.ref.WeakReference;
@@ -21,10 +22,14 @@ import java.util.List;
  * @author houdeming
  * @date 2020/3/17
  */
-public class Task extends AbstractPathMonitor implements OnNavigateListener, OnChargeListener {
+public class Task extends AbstractPathMonitor implements OnNavigateListener, OnChargeListener, OnSystemStopListener {
+    private static final int MOVE_STATUS_IDLE = 0;
+    private static final int MOVE_STATUS_NAVIGATE = 1;
+    private static final int MOVE_STATUS_CHARGE = 2;
     private List<LocationBean> mLocationList;
     private int mAllLoopCount, mItemCount, mCurrentLoopCount;
     private boolean isAddCharge, isStart;
+    private int mMoveStatus;
 
     public Task(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
         super(contextWeakReference, activityWeakReference);
@@ -50,28 +55,25 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     public void onNavigateError() {
         Logger.i(BaseConstant.TAG, "onNavigateError()");
         showToast(mContext.getString(R.string.navigate_error));
-        onNavigateResult(false);
+        handleNavigateResult(false);
     }
 
     @Override
     public void onNavigateResult(boolean isNavigateSuccess) {
         Logger.i(BaseConstant.TAG, "onNavigationResult() isNavigateSuccess=" + isNavigateSuccess);
         showToast(mContext.getString(R.string.navigate_result, isNavigateSuccess));
-        if (mActivity != null) {
-            mActivity.handleMoveResult(isNavigateSuccess);
-        }
-
-        mItemCount++;
-        navigate();
+        handleNavigateResult(isNavigateSuccess);
     }
 
     @Override
     public void onObstacleTrigger() {
+        Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
     public void onObstacleDisappear() {
+        Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
         navigate();
     }
 
@@ -104,8 +106,30 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
             return;
         }
 
+        if (isSystemStop()) {
+            mMoveStatus = MOVE_STATUS_CHARGE;
+        }
+
         if (mActivity != null) {
-            mActivity.handleMoveResult(false);
+            mActivity.handleMoveFail();
+        }
+    }
+
+    @Override
+    public void onSystemStop(boolean isTrigger) {
+        Logger.i(BaseConstant.TAG, "isTrigger=" + isTrigger);
+        if (!isTrigger && isStart) {
+            Logger.i(BaseConstant.TAG, "mMoveStatus=" + mMoveStatus);
+            if (mMoveStatus == MOVE_STATUS_NAVIGATE) {
+                mMoveStatus = MOVE_STATUS_IDLE;
+                navigate();
+                return;
+            }
+
+            if (mMoveStatus == MOVE_STATUS_CHARGE) {
+                mMoveStatus = MOVE_STATUS_IDLE;
+                SlamManager.getInstance().goHome(this);
+            }
         }
     }
 
@@ -114,6 +138,7 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
         mLocationList = data;
         this.isAddCharge = isAddCharge;
         mAllLoopCount = loopCount;
+        mMoveStatus = MOVE_STATUS_IDLE;
         if (data != null && !data.isEmpty()) {
             isStart = true;
             mCurrentLoopCount = 0;
@@ -121,12 +146,15 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
             updateTaskCount();
             startMonitor();
             navigate();
+            SlamManager.getInstance().startSystemStopMonitor(true, true, 1500, this);
         }
     }
 
     public void stop() {
+        Logger.i(BaseConstant.TAG, "task stop()");
         isStart = false;
         stopMonitor();
+        SlamManager.getInstance().stopSystemStopMonitor();
     }
 
     private void navigate() {
@@ -162,7 +190,7 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
             updateTaskCount();
         }
 
-        stopMonitor();
+        stop();
     }
 
     private void continueNavigate() {
@@ -174,6 +202,31 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
         updateTaskCount();
         mItemCount = 0;
         navigate();
+    }
+
+    private void handleNavigateResult(boolean isNavigateSuccess) {
+        if (isNavigateSuccess) {
+            mItemCount++;
+            navigate();
+            return;
+        }
+
+        // 如果紧急停止后，则不再继续
+        if (isSystemStop()) {
+            mMoveStatus = MOVE_STATUS_NAVIGATE;
+            return;
+        }
+
+        if (mActivity != null) {
+            mActivity.handleMoveFail();
+        }
+
+        mItemCount++;
+        navigate();
+    }
+
+    private boolean isSystemStop() {
+        return SlamManager.getInstance().isSystemStop();
     }
 
     private void updateTaskCount() {

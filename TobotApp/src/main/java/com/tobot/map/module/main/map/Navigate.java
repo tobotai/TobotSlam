@@ -46,27 +46,29 @@ public class Navigate extends AbstractPathMonitor implements OnNavigateListener 
     @Override
     public void onNavigateError() {
         Logger.i(BaseConstant.TAG, "onNavigateError()");
-        stopMonitor();
+        stop();
         showToast(mContext.getString(R.string.navigate_error));
     }
 
     @Override
     public void onNavigateResult(boolean isNavigateSuccess) {
         Logger.i(BaseConstant.TAG, "onNavigationResult() isNavigateSuccess=" + isNavigateSuccess);
-        stopMonitor();
+        stop();
         showToast(mContext.getString(R.string.navigate_result, isNavigateSuccess));
-        if (mActivity != null) {
-            mActivity.handleMoveResult(isNavigateSuccess);
+        if (!isNavigateSuccess && mActivity != null) {
+            mActivity.handleMoveFail();
         }
     }
 
     @Override
     public void onObstacleTrigger() {
+        Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
     public void onObstacleDisappear() {
+        Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
         moveTo(x, y, yaw);
     }
 

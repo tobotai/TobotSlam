@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.EditText;
 
@@ -25,6 +24,7 @@ import com.tobot.map.module.main.MainActivity;
 import com.tobot.map.module.main.MapService;
 import com.tobot.map.module.set.SetActivity;
 import com.tobot.map.module.upgrade.UpgradeTipsDialog;
+import com.tobot.map.util.SystemUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,7 +57,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
 
     @Override
     protected void init() {
-        requestScreenSize();
+        SystemUtils.requestDisplayInfo(this);
         Logger.i(BaseConstant.TAG, "valueSize=" + getResources().getDimension(R.dimen.base_values));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new ItemSplitLineDecoration(this, ItemSplitLineDecoration.VERTICAL, true));
@@ -180,11 +180,6 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
         mIp = ip;
         showLoadTipsDialog(getString(R.string.tv_connect_ing), null);
         EventBus.getDefault().post(new ConnectSlamEvent(ip));
-    }
-
-    private void requestScreenSize() {
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        Logger.i(BaseConstant.TAG, "screenWidth=" + metrics.widthPixels + ",screenHeight=" + metrics.heightPixels + ",density=" + metrics.density);
     }
 
     private boolean isUpgradeTipsDialogShow() {

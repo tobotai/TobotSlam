@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                 List<LocationBean> locationBeanList = data.getParcelableArrayListExtra(BaseConstant.DATA_KEY);
                 boolean isAddCharge = data.getBooleanExtra(BaseConstant.CONTENT_KEY, false);
                 int loopCount = data.getIntExtra(BaseConstant.LOOP_KEY, 0);
-                DataHelper.getInstance().clearWarningList();
+//                DataHelper.getInstance().clearWarningList();
                 if (mTask != null) {
                     mTask.execute(locationBeanList, isAddCharge, loopCount);
                 }
@@ -250,7 +250,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onHealthInfo(int code, String info) {
         recordWarningInfo(code, info);
-        showTipsDialog(info);
+//        showTipsDialog(info);
     }
 
     @Override
@@ -519,12 +519,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         });
     }
 
-    public void handleMoveResult(boolean isSuccess) {
-        if (!isSuccess) {
-            // 建图时定位质量为0
-            if (mLocationQuality > 0 && mLocationQuality < SlamCode.RECOVER_QUALITY_MIN) {
-                showTipsDialog(getString(R.string.move_recover_quality_low_tips, SlamCode.RECOVER_QUALITY_MIN));
-            }
+    public void handleMoveFail() {
+        // 建图时定位质量为0
+        if (mLocationQuality > 0 && mLocationQuality < SlamCode.RECOVER_QUALITY_MIN) {
+            showTipsDialog(getString(R.string.move_recover_quality_low_tips, SlamCode.RECOVER_QUALITY_MIN));
         }
     }
 

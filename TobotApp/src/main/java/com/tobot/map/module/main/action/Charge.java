@@ -30,34 +30,36 @@ public class Charge extends AbstractPathMonitor implements OnChargeListener {
     @Override
     public void onChargeError() {
         Logger.i(BaseConstant.TAG, "onChargeError()");
-        stopMonitor();
+        stop();
         showToast(mContext.getString(R.string.charge_error_tips));
     }
 
     @Override
     public void onCharging() {
         Logger.i(BaseConstant.TAG, "onCharging()");
-        stopMonitor();
+        stop();
         showToast(mContext.getString(R.string.charge_ing_tips));
     }
 
     @Override
     public void onChargeResult(boolean isChargeSuccess) {
         Logger.i(BaseConstant.TAG, "onChargeResult()=" + isChargeSuccess);
-        stopMonitor();
+        stop();
         showToast(mContext.getString(R.string.charge_result, isChargeSuccess));
-        if (mActivity != null) {
-            mActivity.handleMoveResult(isChargeSuccess);
+        if (!isChargeSuccess && mActivity != null) {
+            mActivity.handleMoveFail();
         }
     }
 
     @Override
     public void onObstacleTrigger() {
+        Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
     public void onObstacleDisappear() {
+        Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
         goCharge();
     }
 
