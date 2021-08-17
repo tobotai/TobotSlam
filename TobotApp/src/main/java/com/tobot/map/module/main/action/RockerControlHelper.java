@@ -53,6 +53,14 @@ class RockerControlHelper implements RockerView.OnShakeListener {
     }
 
     private void controlMove(RockerView.Direction direction) {
+        // 向前走的时候只考虑直充的情况
+        if (direction != RockerView.Direction.DIRECTION_UP) {
+            if (SlamManager.getInstance().isBatteryCharging()) {
+                isStart = false;
+                return;
+            }
+        }
+
         switch (direction) {
             case DIRECTION_LEFT:
                 SlamManager.getInstance().moveBy(MoveDirection.TURN_LEFT);
@@ -61,6 +69,11 @@ class RockerControlHelper implements RockerView.OnShakeListener {
                 SlamManager.getInstance().moveBy(MoveDirection.TURN_RIGHT);
                 break;
             case DIRECTION_UP:
+                if (SlamManager.getInstance().isDirectCharge()) {
+                    isStart = false;
+                    return;
+                }
+
                 SlamManager.getInstance().moveBy(MoveDirection.FORWARD);
                 break;
             case DIRECTION_DOWN:

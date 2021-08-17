@@ -28,6 +28,18 @@ public class Charge extends AbstractPathMonitor implements OnChargeListener {
     }
 
     @Override
+    public void onChargeRelocateBegin() {
+        Logger.i(BaseConstant.TAG, "onChargeRelocateBegin()");
+        showRelocateTips();
+    }
+
+    @Override
+    public void onChargeRelocateEnd(boolean isRelocateSuccess) {
+        Logger.i(BaseConstant.TAG, "onChargeRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
+        handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
     public void onChargeError() {
         Logger.i(BaseConstant.TAG, "onChargeError()");
         stop();
@@ -46,8 +58,8 @@ public class Charge extends AbstractPathMonitor implements OnChargeListener {
         Logger.i(BaseConstant.TAG, "onChargeResult()=" + isChargeSuccess);
         stop();
         showToast(mContext.getString(R.string.charge_result, isChargeSuccess));
-        if (!isChargeSuccess && mActivity != null) {
-            mActivity.handleMoveFail();
+        if (!isChargeSuccess) {
+            handleMoveFail(true);
         }
     }
 

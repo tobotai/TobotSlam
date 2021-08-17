@@ -28,7 +28,7 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     private static final int MOVE_STATUS_CHARGE = 2;
     private List<LocationBean> mLocationList;
     private int mAllLoopCount, mItemCount, mCurrentLoopCount;
-    private boolean isAddCharge, isStart;
+    private boolean isAddCharge, isStart, isRelocateSuccess;
     private int mMoveStatus;
 
     public Task(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
@@ -49,6 +49,19 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     @Override
     public void onNavigateSensorTrigger(boolean isEnabled) {
         Logger.i(BaseConstant.TAG, "onNavigateSensorTrigger() isEnabled=" + isEnabled);
+    }
+
+    @Override
+    public void onNavigateRelocateBegin() {
+        Logger.i(BaseConstant.TAG, "onNavigateRelocateBegin()");
+        showRelocateTips();
+    }
+
+    @Override
+    public void onNavigateRelocateEnd(boolean isRelocateSuccess) {
+        Logger.i(BaseConstant.TAG, "onNavigateRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
+        this.isRelocateSuccess = isRelocateSuccess;
+        handleRelocateResult(isRelocateSuccess);
     }
 
     @Override
@@ -83,8 +96,21 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     }
 
     @Override
+    public void onChargeRelocateBegin() {
+        Logger.i(BaseConstant.TAG, "onChargeRelocateBegin()");
+        showRelocateTips();
+    }
+
+    @Override
+    public void onChargeRelocateEnd(boolean isRelocateSuccess) {
+        Logger.i(BaseConstant.TAG, "onChargeRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
+        handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
     public void onChargeError() {
         Logger.i(BaseConstant.TAG, "onChargeError()");
+        stop();
     }
 
     @Override
@@ -108,11 +134,11 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
 
         if (isSystemStop()) {
             mMoveStatus = MOVE_STATUS_CHARGE;
+            return;
         }
 
-        if (mActivity != null) {
-            mActivity.handleMoveFail();
-        }
+        stop();
+        handleMoveFail(false);
     }
 
     @Override
@@ -140,6 +166,8 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
         mAllLoopCount = loopCount;
         mMoveStatus = MOVE_STATUS_IDLE;
         if (data != null && !data.isEmpty()) {
+            // 默认定位成功
+            isRelocateSuccess = true;
             isStart = true;
             mCurrentLoopCount = 0;
             mItemCount = 0;
@@ -217,16 +245,15 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
             return;
         }
 
-        if (mActivity != null) {
-            mActivity.handleMoveFail();
+        // 如果不是因为定位问题则继续导航去下一个点
+        if (isRelocateSuccess) {
+            mItemCount++;
+            navigate();
+            return;
         }
 
-        mItemCount++;
-        navigate();
-    }
-
-    private boolean isSystemStop() {
-        return SlamManager.getInstance().isSystemStop();
+        stop();
+        handleMoveFail(false);
     }
 
     private void updateTaskCount() {

@@ -61,9 +61,9 @@
     <string name="tv_virtual_wall">虚拟墙</string>
     <string name="tv_virtual_track">虚拟轨道</string>
     <string name="tv_rubber">橡皮擦</string>
-    <string name="emergency_stop_tips">急停按钮被按，请稍后再试</string>
-    <string name="break_stop_tips">请先松开刹车按钮</string>
-    <string name="direct_charge_to_navigate_tips">请先拔掉直充线</string>
+    <string name="emergency_stop_tips">急停按钮被按…</string>
+    <string name="break_stop_tips">刹车按钮被按…</string>
+    <string name="direct_charge_to_navigate_tips">正在直充…</string>
     <string name="btn_add_current_point">添加当前位置点</string>
     <string name="btn_sort_point">按编号排序</string>
     <string name="btn_edit">编辑</string>
@@ -76,7 +76,7 @@
     <string name="navigate_remind">导航重试中…</string>
     <string name="navigate_error">导航异常</string>
     <string name="navigate_result">导航结果：%1$b</string>
-    <string name="move_recover_quality_low_tips">当前定位质量小于%1$d，无法正常导航，建议手动停止。</string>
+    <string name="move_recover_quality_low_tips">当前定位质量小于%1$d，无法正常导航，建议手动停止。请将机器移动至特征点明显的地方进行重定位操作。</string>
     <string name="relocation_map_tips">定位中…</string>
     <string name="relocation_map_success">重定位成功…</string>
     <string name="relocation_map_fail">重定位失败…</string>

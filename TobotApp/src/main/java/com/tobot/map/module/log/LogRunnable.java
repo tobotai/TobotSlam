@@ -3,6 +3,8 @@ package com.tobot.map.module.log;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tobot.map.constant.BaseConstant;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +71,11 @@ public class LogRunnable implements Runnable {
         commandList.add("*:S");
 
         try {
+            Logger.i(BaseConstant.TAG, "adbLog execute");
             mProcess = Runtime.getRuntime().exec(commandList.toArray(new String[0]));
         } catch (Exception e) {
             e.printStackTrace();
+            Logger.i(BaseConstant.TAG, "adbLog error=" + e.getMessage());
         }
     }
 }

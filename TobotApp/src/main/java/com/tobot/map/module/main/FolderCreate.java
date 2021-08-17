@@ -79,7 +79,7 @@ class FolderCreate {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Logger.i(BaseConstant.TAG, "error=" + e.getMessage());
+            Logger.i(BaseConstant.TAG, "refreshLogFile error=" + e.getMessage());
         }
     }
 }

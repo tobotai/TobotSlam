@@ -44,6 +44,18 @@ public class Navigate extends AbstractPathMonitor implements OnNavigateListener 
     }
 
     @Override
+    public void onNavigateRelocateBegin() {
+        Logger.i(BaseConstant.TAG, "onNavigateRelocateBegin()");
+        showRelocateTips();
+    }
+
+    @Override
+    public void onNavigateRelocateEnd(boolean isRelocateSuccess) {
+        Logger.i(BaseConstant.TAG, "onNavigateRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
+        handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
     public void onNavigateError() {
         Logger.i(BaseConstant.TAG, "onNavigateError()");
         stop();
@@ -55,8 +67,8 @@ public class Navigate extends AbstractPathMonitor implements OnNavigateListener 
         Logger.i(BaseConstant.TAG, "onNavigationResult() isNavigateSuccess=" + isNavigateSuccess);
         stop();
         showToast(mContext.getString(R.string.navigate_result, isNavigateSuccess));
-        if (!isNavigateSuccess && mActivity != null) {
-            mActivity.handleMoveFail();
+        if (!isNavigateSuccess) {
+            handleMoveFail(true);
         }
     }
 

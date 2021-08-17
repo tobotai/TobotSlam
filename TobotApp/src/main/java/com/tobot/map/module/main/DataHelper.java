@@ -63,7 +63,7 @@ public class DataHelper {
         }
 
         // 如果在直充的话，不允许导航
-        if (isDirectCharge()) {
+        if (SlamManager.getInstance().isDirectCharge()) {
             callBackNavigateCondition(false, context.getString(R.string.direct_charge_to_navigate_tips), callBack);
             return;
         }
@@ -82,7 +82,7 @@ public class DataHelper {
         return list;
     }
 
-    public void requestMapNumberList(final Context context, final MapRequestCallBack callBack) {
+    public void requestMapNameList(final Context context, final MapRequestCallBack callBack) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -102,7 +102,7 @@ public class DataHelper {
         });
     }
 
-    public void requestMapNameList(final Context context, final MapRequestCallBack callBack) {
+    public void requestMapFileList(final Context context, final MapRequestCallBack callBack) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -131,21 +131,6 @@ public class DataHelper {
                 }
             }
         });
-    }
-
-    /**
-     * 是否在直充
-     *
-     * @return
-     */
-    private boolean isDirectCharge() {
-        // 是否在充电桩上（在充电桩上并且充着电的情况）
-        if (SlamManager.getInstance().isDockingStatus()) {
-            return false;
-        }
-
-        // 如果不在充电桩上的话，要考虑直充的情况
-        return SlamManager.getInstance().isBatteryCharging();
     }
 
     private void callBackNavigateCondition(boolean isCanNavigate, String reason, NavigateConditionCallBack callBack) {

@@ -184,10 +184,29 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         SlamManager.getInstance().recoverLocationByDefault(new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
+                String content = "";
+                if (!data) {
+                    StringBuilder builder = new StringBuilder();
+                    if (SlamManager.getInstance().isSystemBrakeStop()) {
+                        builder.append(mContext.getString(R.string.break_stop_tips));
+                    }
+
+                    if (SlamManager.getInstance().isSystemEmergencyStop()) {
+                        builder.append(mContext.getString(R.string.emergency_stop_tips));
+                    }
+                    content = builder.toString().trim();
+                }
+
+                final String tips = content;
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         closeLoadTipsDialog();
+                        if (!data && !TextUtils.isEmpty(tips)) {
+                            ToastUtils.getInstance(mContext).show(tips);
+                            return;
+                        }
+
                         ToastUtils.getInstance(mContext).show(data ? R.string.relocation_map_success : R.string.relocation_map_fail);
                     }
                 });

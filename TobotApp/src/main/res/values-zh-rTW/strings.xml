@@ -47,9 +47,8 @@
     <string name="tv_build_map">建圖</string>
     <string name="tv_virtual_wall">虛擬墻</string>
     <string name="tv_virtual_track">虛擬軌道</string>
-    <string name="emergency_stop_tips">急停按鈕被按，請稍後再試</string>
-    <string name="break_stop_tips">請先松開剎車按鈕</string>
-    <string name="direct_charge_to_navigate_tips">請先拔掉直充線</string>
+    <string name="emergency_stop_tips">急停按鈕被按…</string>
+    <string name="break_stop_tips">剎車按鈕被按…</string>
     <string name="btn_add_current_point">添加當前位置點</string>
     <string name="btn_sort_point">按編號排序</string>
     <string name="btn_edit">編輯</string>
@@ -61,7 +60,7 @@
     <string name="navigate_remind">導航重試中…</string>
     <string name="navigate_error">導航異常</string>
     <string name="navigate_result">導航結果：%1$b</string>
-    <string name="move_recover_quality_low_tips">當前定位質量小於%1$d，無法正常導航，建議手動停止。</string>
+    <string name="move_recover_quality_low_tips">當前定位質量小於%1$d，無法正常導航，建議手動停止。請將機器移動至特征點明顯的地方進行重定位操作。</string>
     <string name="relocation_map_fail">重定位失敗…</string>
     <string name="tv_map_switch_tips">確認要加載地圖嗎？加載後將會清除當前的地圖！</string>
     <string name="tv_map_delete_tips">確認要刪除該地圖嗎？</string>

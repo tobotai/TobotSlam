@@ -510,11 +510,50 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         });
     }
 
+    public void showTipsDialog(String tips) {
+        if (TextUtils.isEmpty(tips)) {
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isTipsDialogShow()) {
+                    mTipsDialog.setContent(tips);
+                    return;
+                }
+
+                mTipsDialog = TipsDialog.newInstance(tips);
+                mTipsDialog.setOnConfirmListener(MainActivity.this);
+                mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
+            }
+        });
+    }
+
     public void setTaskCount(String content) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tvCount.setText(content);
+            }
+        });
+    }
+
+    public void showRelocateTips() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showLoadTipsDialog(getString(R.string.relocation_map_tips), null);
+            }
+        });
+    }
+
+    public void handleRelocateResult(boolean isRelocateSuccess) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                closeLoadTipsDialog();
+                showToastTips(getString(isRelocateSuccess ? R.string.relocation_map_success : R.string.relocation_map_fail));
             }
         });
     }
@@ -646,26 +685,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         }
 
         return isFlag;
-    }
-
-    public void showTipsDialog(String tips) {
-        if (TextUtils.isEmpty(tips)) {
-            return;
-        }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isTipsDialogShow()) {
-                    mTipsDialog.setContent(tips);
-                    return;
-                }
-
-                mTipsDialog = TipsDialog.newInstance(tips);
-                mTipsDialog.setOnConfirmListener(MainActivity.this);
-                mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
-            }
-        });
     }
 
     private boolean isTipsDialogShow() {

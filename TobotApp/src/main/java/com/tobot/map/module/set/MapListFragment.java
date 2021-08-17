@@ -70,7 +70,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         mAdapter = new MapAdapter(getActivity(), R.layout.recycler_item_map);
         mAdapter.setOnMapListener(this);
         recyclerView.setAdapter(mAdapter);
-        DataHelper.getInstance().requestMapNameList(getActivity(), this);
+        DataHelper.getInstance().requestMapFileList(getActivity(), this);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         String filePath = BaseConstant.getMapNamePath(getActivity(), mMapName);
         SlamManager.getInstance().deleteFile(filePath);
         new MediaScanner().scanFile(getActivity(), filePath);
-        DataHelper.getInstance().requestMapNameList(getActivity(), this);
+        DataHelper.getInstance().requestMapFileList(getActivity(), this);
     }
 
     @Override
@@ -195,7 +195,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         if (isSuccess) {
             showToastTips(getString(R.string.map_edit_success_tips));
             new MediaScanner().scanFile(getActivity(), new String[]{oldPath, newPath});
-            DataHelper.getInstance().requestMapNameList(getActivity(), this);
+            DataHelper.getInstance().requestMapFileList(getActivity(), this);
             return;
         }
 
