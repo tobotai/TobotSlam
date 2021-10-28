@@ -2,7 +2,6 @@ package com.tobot.map.module.main.map;
 
 import android.content.Context;
 
-import com.slamtec.slamware.robot.Location;
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.common.MoveData;
@@ -21,7 +20,7 @@ import java.lang.ref.WeakReference;
  * @date 2019/10/23
  */
 public class Navigate extends AbstractPathMonitor implements OnNavigateListener {
-    private float x, y, yaw;
+    private LocationBean mLocationBean;
 
     public Navigate(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
         super(contextWeakReference, activityWeakReference);
@@ -41,6 +40,7 @@ public class Navigate extends AbstractPathMonitor implements OnNavigateListener 
     @Override
     public void onNavigateSensorTrigger(boolean isEnabled) {
         Logger.i(BaseConstant.TAG, "onNavigateSensorTrigger() isEnabled=" + isEnabled);
+        showToast("sensor isEnabled=" + isEnabled);
     }
 
     @Override
@@ -53,6 +53,12 @@ public class Navigate extends AbstractPathMonitor implements OnNavigateListener 
     public void onNavigateRelocateEnd(boolean isRelocateSuccess) {
         Logger.i(BaseConstant.TAG, "onNavigateRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
         handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
+    public void onNavigateSetPose(boolean isFinish) {
+        Logger.i(BaseConstant.TAG, "onNavigateSetPose() isFinish=" + isFinish);
+        handleNavigateSetPose(isFinish);
     }
 
     @Override
@@ -81,26 +87,27 @@ public class Navigate extends AbstractPathMonitor implements OnNavigateListener 
     @Override
     public void onObstacleDisappear() {
         Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
-        moveTo(x, y, yaw);
-    }
-
-    public void moveTo(LocationBean bean) {
-        if (bean != null) {
-            moveTo(bean.getX(), bean.getY(), bean.getYaw());
-        }
+        moveTo(mLocationBean);
     }
 
     public void moveTo(float x, float y, float yaw) {
-        this.x = x;
-        this.y = y;
-        this.yaw = yaw;
-        startMonitor();
-        Location location = new Location(x, y, 0);
-        long tryTime = 0;
-        if (MoveData.getInstance().getObstacleMode() == MoveData.MEET_OBSTACLE_AVOID) {
-            tryTime = DataHelper.getInstance().getTryTimeMillis(mContext);
+        LocationBean bean = new LocationBean();
+        bean.setX(x);
+        bean.setY(y);
+        bean.setYaw(yaw);
+        moveTo(bean);
+    }
+
+    public void moveTo(LocationBean bean) {
+        mLocationBean = bean;
+        if (bean != null) {
+            startMonitor();
+            long tryTime = 0;
+            if (MoveData.getInstance().getObstacleMode() == MoveData.MEET_OBSTACLE_AVOID) {
+                tryTime = DataHelper.getInstance().getTryTimeMillis(mContext);
+            }
+            SlamManager.getInstance().moveTo(bean, MoveData.getInstance().getMoveOption(), tryTime, this);
         }
-        SlamManager.getInstance().moveTo(location, MoveData.getInstance().getMoveOption(), yaw, tryTime, this);
     }
 
     public void stop() {

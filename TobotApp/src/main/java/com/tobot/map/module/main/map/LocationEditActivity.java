@@ -2,9 +2,14 @@ package com.tobot.map.module.main.map;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.slamtec.slamware.robot.Pose;
@@ -12,6 +17,9 @@ import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
+import com.tobot.map.module.log.Logger;
+import com.tobot.map.util.NumberUtils;
+import com.tobot.map.util.SystemUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
@@ -24,7 +32,7 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2020/3/14
  */
-public class LocationEditActivity extends BaseActivity implements SensorAreaDialog.OnSensorAreaListener {
+public class LocationEditActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.tv_head)
     TextView tvHead;
     @BindView(R.id.et_number)
@@ -33,14 +41,25 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
     EditText etNameChina;
     @BindView(R.id.et_name_english)
     EditText etNameEnglish;
-    @BindView(R.id.tv_config_ultrasonic)
-    TextView tvUltrasonicSwitch;
+    @BindView(R.id.rb_mark_location)
+    RadioButton rbMarkLocation;
+    @BindView(R.id.rb_relocation)
+    RadioButton rbRelocation;
+    @BindView(R.id.rg_location_type)
+    RadioGroup rgLocationType;
+    @BindView(R.id.ll_show_relocation_area)
+    LinearLayout llShowRelocationArea;
+    @BindView(R.id.et_relocation_area_width)
+    EditText etRelocationWidth;
+    @BindView(R.id.et_relocation_area_height)
+    EditText etRelocationHeight;
+    @BindView(R.id.btn_close_sensor)
+    Button btnCloseSensor;
     private String mNumber;
-    private boolean isRequestPose;
-    private Pose mPose;
-    private int mUltrasonicStatus;
-    private SensorAreaDialog mSensorAreaDialog;
     private LocationBean mLocationBean;
+    private int mLocationType = SlamCode.TYPE_IDLE;
+    private float mWidthHalf, mHeightHalf;
+    private boolean isCloseSensor;
 
     @Override
     protected int getLayoutResId() {
@@ -51,7 +70,6 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
     protected void init() {
         tvHead.setText(R.string.tv_title_edit_location);
         // 超声波默认打开状态
-        mUltrasonicStatus = SlamCode.ULTRASONIC_STATUS_OPEN;
         LocationBean bean = getIntent().getParcelableExtra(BaseConstant.DATA_KEY);
         mLocationBean = bean;
         if (bean != null) {
@@ -59,47 +77,66 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
             etNumber.setText(mNumber);
             etNameChina.setText(bean.getLocationNameChina());
             etNameEnglish.setText(bean.getLocationNameEnglish());
-            mUltrasonicStatus = bean.getSensorStatus();
+            setLocationType(bean);
         }
-        tvUltrasonicSwitch.setSelected(mUltrasonicStatus == SlamCode.ULTRASONIC_STATUS_OPEN);
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (isSensorAreaDialogShow()) {
-            mSensorAreaDialog.getDialog().dismiss();
-            mSensorAreaDialog = null;
+        for (int i = 0, size = rgLocationType.getChildCount(); i < size; i++) {
+            rgLocationType.getChildAt(i).setOnClickListener(this);
         }
     }
 
     @Override
-    public void onSensorArea(float startX, float startY, float endX, float endY) {
-        if (mLocationBean != null) {
-            mLocationBean.setStartX(startX);
-            mLocationBean.setStartY(startY);
-            mLocationBean.setEndX(endX);
-            mLocationBean.setEndY(endY);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            LocationBean bean = data.getParcelableExtra(BaseConstant.DATA_KEY);
+            if (bean != null) {
+                isCloseSensor = true;
+                // 如果设置了传感器区域，就不能再设置定位区域
+                mWidthHalf = 0;
+                mHeightHalf = 0;
+                etRelocationWidth.setText("");
+                etRelocationHeight.setText("");
+                if (mLocationBean != null) {
+                    mLocationBean.setSensorStatus(bean.getSensorStatus());
+                    // 如果没设置的话，则默认为0
+                    mLocationBean.setStartX(bean.getStartX());
+                    mLocationBean.setStartY(bean.getStartY());
+                    mLocationBean.setEndX(bean.getEndX());
+                    mLocationBean.setEndY(bean.getEndY());
+                }
+            }
         }
     }
 
-    @OnClick({R.id.btn_update_location, R.id.tv_config_ultrasonic, R.id.btn_ultrasonic_area, R.id.btn_confirm})
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.rb_mark_location:
+                handleRadioButtonClick(id, SlamCode.TYPE_MARK_LOCATION);
+                break;
+            case R.id.rb_relocation:
+                handleRadioButtonClick(id, SlamCode.TYPE_RELOCATION);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @OnClick({R.id.btn_update_location, R.id.btn_set, R.id.btn_close_sensor, R.id.btn_confirm})
     public void onClickView(View view) {
         switch (view.getId()) {
             case R.id.btn_update_location:
-                isRequestPose = true;
                 ThreadPoolManager.getInstance().execute(new LocationRunnable());
                 break;
-            case R.id.tv_config_ultrasonic:
-                mUltrasonicStatus = tvUltrasonicSwitch.isSelected() ? SlamCode.ULTRASONIC_STATUS_CLOSE : SlamCode.ULTRASONIC_STATUS_OPEN;
-                tvUltrasonicSwitch.setSelected(mUltrasonicStatus == SlamCode.ULTRASONIC_STATUS_OPEN);
+            case R.id.btn_set:
+                setRelocationArea();
                 break;
-            case R.id.btn_ultrasonic_area:
-                if (!isSensorAreaDialogShow()) {
-                    mSensorAreaDialog = SensorAreaDialog.newInstance(mLocationBean);
-                    mSensorAreaDialog.setOnSensorAreaListener(this);
-                    mSensorAreaDialog.show(getSupportFragmentManager(), "SENSOR_AREA_DIALOG");
-                }
+            case R.id.btn_close_sensor:
+                Intent intent = new Intent(this, CloseSensorActivity.class);
+                intent.putExtra(BaseConstant.DATA_KEY, mLocationBean);
+                startActivityForResult(intent, 1);
                 break;
             case R.id.btn_confirm:
                 confirm();
@@ -107,6 +144,74 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
             default:
                 break;
         }
+    }
+
+    private void setLocationType(LocationBean bean) {
+        mLocationType = bean.getType();
+        switch (mLocationType) {
+            case SlamCode.TYPE_MARK_LOCATION:
+                rbMarkLocation.setChecked(true);
+                llShowRelocationArea.setVisibility(View.GONE);
+                btnCloseSensor.setVisibility(View.GONE);
+                break;
+            case SlamCode.TYPE_RELOCATION:
+                rbRelocation.setChecked(true);
+                btnCloseSensor.setVisibility(View.GONE);
+                llShowRelocationArea.setVisibility(View.VISIBLE);
+                etRelocationWidth.setText(String.valueOf(Math.abs(bean.getEndX() - bean.getStartX())));
+                etRelocationHeight.setText(String.valueOf(Math.abs(bean.getEndY() - bean.getStartY())));
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void handleRadioButtonClick(int id, int type) {
+        if (mLocationType == type) {
+            rgLocationType.clearCheck();
+            mLocationType = SlamCode.TYPE_IDLE;
+            if (type == SlamCode.TYPE_RELOCATION) {
+                llShowRelocationArea.setVisibility(View.GONE);
+            }
+            btnCloseSensor.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        mLocationType = type;
+        rgLocationType.check(id);
+        llShowRelocationArea.setVisibility(type == SlamCode.TYPE_RELOCATION ? View.VISIBLE : View.GONE);
+        btnCloseSensor.setVisibility(View.GONE);
+        // 先关闭传感器后又点击的情况
+        if (isCloseSensor) {
+            isCloseSensor = false;
+            if (mLocationBean != null) {
+                mLocationBean.setSensorStatus(SlamCode.STATUS_SENSOR_OPEN);
+                mLocationBean.setStartX(0);
+                mLocationBean.setStartY(0);
+                mLocationBean.setEndX(0);
+                mLocationBean.setEndY(0);
+            }
+        }
+    }
+
+    private void setRelocationArea() {
+        SystemUtils.hideKeyBoard(this);
+        String widthStr = etRelocationWidth.getText().toString().trim();
+        String heightStr = etRelocationHeight.getText().toString().trim();
+        if (mLocationBean == null) {
+            return;
+        }
+
+        mWidthHalf = 0;
+        if (NumberUtils.isDoubleOrFloat(widthStr)) {
+            mWidthHalf = Float.parseFloat(widthStr) / 2.0f;
+        }
+
+        mHeightHalf = 0;
+        if (NumberUtils.isDoubleOrFloat(heightStr)) {
+            mHeightHalf = Float.parseFloat(heightStr) / 2.0f;
+        }
+        showToastTips(getString(R.string.set_success_tips));
     }
 
     private void confirm() {
@@ -152,23 +257,22 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
             }
         }
 
-        // 更新点位置的情况
-        if (isRequestPose && mPose == null) {
-            isRequestPose = false;
-            showToastTips(getString(R.string.pose_request_fail_tips));
-            return;
-        }
-
         if (mLocationBean != null) {
             mLocationBean.setLocationNumber(number);
             mLocationBean.setLocationNameChina(nameChina);
             mLocationBean.setLocationNameEnglish(nameEnglish);
-            mLocationBean.setSensorStatus(mUltrasonicStatus);
-            if (mPose != null) {
-                mLocationBean.setX(mPose.getX());
-                mLocationBean.setY(mPose.getY());
-                mLocationBean.setYaw(mPose.getYaw());
+            mLocationBean.setType(mLocationType);
+            // 设置重定位区域
+            if (mLocationType == SlamCode.TYPE_RELOCATION) {
+                Logger.i(BaseConstant.TAG, "widthHalf=" + mWidthHalf + ",heightHalf=" + mHeightHalf);
+                if (mWidthHalf > 0 && mHeightHalf > 0) {
+                    mLocationBean.setStartX(mLocationBean.getX() - mWidthHalf);
+                    mLocationBean.setStartY(mLocationBean.getY() + mHeightHalf);
+                    mLocationBean.setEndX(mLocationBean.getX() + mWidthHalf);
+                    mLocationBean.setEndY(mLocationBean.getY() - mHeightHalf);
+                }
             }
+
             MyDBSource.getInstance(this).updateLocation(mNumber, mLocationBean);
         }
 
@@ -179,18 +283,24 @@ public class LocationEditActivity extends BaseActivity implements SensorAreaDial
         finish();
     }
 
-    private boolean isSensorAreaDialogShow() {
-        return mSensorAreaDialog != null && mSensorAreaDialog.getDialog() != null && mSensorAreaDialog.getDialog().isShowing();
-    }
-
     private class LocationRunnable implements Runnable {
         @Override
         public void run() {
-            mPose = SlamManager.getInstance().getPose();
+            Pose pose = SlamManager.getInstance().getPose();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showToastTips(getString(mPose != null ? R.string.pose_request_success_tips : R.string.pose_request_fail_tips));
+                    boolean isSuccess = false;
+                    if (pose != null) {
+                        isSuccess = true;
+                        if (mLocationBean != null) {
+                            mLocationBean.setX(pose.getX());
+                            mLocationBean.setY(pose.getY());
+                            mLocationBean.setYaw(pose.getYaw());
+                        }
+                    }
+
+                    showToastTips(getString(isSuccess ? R.string.pose_request_success_tips : R.string.pose_request_fail_tips));
                 }
             });
         }

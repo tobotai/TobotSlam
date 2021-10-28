@@ -1,6 +1,7 @@
 package com.tobot.map.module.main.map;
 
 import android.content.Context;
+import android.graphics.RectF;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.tobot.map.module.main.MainActivity;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
+import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnResultListener;
 import com.tobot.slam.data.LocationBean;
 
@@ -31,7 +33,7 @@ import java.util.List;
  * @author houdeming
  * @date 2020/3/15
  */
-public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDismissListener, NameInputDialog.OnNameListener, ConfirmDialog.OnConfirmListener {
+public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDismissListener, NameInputDialog.OnNameListener, ConfirmDialog.OnConfirmListener, OnResultListener<Boolean> {
     private MainActivity mActivity;
     private TextView tvBuildMap;
     private OnMapListener mOnMapListener;
@@ -40,6 +42,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     private NameInputDialog mNameInputDialog;
     private LoadTipsDialog mLoadTipsDialog;
     private ConfirmDialog mConfirmDialog;
+    private boolean isRelocationPart;
 
     public MapPopupWindow(Context context, WeakReference<MainActivity> reference, OnMapListener listener) {
         super(context);
@@ -59,14 +62,14 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         view.findViewById(R.id.tv_add_point).setOnClickListener(this);
         view.findViewById(R.id.tv_reset_charge).setOnClickListener(this);
         view.findViewById(R.id.tv_relocation).setOnClickListener(this);
-        view.findViewById(R.id.tv_clean_map).setOnClickListener(this);
+        view.findViewById(R.id.tv_clear_map).setOnClickListener(this);
         view.findViewById(R.id.tv_save_map).setOnClickListener(this);
     }
 
     @Override
     public void onDismiss() {
         closeAddPointViewDialog();
-        closeNumberInputDialog();
+        closeNameInputDialog();
         closeLoadTipsDialog();
         if (isConfirmDialogShow()) {
             mConfirmDialog.getDialog().dismiss();
@@ -90,7 +93,11 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         switch (v.getId()) {
             case R.id.tv_build_map:
                 tvBuildMap.setSelected(!tvBuildMap.isSelected());
-                SlamManager.getInstance().setMapUpdateAsync(tvBuildMap.isSelected(), null);
+                boolean isUpdate = tvBuildMap.isSelected();
+                SlamManager.getInstance().setMapUpdateAsync(isUpdate, null);
+                if (isUpdate) {
+                    mActivity.updateMap();
+                }
                 break;
             case R.id.tv_add_point:
                 dismiss();
@@ -105,11 +112,19 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                 break;
             case R.id.tv_relocation:
                 dismiss();
-                relocation();
+                isRelocationPart = DataHelper.getInstance().getRelocationType(mContext) == SlamCode.RELOCATION_PART;
+                if (isRelocationPart) {
+                    if (mActivity != null) {
+                        mActivity.setRelocationPart(true);
+                    }
+                    return;
+                }
+
+                relocationGlobal();
                 break;
-            case R.id.tv_clean_map:
+            case R.id.tv_clear_map:
                 if (mOnMapListener != null) {
-                    mOnMapListener.onMapClean();
+                    mOnMapListener.onMapClear();
                 }
                 break;
             case R.id.tv_save_map:
@@ -130,7 +145,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
             return;
         }
 
-        closeNumberInputDialog();
+        closeNameInputDialog();
         showDialogTips(mContext.getString(R.string.map_save_tips));
         saveMap(name);
     }
@@ -138,7 +153,41 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     @Override
     public void onConfirm() {
         dismiss();
-        cleanMap();
+        clearMap();
+    }
+
+    @Override
+    public void onResult(Boolean data) {
+        // 重定位结果
+        String content = "";
+        if (!data) {
+            StringBuilder builder = new StringBuilder();
+            if (SlamManager.getInstance().isSystemBrakeStop()) {
+                builder.append(mContext.getString(R.string.break_stop_tips));
+            }
+
+            if (SlamManager.getInstance().isSystemEmergencyStop()) {
+                builder.append(mContext.getString(R.string.emergency_stop_tips));
+            }
+            content = builder.toString().trim();
+        }
+
+        final String tips = content;
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                closeLoadTipsDialog();
+                if (!data && !TextUtils.isEmpty(tips)) {
+                    ToastUtils.getInstance(mContext).show(tips);
+                } else {
+                    ToastUtils.getInstance(mContext).show(data ? R.string.relocation_map_success : R.string.relocation_map_fail);
+                }
+
+                if (isRelocationPart) {
+                    mActivity.setRelocationPart(false);
+                }
+            }
+        });
     }
 
     public void showAddPointViewDialog(FragmentManager fragmentManager, AddPointViewDialog.OnPointListener listener) {
@@ -175,60 +224,38 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         if (!isConfirmDialogShow()) {
             mConfirmDialog = ConfirmDialog.newInstance(tips);
             mConfirmDialog.setOnConfirmListener(this);
-            mConfirmDialog.show(fragmentManager, "CLEAN_MAP_DIALOG");
+            mConfirmDialog.show(fragmentManager, "CLEAR_MAP_DIALOG");
         }
     }
 
-    private void relocation() {
+    public void relocationPart(RectF area) {
         showDialogTips(mContext.getString(R.string.relocation_map_tips));
-        SlamManager.getInstance().recoverLocationByDefault(new OnResultListener<Boolean>() {
-            @Override
-            public void onResult(Boolean data) {
-                String content = "";
-                if (!data) {
-                    StringBuilder builder = new StringBuilder();
-                    if (SlamManager.getInstance().isSystemBrakeStop()) {
-                        builder.append(mContext.getString(R.string.break_stop_tips));
-                    }
-
-                    if (SlamManager.getInstance().isSystemEmergencyStop()) {
-                        builder.append(mContext.getString(R.string.emergency_stop_tips));
-                    }
-                    content = builder.toString().trim();
-                }
-
-                final String tips = content;
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeLoadTipsDialog();
-                        if (!data && !TextUtils.isEmpty(tips)) {
-                            ToastUtils.getInstance(mContext).show(tips);
-                            return;
-                        }
-
-                        ToastUtils.getInstance(mContext).show(data ? R.string.relocation_map_success : R.string.relocation_map_fail);
-                    }
-                });
-            }
-        });
+        SlamManager.getInstance().recoverLocationByCustom(area, true, this);
     }
 
-    private void cleanMap() {
-        showDialogTips(mContext.getString(R.string.map_clean_tips));
+    private void relocationGlobal() {
+        showDialogTips(mContext.getString(R.string.relocation_map_tips));
+        SlamManager.getInstance().recoverLocationByDefault(this);
+    }
+
+    private void clearMap() {
+        showDialogTips(mContext.getString(R.string.map_clear_tips));
         SlamManager.getInstance().clearMapAsync(new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
                 if (data) {
                     MyDBSource.getInstance(mContext).deleteAllLocation();
+                    // 删除设置的传感器区域
+                    SlamManager.getInstance().setSensorArea(null);
+                    DataHelper.getInstance().setCurrentMapName("");
                 }
 
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mActivity.cleanMapResult(data);
+                        mActivity.clearMapResult(data);
                         closeLoadTipsDialog();
-                        ToastUtils.getInstance(mContext).show(data ? R.string.map_clean_success_tips : R.string.map_clean_fail_tips);
+                        ToastUtils.getInstance(mContext).show(data ? R.string.clear_success_tips : R.string.clear_fail_tips);
                     }
                 });
             }
@@ -237,13 +264,17 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
 
     private void saveMap(String number) {
         final List<LocationBean> beanList = DataHelper.getInstance().getLocationBeanList(mContext, number);
-        SlamManager.getInstance().saveMapAsync(BaseConstant.getMapDirectory(mContext), BaseConstant.getMapFileName(number), beanList, new OnResultListener<Boolean>() {
+        String mapFile = BaseConstant.getMapFileName(number);
+        SlamManager.getInstance().saveMapAsync(BaseConstant.getMapDirectory(mContext), mapFile, beanList, new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         closeLoadTipsDialog();
+                        if (data) {
+                            DataHelper.getInstance().setCurrentMapName(mapFile);
+                        }
                         ToastUtils.getInstance(mContext).show(data ? R.string.map_save_success_tips : R.string.map_save_fail_tips);
                     }
                 });
@@ -273,7 +304,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         }
     }
 
-    private void closeNumberInputDialog() {
+    private void closeNameInputDialog() {
         if (isNameInputDialogShow()) {
             mNameInputDialog.getDialog().dismiss();
             mNameInputDialog = null;
@@ -336,7 +367,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         /**
          * 清除地图
          */
-        void onMapClean();
+        void onMapClear();
 
         /**
          * 保存地图

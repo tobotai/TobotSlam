@@ -75,7 +75,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         btnSort.setOnClickListener(this);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_point);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new ItemSplitLineDecoration(getActivity(), ItemSplitLineDecoration.VERTICAL, true));
+        recyclerView.addItemDecoration(new ItemSplitLineDecoration(getActivity(), ItemSplitLineDecoration.VERTICAL, R.color.popup_line_color, true));
         mAdapter = new LocationAdapter(getActivity(), R.layout.recycler_item_location);
         mAdapter.setOnLocationListener(this);
         recyclerView.setAdapter(mAdapter);
@@ -88,10 +88,11 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
         Logger.i(BaseConstant.TAG, "AddPointViewDialog requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (resultCode == Activity.RESULT_OK && data != null) {
             showLocationData(MyDBSource.getInstance(getActivity()).queryLocationList());
+            LocationBean bean = data.getParcelableExtra(BaseConstant.DATA_KEY);
             if (mOnPointListener != null) {
-                LocationBean bean = data.getParcelableExtra(BaseConstant.DATA_KEY);
                 mOnPointListener.onUpdateLocationLabel(data.getStringExtra(BaseConstant.NUMBER_KEY), bean);
             }
+            SlamManager.getInstance().updateSensorArea(bean);
         }
     }
 
