@@ -27,6 +27,11 @@ public class AppUtils {
         return info;
     }
 
+    public static String getVersion(Context context, String packageName) {
+        PackageInfo info = getPackageInfo(context, packageName);
+        return info != null ? info.versionName : "";
+    }
+
     public static Drawable getAppIcon(Context context, String packageName) {
         Drawable drawable = null;
         try {

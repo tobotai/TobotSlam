@@ -32,7 +32,6 @@ public class SharedPreferencesUtils {
                 }
             }
         }
-
         return sInstance;
     }
 

@@ -2,6 +2,7 @@ package com.tobot.map.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,7 +16,7 @@ import com.tobot.map.module.log.Logger;
  */
 public class SystemUtils {
 
-    protected void hideKeyBoard(Activity activity) {
+    public static void hideKeyBoard(Activity activity) {
         try {
             InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (manager != null && manager.isActive()) {
@@ -49,5 +50,17 @@ public class SystemUtils {
 
     public static int getDisplayHeight(Context context) {
         return context.getResources().getDisplayMetrics().heightPixels;
+    }
+
+    public static int getStatusBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
+    }
+
+    public static int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
     }
 }
