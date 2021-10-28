@@ -21,7 +21,7 @@ import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.net.HttpApi;
-import com.tobot.map.module.net.HttpResultCallBack;
+import com.tobot.map.module.net.HttpResultCallback;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 
@@ -72,7 +72,7 @@ public class DownloadManager {
     }
 
     public void checkUpdate(String url, final OnDownloadListener listener) {
-        HttpApi.queryVersion(url, new HttpResultCallBack<Response<ResponseBody>>() {
+        HttpApi.queryVersion(url, new HttpResultCallback<Response<ResponseBody>>() {
             @Override
             public void onHttpRequestResult(retrofit2.Response<ResponseBody> data) {
                 if (data != null) {
@@ -90,7 +90,7 @@ public class DownloadManager {
     public void downLoadApk(String url) {
         Logger.i(BaseConstant.TAG, "url=" + url);
         setNotification();
-        HttpApi.downloadFile(url, new HttpResultCallBack<Response<ResponseBody>>() {
+        HttpApi.downloadFile(url, new HttpResultCallback<Response<ResponseBody>>() {
             @Override
             public void onHttpRequestResult(Response<ResponseBody> data) {
                 if (data != null) {
