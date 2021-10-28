@@ -1,7 +1,9 @@
 package com.tobot.map.module.task;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,7 +26,7 @@ import java.util.List;
 public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClickListener, OnItemSelectedListener {
     private static final int MAX = 200;
     private static final float LINE_SPACE = 1.5f;
-    private static final int ITEM_VISIBLE_COUNT = 3;
+    private static final int ITEM_VISIBLE_COUNT = 5;
     private TextView tvTitle, tvTaskPoint, tvChargeSwitch, tvLoopCount, tvLoop;
     /**
      * 默认执行一次
@@ -46,6 +48,7 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
         return R.layout.dialog_task_execute_confirm;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initView(View view) {
         tvTitle = view.findViewById(R.id.tv_title);
@@ -66,6 +69,15 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
         wheelView.setOnItemSelectedListener(this);
         NumberWheelAdapter adapter = new NumberWheelAdapter(1, MAX);
         wheelView.setAdapter(adapter);
+        // 解决wheelView的滑动冲突
+        wheelView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // 屏蔽父类的事件
+                wheelView.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
     }
 
     @Override

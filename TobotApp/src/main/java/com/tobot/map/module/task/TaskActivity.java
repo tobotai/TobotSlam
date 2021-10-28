@@ -3,7 +3,6 @@ package com.tobot.map.module.task;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -14,6 +13,7 @@ import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.entity.RouteBean;
+import com.tobot.map.module.common.FlowLayoutManager;
 import com.tobot.map.module.common.GridItemDecoration;
 import com.tobot.map.module.log.Logger;
 import com.tobot.slam.data.LocationBean;
@@ -34,7 +34,6 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
     TextView tvTips;
     @BindView(R.id.recycler_route)
     RecyclerView recyclerView;
-    private static final int SPAN_COUNT = 5;
     private TaskAdapter mAdapter;
     private TaskDetailDialog mTaskDetailDialog;
     private TaskExecuteConfirmDialog mTaskExecuteConfirmDialog;
@@ -46,9 +45,9 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
 
     @Override
     protected void init() {
-        recyclerView.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
         int space = getResources().getDimensionPixelSize(R.dimen.item_split_size);
         recyclerView.addItemDecoration(new GridItemDecoration(space, space));
+        recyclerView.setLayoutManager(new FlowLayoutManager());
         mAdapter = new TaskAdapter(this, R.layout.recycler_item_task);
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnItemLongClickListener(this);

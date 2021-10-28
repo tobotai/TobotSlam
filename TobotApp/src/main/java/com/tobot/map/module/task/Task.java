@@ -49,6 +49,7 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     @Override
     public void onNavigateSensorTrigger(boolean isEnabled) {
         Logger.i(BaseConstant.TAG, "onNavigateSensorTrigger() isEnabled=" + isEnabled);
+        showToast("sensor isEnabled=" + isEnabled);
     }
 
     @Override
@@ -62,6 +63,12 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
         Logger.i(BaseConstant.TAG, "onNavigateRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
         this.isRelocateSuccess = isRelocateSuccess;
         handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
+    public void onNavigateSetPose(boolean isFinish) {
+        Logger.i(BaseConstant.TAG, "onNavigateSetPose() isFinish=" + isFinish);
+        handleNavigateSetPose(isFinish);
     }
 
     @Override
@@ -81,18 +88,28 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     @Override
     public void onObstacleTrigger() {
         Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
+        // 充电桩附近不处理
+        if (isChargeToPileNearby) {
+            return;
+        }
+
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
     public void onObstacleDisappear() {
         Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
+        if (isChargeToPileNearby) {
+            return;
+        }
+
         navigate();
     }
 
     @Override
     public void onChargeSensorTrigger(boolean isEnabled) {
         Logger.i(BaseConstant.TAG, "onChargeSensorTrigger() isEnabled=" + isEnabled);
+        showToast("sensor isEnabled=" + isEnabled);
     }
 
     @Override
@@ -105,6 +122,12 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     public void onChargeRelocateEnd(boolean isRelocateSuccess) {
         Logger.i(BaseConstant.TAG, "onChargeRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
         handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
+    public void onChargeToPileNearby() {
+        Logger.i(BaseConstant.TAG, "onChargeToPileNearby()");
+        isChargeToPileNearby = true;
     }
 
     @Override
@@ -154,7 +177,7 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
 
             if (mMoveStatus == MOVE_STATUS_CHARGE) {
                 mMoveStatus = MOVE_STATUS_IDLE;
-                SlamManager.getInstance().goHome(this);
+                goCharge();
             }
         }
     }
@@ -211,7 +234,7 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
             }
 
             if (isAddCharge) {
-                SlamManager.getInstance().goHome(this);
+                goCharge();
                 return;
             }
 
@@ -221,9 +244,13 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
         stop();
     }
 
+    private void goCharge() {
+        SlamManager.getInstance().goHome(DataHelper.getInstance().getChargeDistance(mContext), DataHelper.getInstance().getChargeOffset(mContext), this);
+    }
+
     private void continueNavigate() {
         if (isAddCharge) {
-            SlamManager.getInstance().goHome(this);
+            goCharge();
             return;
         }
 
