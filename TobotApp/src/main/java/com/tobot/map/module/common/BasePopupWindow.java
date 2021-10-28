@@ -60,7 +60,8 @@ public abstract class BasePopupWindow extends PopupWindow implements View.OnClic
         // 获取需要在其上方显示的控件的位置信息
         if (mX == 0 || mY == 0) {
             int[] location = new int[2];
-            parent.getLocationOnScreen(location);
+            // getLocationOnScreen在挖孔屏、刘海屏下有偏差
+            parent.getLocationInWindow(location);
             mX = (location[0] + parent.getWidth() / 2) - mPopupWidth / 2;
             mY = location[1] - mPopupHeight - mContext.getResources().getDimensionPixelOffset(R.dimen.popup_margin_bottom);
         }

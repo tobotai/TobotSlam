@@ -25,10 +25,14 @@ public class ItemSplitLineDecoration extends RecyclerView.ItemDecoration {
     private int mSplitLineHeight;
 
     public ItemSplitLineDecoration(Context context, int orientation, boolean isLastDraw) {
+        this(context, orientation, R.color.item_split_line, isLastDraw);
+    }
+
+    public ItemSplitLineDecoration(Context context, int orientation, int color, boolean isLastDraw) {
         mOrientation = orientation;
         this.isLastDraw = isLastDraw;
         mPaint = new Paint();
-        mPaint.setColor(ContextCompat.getColor(context, R.color.item_split_line));
+        mPaint.setColor(ContextCompat.getColor(context, color));
         mSplitLineHeight = context.getResources().getDimensionPixelSize(R.dimen.item_split_line_height);
     }
 

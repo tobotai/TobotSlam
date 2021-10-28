@@ -35,14 +35,6 @@ public class MoveData {
      * 遇障暂停
      */
     public static final int MEET_OBSTACLE_SUSPEND = 1;
-    /**
-     * 默认速度
-     */
-    public static final float DEFAULT_SPEED = 0.70f;
-    /**
-     * 默认旋转速度[0.05-2.0]
-     */
-    public static final float DEFAULT_ROTATE_SPEED = 1.0f;
     private int mNavigateMode = NAVIGATE_FREE;
     private int mMotionMode = MOTION_TO_POINT_ORDINARY;
     private int mObstacleMode = MEET_OBSTACLE_AVOID;
