@@ -2,15 +2,15 @@
 <resources>
     <string-array name="device_list">
         <item>S/N</item>
-        <item>firmware version</item>
-        <item>system version</item>
-        <item>control panel hardware version</item>
-        <item>control panel software version</item>
-        <item>control panel serial</item>
-        <item>mode</item>
+        <item>固件版本</item>
+        <item>系統版本</item>
+        <item>控制板硬件版本</item>
+        <item>控制板軟件版本</item>
+        <item>控制板序列號</item>
+        <item>模式</item>
         <item>SSID</item>
         <item>IP</item>
-        <item>charging state</item>
-        <item>map size</item>
+        <item>充電狀態</item>
+        <item>地圖大小</item>
     </string-array>
 </resources>
