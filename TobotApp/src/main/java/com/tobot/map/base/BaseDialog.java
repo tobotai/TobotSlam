@@ -70,11 +70,11 @@ public abstract class BaseDialog extends DialogFragment {
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 window.setGravity(Gravity.CENTER);
                 double percentage = getScreenWidthPercentage();
-                int width = (int) (SystemUtils.getDisplayWidth(getActivity()) * percentage);
+                int width = (int) (SystemUtils.getDisplayWidth(activity) * percentage);
                 // 如果屏幕宽的百分比不是100%的话，再考虑横竖屏的问题
                 if (percentage != 1) {
                     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        width = (int) (SystemUtils.getDisplayHeight(getActivity()) * percentage);
+                        width = (int) (SystemUtils.getDisplayHeight(activity) * percentage);
                     }
                 }
                 // 如果宽是全屏的话，则高也默认全屏

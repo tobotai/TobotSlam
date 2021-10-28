@@ -28,6 +28,13 @@ public class BaseApplication extends Application implements CrashHandler.OnUncau
     }
 
     @Override
+    public void onTerminate() {
+        super.onTerminate();
+        Logger.i(BaseConstant.TAG, "onTerminate()");
+        System.exit(0);
+    }
+
+    @Override
     public void onUncaughtException(String error) {
         Logger.i(BaseConstant.TAG, "error=" + error);
     }
