@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_head" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/view_margin_top"
+            android:paddingBottom="@dimen/view_margin_top">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:orientation="vertical">
+
+                <RadioGroup
+                    android:id="@+id/rg_sonar_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_sonar"
+                        style="@style/rb_speed"
+                        android:text="@string/sonar" />
+
+                    <RadioButton
+                        android:id="@+id/rb_cliff"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/cliff" />
+
+                    <RadioButton
+                        android:id="@+id/rb_all"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/all" />
+                </RadioGroup>
+
+                <LinearLayout
+                    android:id="@+id/ll_show_area_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/et_area_width"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_marginTop="@dimen/et_margin_top"
+                        android:background="@drawable/shape_edit_bg"
+                        android:digits="@string/et_float_num_format"
+                        android:gravity="center"
+                        android:hint="@string/et_area_width_hint"
+                        android:inputType="number|numberDecimal"
+                        android:textColor="@color/et_tv"
+                        android:textColorHint="@color/et_hint"
+                        android:textSize="@dimen/et_tv" />
+
+                    <EditText
+                        android:id="@+id/et_area_height"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_marginTop="@dimen/et_margin_top"
+                        android:background="@drawable/shape_edit_bg"
+                        android:digits="@string/et_float_num_format"
+                        android:gravity="center"
+                        android:hint="@string/et_area_height_hint"
+                        android:inputType="number|numberDecimal"
+                        android:textColor="@color/et_tv"
+                        android:textColorHint="@color/et_hint"
+                        android:textSize="@dimen/et_tv" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/tips_margin_top"
+                        android:text="@string/tv_close_sensor_tips"
+                        android:textColor="@color/tv_tips"
+                        android:textSize="@dimen/tv_tips" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_confirm"
+                    style="@style/btn_connect"
+                    android:layout_marginBottom="@dimen/view_margin_bottom"
+                    android:text="@string/btn_confirm" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

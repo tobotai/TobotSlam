@@ -16,7 +16,7 @@
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
         android:id="@+id/tv_virtual_track"
@@ -30,7 +30,7 @@
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
         android:id="@+id/tv_rubber"

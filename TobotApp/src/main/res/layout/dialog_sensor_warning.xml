@@ -13,6 +13,12 @@
         android:layout_marginTop="@dimen/dialog_layout_margin_top"
         android:layout_marginRight="@dimen/dialog_layout_margin_left">
 
+        <ImageView
+            android:id="@+id/iv_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_clear" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,12 +36,12 @@
             android:src="@drawable/ic_close" />
 
         <ImageView
-            android:id="@+id/iv_clear"
+            android:id="@+id/iv_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/dialog_layout_margin_left"
             android:layout_toLeftOf="@id/iv_close"
-            android:src="@drawable/ic_clear" />
+            android:src="@drawable/ic_delete_white" />
     </RelativeLayout>
 
     <View

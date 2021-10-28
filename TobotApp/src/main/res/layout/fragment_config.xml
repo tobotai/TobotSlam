@@ -33,35 +33,29 @@
                     android:textColor="@color/tv_content"
                     android:textSize="@dimen/tv_content" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <RadioGroup
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
+                    android:layout_marginTop="@dimen/view_margin_top"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tv_current_speed_tips"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/tv_tips"
-                        android:textSize="@dimen/tv_tips" />
+                    <RadioButton
+                        android:id="@+id/rb_speed_low"
+                        style="@style/rb_speed"
+                        android:text="@string/speed_low" />
 
-                    <com.tobot.bar.seekbar.StripSeekBar
-                        android:id="@+id/sb_speed"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/sb_speed_height"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
-                        android:paddingLeft="@dimen/sb_speed_padding_left"
-                        android:paddingRight="@dimen/sb_speed_padding_left"
-                        app:bar_bgColor="@color/sb_speed_bg"
-                        app:bar_centerColor="@color/sb_speed_center"
-                        app:bar_circleColor="@color/sb_speed_circle"
-                        app:bar_endColor="@color/sb_speed_end"
-                        app:bar_height="@dimen/sb_speed_bar_height"
-                        app:bar_startColor="@color/sb_speed_start"
-                        app:bar_textShow="false" />
-                </LinearLayout>
+                    <RadioButton
+                        android:id="@+id/rb_speed_medium"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/speed_medium" />
+
+                    <RadioButton
+                        android:id="@+id/rb_speed_high"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/speed_high" />
+                </RadioGroup>
 
                 <View style="@style/view_line" />
 
@@ -234,6 +228,31 @@
                     android:layout_marginTop="@dimen/view_margin_top" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_navigate_parameter"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/layout_item_height"
+                    android:background="@drawable/selector_item_bg"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/tv_navigate_parameter"
+                        android:textColor="@drawable/selector_tv_item"
+                        android:textSize="@dimen/tv_content" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right_arrow" />
+                </RelativeLayout>
+
+                <View style="@style/view_line" />
+
+                <RelativeLayout
                     android:id="@+id/rl_set_sensor_status"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_item_height"
@@ -282,50 +301,6 @@
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
-
-                <TextView
-                    android:id="@+id/tv_chassis_radius"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/tv_chassis_radius_tips"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/et_chassis_radius"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/et_height"
-                        android:layout_weight="3"
-                        android:background="@drawable/shape_edit_bg"
-                        android:digits="@string/et_float_num_format"
-                        android:gravity="center"
-                        android:hint="@string/et_chassis_radius_hint"
-                        android:inputType="number|numberDecimal"
-                        android:textColor="@color/et_tv"
-                        android:textSize="@dimen/et_tv" />
-
-                    <Button
-                        android:id="@+id/btn_set_chassis_radius"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/btn_height"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_btn_oval_bg"
-                        android:text="@string/btn_set"
-                        android:textColor="@color/tv_white"
-                        android:textSize="@dimen/btn_tv_size" />
-                </LinearLayout>
-
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
             </LinearLayout>
         </LinearLayout>
     </com.tobot.map.module.common.HorizontalConflictScrollView>

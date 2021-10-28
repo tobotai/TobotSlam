@@ -32,7 +32,7 @@
         android:id="@+id/recycler_route"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/view_margin_left_right"
-        android:layout_marginRight="@dimen/view_margin_left_right"
+        android:layout_marginLeft="@dimen/view_set_margin_left_right"
+        android:layout_marginRight="@dimen/view_set_margin_left_right"
         android:overScrollMode="never" />
 </LinearLayout>

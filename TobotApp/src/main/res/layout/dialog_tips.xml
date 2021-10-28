@@ -20,12 +20,14 @@
             android:layout_marginLeft="@dimen/dialog_layout_margin_left"
             android:layout_marginTop="@dimen/dialog_content_margin_top"
             android:layout_marginRight="@dimen/dialog_layout_margin_left"
+            android:lineSpacingExtra="@dimen/tv_line_space"
             android:textColor="@color/tv_white"
             android:textSize="@dimen/tv_content" />
     </LinearLayout>
 
     <Button
         android:id="@+id/btn_confirm"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dialog_btn_height"
         android:background="@drawable/selector_btn_bottom_bg"

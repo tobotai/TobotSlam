@@ -18,7 +18,7 @@
         kongqw:rockerRadius="@dimen/rocker_radius" />
 
     <View
-        style="@style/view_line"
+        style="@style/popup_view_line"
         android:layout_marginTop="@dimen/popup_margin_left_right" />
 
     <TextView

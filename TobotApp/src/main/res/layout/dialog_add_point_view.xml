@@ -26,7 +26,7 @@
     </RelativeLayout>
 
     <View
-        style="@style/view_line"
+        style="@style/popup_view_line"
         android:layout_marginLeft="@dimen/view_margin_top"
         android:layout_marginRight="@dimen/view_margin_top" />
 

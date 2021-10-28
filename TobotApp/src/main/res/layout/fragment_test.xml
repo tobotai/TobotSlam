@@ -148,6 +148,7 @@
 
                     <Button
                         android:id="@+id/btn_send"
+                        style="?android:attr/borderlessButtonStyle"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/btn_height"
                         android:layout_marginLeft="@dimen/sb_speed_padding_left"
@@ -162,71 +163,30 @@
                     style="@style/view_line"
                     android:layout_marginTop="@dimen/view_margin_top" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/get_sensor_count"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/rl_sensor_info"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
+                    android:layout_height="@dimen/layout_item_height"
+                    android:background="@drawable/selector_item_bg"
+                    android:gravity="center_vertical">
 
-                    <Button
-                        android:id="@+id/btn_sensor_sonar_count"
-                        style="@style/btn_sensor_count_style" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/tv_sensor_info"
+                        android:textColor="@drawable/selector_tv_item"
+                        android:textSize="@dimen/tv_content" />
 
-                    <Button
-                        android:id="@+id/btn_sensor_cliff_count"
-                        style="@style/btn_sensor_count_style"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right_arrow" />
+                </RelativeLayout>
 
-                    <Button
-                        android:id="@+id/btn_sensor_bumper_count"
-                        style="@style/btn_sensor_count_style"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
-                </LinearLayout>
-
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/get_sensor_status"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/btn_sensor_sonar_status"
-                        style="@style/btn_sensor_count_style" />
-
-                    <Button
-                        android:id="@+id/btn_sensor_cliff_status"
-                        style="@style/btn_sensor_count_style"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
-
-                    <Button
-                        android:id="@+id/btn_sensor_bumper_status"
-                        style="@style/btn_sensor_count_style"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left" />
-                </LinearLayout>
-
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
+                <View style="@style/view_line" />
 
                 <RelativeLayout
                     android:id="@+id/rl_get_sensor_detect_info"

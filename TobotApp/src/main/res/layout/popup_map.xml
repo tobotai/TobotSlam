@@ -19,7 +19,7 @@
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
         android:id="@+id/tv_add_point"
@@ -31,7 +31,7 @@
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
         android:id="@+id/tv_reset_charge"
@@ -43,7 +43,7 @@
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
         android:id="@+id/tv_relocation"
@@ -55,19 +55,19 @@
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
-        android:id="@+id/tv_clean_map"
+        android:id="@+id/tv_clear_map"
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_item_height"
         android:background="@drawable/selector_item_bg"
         android:gravity="center"
-        android:text="@string/tv_clean_map"
+        android:text="@string/tv_clear_map"
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 
-    <View style="@style/view_line" />
+    <View style="@style/popup_view_line" />
 
     <TextView
         android:id="@+id/tv_save_map"

@@ -35,25 +35,54 @@
                 android:hint="@string/et_hint_edit_location_english_tips"
                 android:inputType="textUri|textMultiLine" />
 
-            <Button
-                android:id="@+id/btn_update_location"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/btn_height"
-                android:layout_marginLeft="@dimen/view_margin_left_right"
-                android:layout_marginTop="@dimen/et_margin_top"
-                android:layout_marginRight="@dimen/view_margin_left_right"
-                android:background="@drawable/selector_btn_bg"
-                android:gravity="center"
-                android:text="@string/btn_update_location"
-                android:textColor="@color/tv_white"
-                android:textSize="@dimen/btn_tv_size" />
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/view_margin_left_right"
-                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_marginTop="@dimen/tips_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right">
+
+                <Button
+                    android:id="@+id/btn_update_location"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/btn_height"
+                    android:background="@drawable/selector_btn_oval_bg"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/btn_over_content_padding_left"
+                    android:paddingRight="@dimen/btn_over_content_padding_left"
+                    android:text="@string/btn_update_location"
+                    android:textColor="@color/tv_white"
+                    android:textSize="@dimen/btn_tv_size" />
+
+                <RadioGroup
+                    android:id="@+id/rg_location_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/rb_wall_margin"
+                    android:layout_toRightOf="@id/btn_update_location"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_mark_location"
+                        style="@style/rb_speed"
+                        android:text="@string/tv_mark_location" />
+
+                    <RadioButton
+                        android:id="@+id/rb_relocation"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/tv_relocation" />
+                </RadioGroup>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_show_relocation_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/tips_margin_top"
                 android:layout_marginRight="@dimen/view_margin_left_right"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -62,43 +91,90 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/tv_config_ultrasonic"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:drawableRight="@drawable/selector_switch"
-                        android:drawablePadding="@dimen/iv_drawable_padding"
-                        android:gravity="center_vertical"
-                        android:text="@string/tv_config_ultrasonic"
-                        android:textColor="@color/tv_content"
-                        android:textSize="@dimen/tv_content" />
-
                     <Button
-                        android:id="@+id/btn_ultrasonic_area"
+                        android:id="@+id/btn_set"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/btn_height"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/selector_btn_bg"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:background="@drawable/selector_btn_oval_bg"
                         android:gravity="center"
-                        android:paddingLeft="@dimen/btn_area_padding_left"
-                        android:paddingRight="@dimen/btn_area_padding_left"
-                        android:text="@string/btn_ultrasonic_area"
+                        android:paddingLeft="@dimen/btn_over_content_padding_left"
+                        android:paddingRight="@dimen/btn_over_content_padding_left"
+                        android:text="@string/btn_set"
                         android:textColor="@color/tv_white"
                         android:textSize="@dimen/btn_tv_size" />
+
+                    <EditText
+                        android:id="@+id/et_relocation_area_width"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_toLeftOf="@id/btn_set"
+                        android:background="@drawable/shape_edit_bg"
+                        android:digits="@string/et_float_num_format"
+                        android:gravity="center"
+                        android:hint="@string/et_relocation_area_width"
+                        android:inputType="number|numberDecimal"
+                        android:textColor="@color/et_tv"
+                        android:textColorHint="@color/et_hint"
+                        android:textSize="@dimen/et_tv" />
+
+                    <EditText
+                        android:id="@+id/et_relocation_area_height"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/et_height"
+                        android:layout_below="@id/et_relocation_area_width"
+                        android:layout_marginTop="@dimen/et_margin_top"
+                        android:layout_toLeftOf="@id/btn_set"
+                        android:background="@drawable/shape_edit_bg"
+                        android:digits="@string/et_float_num_format"
+                        android:gravity="center"
+                        android:hint="@string/et_relocation_area_height"
+                        android:inputType="number|numberDecimal"
+                        android:textColor="@color/et_tv"
+                        android:textColorHint="@color/et_hint"
+                        android:textSize="@dimen/et_tv" />
                 </RelativeLayout>
 
-                <View style="@style/view_line" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/tips_margin_top"
+                    android:text="@string/tv_relocation_area_tips"
+                    android:textColor="@color/tv_tips"
+                    android:textSize="@dimen/tv_tips" />
             </LinearLayout>
+
+            <View
+                style="@style/view_line"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/tips_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right" />
+
+            <Button
+                android:id="@+id/btn_close_sensor"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginLeft="@dimen/view_margin_left_right"
+                android:layout_marginTop="@dimen/tips_margin_top"
+                android:layout_marginRight="@dimen/view_margin_left_right"
+                android:background="@drawable/selector_btn_oval_bg"
+                android:gravity="center"
+                android:paddingLeft="@dimen/btn_over_content_padding_left"
+                android:paddingRight="@dimen/btn_over_content_padding_left"
+                android:text="@string/btn_close_sensor"
+                android:textColor="@color/tv_white"
+                android:textSize="@dimen/btn_tv_size" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/view_margin_left_right"
-                android:layout_marginTop="@dimen/et_margin_top"
+                android:layout_marginTop="@dimen/tips_margin_top"
                 android:layout_marginRight="@dimen/view_margin_left_right"
                 android:text="@string/name_edit_rule_tips"
                 android:textColor="@color/tv_tips"
