@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="shape_btn_map_refresh_size">60dp</dimen>
+    <dimen name="head_tv_size">19sp</dimen>
+    <dimen name="tv_big">22sp</dimen>
+    <dimen name="tv_title">17sp</dimen>
+    <dimen name="tv_content">16sp</dimen>
+    <dimen name="tv_tips">15sp</dimen>
+    <dimen name="btn_tv_size">16sp</dimen>
+    <dimen name="et_tv">16sp</dimen>
+</resources>
