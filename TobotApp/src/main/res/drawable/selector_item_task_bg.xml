@@ -2,21 +2,21 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/shape_btn_corners" />
-            <solid android:color="@color/layout_item_pressed_bg" />
+            <corners android:radius="@dimen/shape_oval_corners_radius" />
+            <solid android:color="@color/shape_btn_normal" />
         </shape>
     </item>
 
-    <item android:state_selected="true">
+    <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/shape_btn_corners" />
-            <solid android:color="@color/layout_item_pressed_bg" />
+            <corners android:radius="@dimen/shape_oval_corners_radius" />
+            <solid android:color="@color/shape_btn_normal" />
         </shape>
     </item>
 
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/shape_btn_corners" />
+            <corners android:radius="@dimen/shape_oval_corners_radius" />
             <solid android:color="@color/shape_tv_point_bg" />
         </shape>
     </item>
