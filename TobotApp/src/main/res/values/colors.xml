@@ -15,6 +15,7 @@
     <color name="shape_btn_normal">#3788FB</color>
     <color name="shape_btn_pressed">#2F6EC9</color>
     <color name="item_split_line">#EDEDED</color>
+    <color name="popup_line_color">#98989F</color>
     <color name="shape_bg">#80000000</color>
     <color name="shape_dialog_bg">#3788FB</color>
     <color name="shape_dialog_load_bg">#80000000</color>
@@ -36,7 +37,6 @@
     <color name="wheelView_textColorOut">#EDEDED</color>
     <color name="wheelView_textColorCenter">#FFFFFF</color>
     <color name="wheelView_dividerColor">#EDEDED</color>
-    <color name="tv_socket_connect_success_tips">#00FF00</color>
     <color name="tv_rssi_tips">#FFFF00</color>
     <color name="shape_btn_circle_normal">#FE7700</color>
 </resources>

@@ -32,6 +32,12 @@
         <item name="android:background">@color/item_split_line</item>
     </style>
 
+    <style name="popup_view_line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/item_split_line_height</item>
+        <item name="android:background">@color/popup_line_color</item>
+    </style>
+
     <style name="btn_item_style" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/btn_item_height</item>
