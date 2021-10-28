@@ -9,6 +9,8 @@ import android.widget.RadioGroup;
 
 import com.tobot.map.R;
 import com.tobot.slam.SlamManager;
+import com.tobot.slam.data.Rubber;
+import com.tobot.slam.view.MapView;
 
 /**
  * @author houdeming
@@ -16,6 +18,7 @@ import com.tobot.slam.SlamManager;
  */
 public class RubberEditView extends LinearLayout implements View.OnClickListener {
     private RadioGroup radioGroup;
+    private MapView mMapView;
     private OnEditListener mOnEditListener;
 
     public RubberEditView(Context context) {
@@ -41,26 +44,31 @@ public class RubberEditView extends LinearLayout implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_back:
-                callBackEditOption(OnEditListener.OPTION_CLOSE);
+                if (mOnEditListener != null) {
+                    mOnEditListener.onEditClose();
+                }
                 break;
             case R.id.rb_wipe_white:
-                callBackEditOption(OnEditListener.OPTION_WIPE_WHITE);
+                setRubberMode(Rubber.RUBBER_WHITE);
                 break;
             case R.id.rb_wipe_grey:
-                callBackEditOption(OnEditListener.OPTION_WIPE_GREY);
+                setRubberMode(Rubber.RUBBER_GREY);
                 break;
             case R.id.rb_wipe_black:
-                callBackEditOption(OnEditListener.OPTION_WIPE_BLACK);
+                setRubberMode(Rubber.RUBBER_BLACK);
                 break;
             case R.id.rb_wipe_cancel:
-                callBackEditOption(OnEditListener.OPTION_WIPE_CANCEL);
+                if (mMapView != null) {
+                    mMapView.closeRubber();
+                }
                 break;
             default:
                 break;
         }
     }
 
-    public void init(OnEditListener listener) {
+    public void init(MapView mapView, OnEditListener listener) {
+        mMapView = mapView;
         mOnEditListener = listener;
         radioGroup.clearCheck();
         setVisibility(VISIBLE);
@@ -69,12 +77,15 @@ public class RubberEditView extends LinearLayout implements View.OnClickListener
     }
 
     public void remove() {
+        if (mMapView != null) {
+            mMapView.closeRubber();
+        }
         setVisibility(GONE);
     }
 
-    private void callBackEditOption(int option) {
-        if (mOnEditListener != null) {
-            mOnEditListener.onEditOption(option);
+    private void setRubberMode(Rubber rubber) {
+        if (mMapView != null) {
+            mMapView.setRubberMode(rubber);
         }
     }
 }

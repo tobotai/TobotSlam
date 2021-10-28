@@ -7,9 +7,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
+import com.slamtec.slamware.geometry.Line;
+import com.slamtec.slamware.geometry.PointF;
+import com.slamtec.slamware.robot.ArtifactUsage;
 import com.tobot.map.R;
+import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.db.MyDBSource;
+import com.tobot.slam.SlamManager;
 import com.tobot.slam.data.LocationBean;
+import com.tobot.slam.view.MapView;
 
 import java.util.List;
 
@@ -17,11 +23,14 @@ import java.util.List;
  * @author houdeming
  * @date 2020/5/9
  */
-public class EditLineView extends LinearLayout implements View.OnClickListener {
+public class EditLineView extends LinearLayout implements View.OnClickListener, BaseRecyclerAdapter.OnItemClickListener<LocationBean> {
     private RadioGroup radioGroup;
     private int mEditType;
+    private MapView mMapView;
     private AddLineView mAddLineView;
     private OnEditListener mOnEditListener;
+    private boolean isStart;
+    private PointF mPointStart, mPointEnd;
 
     public EditLineView(Context context) {
         this(context, null);
@@ -45,25 +54,42 @@ public class EditLineView extends LinearLayout implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_back:
-                callBackEditOption(OnEditListener.OPTION_CLOSE);
+                if (mOnEditListener != null) {
+                    mOnEditListener.onEditClose();
+                }
                 break;
             case R.id.rb_add_line:
-                callBackEditOption(OnEditListener.OPTION_ADD);
-                showAddLineView();
+                ArtifactUsage artifactUsage = getArtifactUsage();
+                showAddLineView(artifactUsage);
+                if (mMapView != null) {
+                    mMapView.setLine(artifactUsage);
+                }
                 break;
             case R.id.rb_remove_line:
-                callBackEditOption(OnEditListener.OPTION_REMOVE);
+                if (mMapView != null) {
+                    mMapView.removeLine(getArtifactUsage());
+                }
                 break;
             case R.id.rb_clear_line:
-                callBackEditOption(OnEditListener.OPTION_CLEAR);
+                if (mMapView != null) {
+                    mMapView.clearLines(getArtifactUsage());
+                }
                 break;
             default:
                 break;
         }
     }
 
-    public void init(int editType, AddLineView view, OnEditListener listener) {
+    @Override
+    public void onItemClick(int position, LocationBean data) {
+        if (data != null) {
+            addLine(new PointF(data.getX(), data.getY()));
+        }
+    }
+
+    public void init(int editType, MapView mapView, AddLineView view, OnEditListener listener) {
         mEditType = editType;
+        mMapView = mapView;
         mAddLineView = view;
         mOnEditListener = listener;
         radioGroup.clearCheck();
@@ -71,26 +97,48 @@ public class EditLineView extends LinearLayout implements View.OnClickListener {
     }
 
     public void remove() {
+        if (mMapView != null) {
+            mMapView.resetLine();
+        }
+
         setVisibility(GONE);
         if (mAddLineView != null && mAddLineView.getVisibility() == VISIBLE) {
             mAddLineView.remove();
         }
     }
 
-    private void callBackEditOption(int option) {
-        if (mOnEditListener != null) {
-            mOnEditListener.onEditOption(option);
-        }
+    private ArtifactUsage getArtifactUsage() {
+        return mEditType == OnEditListener.TYPE_VIRTUAL_WALL ? ArtifactUsage.ArtifactUsageVirutalWall : ArtifactUsage.ArtifactUsageVirtualTrack;
     }
 
-    private void showAddLineView() {
+    private void showAddLineView(ArtifactUsage artifactUsage) {
         // 只有添加虚拟轨道的时候显示
-        if (mEditType == OnEditListener.TYPE_VIRTUAL_TRACK && mAddLineView != null && mAddLineView.getVisibility() != VISIBLE) {
+        if (artifactUsage == ArtifactUsage.ArtifactUsageVirutalWall) {
+            return;
+        }
+
+        if (mAddLineView != null && mAddLineView.getVisibility() != VISIBLE) {
             List<LocationBean> dataList = MyDBSource.getInstance(getContext()).queryLocationList();
             // 有位置点的话才显示，否则不显示
             if (dataList != null && !dataList.isEmpty()) {
-                mAddLineView.init(dataList, mOnEditListener);
+                mAddLineView.init(dataList, this);
+                isStart = false;
             }
+        }
+    }
+
+    private void addLine(PointF pointF) {
+        if (isStart) {
+            isStart = false;
+            mPointEnd = pointF;
+        } else {
+            isStart = true;
+            mPointStart = pointF;
+        }
+
+        mMapView.setLine(getArtifactUsage(), pointF);
+        if (!isStart) {
+            SlamManager.getInstance().addLineAsync(getArtifactUsage(), new Line(mPointStart, mPointEnd), null);
         }
     }
 }
