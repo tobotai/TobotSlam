@@ -74,10 +74,6 @@ public class BaseConstant {
         return getMapDirectory(context).concat(File.separator).concat(number).concat(FILE_MAP_NAME_SUFFIX);
     }
 
-    /**
-     * 定位质量的最小值（根据实际情况调整，定位质量低于40超过3秒就停了）
-     */
-    public static final int LOCALIZATION_QUALITY_MIN = 43;
     public static final String DATA_KEY = "data_key";
     public static final String NUMBER_KEY = "number_key";
     public static final String CONTENT_KEY = "content_key";
@@ -105,18 +101,13 @@ public class BaseConstant {
      */
     public static final float MIN_NAVIGATE_SPEED = 0.1f;
     /**
-     * 最大旋转速度
+     * 最大旋转速度[0.05-2.0]
      */
     public static final float MAX_ROTATE_SPEED = 2.0f;
     /**
      * 最小旋转速度
      */
     public static final float MIN_ROTATE_SPEED = 0.1f;
-
-    /**
-     * 默认底盘半径
-     */
-    public static final float CHASSIS_RADIUS_DEFAULT = 0.25f;
 
     public static final int LOG_NO = 0;
     public static final int LOG_LOGCAT = 1;
