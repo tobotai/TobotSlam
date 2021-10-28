@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 public abstract class AbstractPathMonitor implements OnObstacleListener {
     protected Context mContext;
     protected MainActivity mActivity;
+    protected boolean isChargeToPileNearby;
 
     public AbstractPathMonitor(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
         mContext = contextWeakReference.get();
@@ -24,6 +25,7 @@ public abstract class AbstractPathMonitor implements OnObstacleListener {
 
     protected void startMonitor() {
         if (MoveData.getInstance().getObstacleMode() == MoveData.MEET_OBSTACLE_SUSPEND) {
+            isChargeToPileNearby = false;
             SlamManager.getInstance().startMonitorObstacle(this);
         }
     }
@@ -47,6 +49,12 @@ public abstract class AbstractPathMonitor implements OnObstacleListener {
     protected void handleRelocateResult(boolean isRelocateSuccess) {
         if (mActivity != null) {
             mActivity.handleRelocateResult(isRelocateSuccess);
+        }
+    }
+
+    protected void handleNavigateSetPose(boolean isFinish) {
+        if (mActivity != null) {
+            mActivity.handleNavigateSetPose(isFinish);
         }
     }
 

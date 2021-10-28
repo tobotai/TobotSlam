@@ -2,6 +2,7 @@ package com.tobot.map.module.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -42,7 +43,6 @@ import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnSlamExceptionListener;
 import com.tobot.slam.data.LocationBean;
-import com.tobot.slam.data.Rubber;
 import com.tobot.slam.view.MapView;
 
 import java.lang.ref.WeakReference;
@@ -73,8 +73,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     TextView tvRssi;
     @BindView(R.id.tv_count)
     TextView tvCount;
-    @BindView(R.id.tv_socket_connect_success_tips)
-    TextView tvSocketConnectTips;
     @BindView(R.id.ll_control)
     LinearLayout llControl;
     @BindView(R.id.iv_set)
@@ -95,9 +93,8 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     private ActionPopupWindow mActionPopupWindow;
     private MapPopupWindow mMapPopupWindow;
     private EditPopupWindow mEditPopupWindow;
-    private int mEditType, mOption, mLowBatteryStatus, mLocationQuality;
-    private MapClickHandle mMapClickHandle;
-    private boolean isHandleMove, isShowTips, isUpdateMap, isDisconnect;
+    private int mLowBatteryStatus, mLocationQuality;
+    private boolean isHandleMove, isShowTips, isUpdateMap, isDisconnect, isShowRelocationTips;
     private Charge mCharge;
     private static final int LOW_BATTERY = 1;
     private TipsDialog mTipsDialog;
@@ -121,7 +118,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         SlamManager.getInstance().setOnSlamExceptionListener(this);
         mapView.setOnMapListener(this);
         mMapHelper = new MapHelper(new WeakReference<>(this), new WeakReference<>(this), new WeakReference<>(mapView));
-        mMapClickHandle = new MapClickHandle(new WeakReference<>(this), new WeakReference<>(mapView));
         mNavigate = new Navigate(new WeakReference<>(this), new WeakReference<>(this));
         mTask = new Task(new WeakReference<>(this), new WeakReference<>(this));
         mCharge = new Charge(new WeakReference<>(this), new WeakReference<>(this));
@@ -142,9 +138,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                 // 地图界面上的位置点提示
                 mapView.addLocationLabel(true, MyDBSource.getInstance(this).queryLocationList());
                 // 切换后要更新一下地图界面
-                if (mMapHelper != null) {
-                    mMapHelper.updateMap();
-                }
+                updateMap();
                 return;
             }
 
@@ -232,8 +226,15 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     @Override
     public void onMapClick(MotionEvent event) {
-        if (mMapClickHandle != null) {
-            mMapClickHandle.handleMapClick(mEditType, mOption, event, isHandleMove);
+        if (isHandleMove) {
+            PointF pointF = mapView.widgetCoordinateToMapCoordinate(event.getX(), event.getY());
+            mapView.setClickTips(pointF);
+            if (pointF != null) {
+                LocationBean bean = new LocationBean();
+                bean.setX(pointF.getX());
+                bean.setY(pointF.getY());
+                onMoveTo(bean);
+            }
         }
     }
 
@@ -249,8 +250,21 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     @Override
     public void onHealthInfo(int code, String info) {
+        // 如果电机异常的话，就停止运动
+        if (code == SlamCode.CODE_MOTOR_ERROR) {
+            handleTvStopClick();
+        }
+
         recordWarningInfo(code, info);
 //        showTipsDialog(info);
+    }
+
+    @Override
+    public void onRelocationArea(RectF area) {
+        Logger.i(BaseConstant.TAG, "onRelocationArea()");
+        if (mMapPopupWindow != null) {
+            mMapPopupWindow.relocationPart(area);
+        }
     }
 
     @Override
@@ -297,9 +311,9 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     @Override
-    public void onMapClean() {
+    public void onMapClear() {
         if (mMapPopupWindow != null) {
-            mMapPopupWindow.showConfirmDialog(getSupportFragmentManager(), getString(R.string.tv_clean_map_tips));
+            mMapPopupWindow.showConfirmDialog(getSupportFragmentManager(), getString(R.string.tv_clear_map_tips));
         }
     }
 
@@ -312,56 +326,24 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     @Override
     public void onEditClick(int type) {
-        mEditType = type;
         llControl.setVisibility(View.GONE);
         ivSet.setVisibility(View.GONE);
         if (type == OnEditListener.TYPE_RUBBER) {
-            rubberEditView.init(this);
+            rubberEditView.init(mapView, this);
             return;
         }
 
-        editLineView.init(type, addLineView, this);
+        editLineView.init(type, mapView, addLineView, this);
     }
 
     @Override
-    public void onEditOption(int option) {
-        mOption = option;
-        switch (option) {
-            case OnEditListener.OPTION_CLOSE:
-                if (editLineView.getVisibility() == View.VISIBLE) {
-                    removeEditLineView();
-                    return;
-                }
-
-                removeRubberView();
-                break;
-            case OnEditListener.OPTION_WIPE_WHITE:
-                mapView.setRubberMode(Rubber.RUBBER_WHITE);
-                break;
-            case OnEditListener.OPTION_WIPE_GREY:
-                mapView.setRubberMode(Rubber.RUBBER_GREY);
-                break;
-            case OnEditListener.OPTION_WIPE_BLACK:
-                mapView.setRubberMode(Rubber.RUBBER_BLACK);
-                break;
-            case OnEditListener.OPTION_WIPE_CANCEL:
-                mapView.closeRubber();
-                break;
-            case OnEditListener.OPTION_CLEAR:
-                if (mMapClickHandle != null) {
-                    mMapClickHandle.clearLines(mEditType);
-                }
-                break;
-            default:
-                break;
+    public void onEditClose() {
+        if (editLineView.getVisibility() == View.VISIBLE) {
+            removeEditLineView();
+            return;
         }
-    }
 
-    @Override
-    public void onAddLine(PointF pointF) {
-        if (mMapClickHandle != null) {
-            mMapClickHandle.addLine(mEditType, pointF);
-        }
+        removeRubberView();
     }
 
     @Override
@@ -456,14 +438,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         DataHelper.getInstance().setWarningData(info);
     }
 
-    public void moveTo(float x, float y, float yaw) {
-        if (mNavigate != null) {
-            mNavigate.moveTo(x, y, yaw);
-        }
-    }
-
     public void showToast(String tips) {
-        showToastTips(tips);
+        if (!isFinish) {
+            showToastTips(tips);
+        }
     }
 
     public void updatePoseShow(Pose pose) {
@@ -490,10 +468,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         });
     }
 
-    public void cleanMapResult(boolean isSuccess) {
+    public void clearMapResult(boolean isSuccess) {
         if (isSuccess) {
-            mapView.clearLocationLabel();
-            mapView.setCentred();
+            mapView.clearMap();
+            updateMap();
         }
     }
 
@@ -539,7 +517,20 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         });
     }
 
+    public void setRelocationPart(boolean isRelocationPart) {
+        mapView.setRelocationPart(isRelocationPart);
+        // 只提示1次
+        if (isRelocationPart && !isShowRelocationTips) {
+            isShowRelocationTips = true;
+            showTipsDialog(getString(R.string.tv_relocation_part_tips));
+        }
+    }
+
     public void showRelocateTips() {
+        if (isFinish) {
+            return;
+        }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -549,6 +540,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     public void handleRelocateResult(boolean isRelocateSuccess) {
+        if (isFinish) {
+            return;
+        }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -558,10 +553,37 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         });
     }
 
+    public void handleNavigateSetPose(boolean isSetFinish) {
+        if (isFinish) {
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isSetFinish) {
+                    closeLoadTipsDialog();
+                    return;
+                }
+
+                showLoadTipsDialog(getString(R.string.set_pose_tips), null);
+            }
+        });
+    }
+
     public void handleMoveFail() {
         // 建图时定位质量为0
-        if (mLocationQuality > 0 && mLocationQuality < SlamCode.RECOVER_QUALITY_MIN) {
-            showTipsDialog(getString(R.string.move_recover_quality_low_tips, SlamCode.RECOVER_QUALITY_MIN));
+        if (mLocationQuality > 0 && !isFinish) {
+            int minQuality = SlamManager.getInstance().getRelocationQualityMin();
+            if (mLocationQuality < minQuality) {
+                showTipsDialog(getString(R.string.move_recover_quality_low_tips, minQuality));
+            }
+        }
+    }
+
+    public void updateMap() {
+        if (mMapHelper != null) {
+            mMapHelper.updateMap();
         }
     }
 
@@ -623,6 +645,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     private void handleTvStopClick() {
+        setRelocationPart(false);
         if (mTask != null) {
             mTask.stop();
         }
@@ -653,16 +676,13 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     private void removeEditLineView() {
-        mOption = OnEditListener.OPTION_CLOSE;
         editLineView.remove();
         llControl.setVisibility(View.VISIBLE);
         ivSet.setVisibility(View.VISIBLE);
     }
 
     private void removeRubberView() {
-        mOption = OnEditListener.OPTION_CLOSE;
         rubberEditView.remove();
-        mapView.closeRubber();
         llControl.setVisibility(View.VISIBLE);
         ivSet.setVisibility(View.VISIBLE);
     }

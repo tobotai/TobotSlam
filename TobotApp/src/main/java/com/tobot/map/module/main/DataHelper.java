@@ -11,6 +11,7 @@ import com.tobot.map.module.main.warning.WarningInfo;
 import com.tobot.map.util.SharedPreferencesUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
+import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.data.LocationBean;
 
 import java.io.File;
@@ -27,11 +28,16 @@ public class DataHelper {
     private static final String IP_SOCKET_KEY = "ip_socket_key";
     private static final String TRY_TIME_KEY = "try_time_key";
     private static final String LOG_KEY = "log_key";
+    private static final String RELOCATION_TYPE_KEY = "relocation_type_key";
     private static final String CHASSIS_RADIUS_KEY = "chassis_radius_key";
+    private static final String RELOCATION_MIN_KEY = "relocation_min_key";
+    private static final String RELOCATION_SAFE_KEY = "relocation_safe_key";
+    private static final String CHARGE_DISTANCE_KEY = "charge_distance_key";
+    private static final String CHARGE_OFFSET_KEY = "charge_offset_key";
     private String mMapName, mIp;
-    private int mLowBattery, mTryTime, mLogType;
+    private int mLowBattery, mTryTime, mLogType, mRelocationQuality, mRelocationSafeValue, mRelocationType;
     private List<WarningInfo> mWarningList;
-    private float mChassisRadius;
+    private float mChassisRadius, mChargeDistance, mChargeOffset;
 
     private static class BaseDataHolder {
         private static final DataHelper INSTANCE = new DataHelper();
@@ -49,26 +55,26 @@ public class DataHelper {
         return mMapName;
     }
 
-    public void requestNavigateCondition(Context context, NavigateConditionCallBack callBack) {
+    public void requestNavigateCondition(Context context, NavigateConditionCallback callback) {
         // 急停按钮，请在线程中判断
         if (SlamManager.getInstance().isSystemEmergencyStop()) {
-            callBackNavigateCondition(false, context.getString(R.string.emergency_stop_tips), callBack);
+            callbackNavigateCondition(false, context.getString(R.string.emergency_stop_tips), callback);
             return;
         }
 
         // 刹车按钮，请在线程中判断
         if (SlamManager.getInstance().isSystemBrakeStop()) {
-            callBackNavigateCondition(false, context.getString(R.string.break_stop_tips), callBack);
+            callbackNavigateCondition(false, context.getString(R.string.break_stop_tips), callback);
             return;
         }
 
         // 如果在直充的话，不允许导航
         if (SlamManager.getInstance().isDirectCharge()) {
-            callBackNavigateCondition(false, context.getString(R.string.direct_charge_to_navigate_tips), callBack);
+            callbackNavigateCondition(false, context.getString(R.string.direct_charge_to_navigate_tips), callback);
             return;
         }
 
-        callBackNavigateCondition(true, "", callBack);
+        callbackNavigateCondition(true, "", callback);
     }
 
     public List<LocationBean> getLocationBeanList(Context context, String mapNumber) {
@@ -82,7 +88,7 @@ public class DataHelper {
         return list;
     }
 
-    public void requestMapNameList(final Context context, final MapRequestCallBack callBack) {
+    public void requestMapNameList(final Context context, final MapRequestCallback callback) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -95,26 +101,26 @@ public class DataHelper {
                     }
                 }
 
-                if (callBack != null) {
-                    callBack.onMapList(map);
+                if (callback != null) {
+                    callback.onMapList(map);
                 }
             }
         });
     }
 
-    public void requestMapFileList(final Context context, final MapRequestCallBack callBack) {
+    public void requestMapFileList(final Context context, final MapRequestCallback callback) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 List<String> data = SlamManager.getInstance().getMapList(BaseConstant.getMapDirectory(context), BaseConstant.FILE_MAP_NAME_SUFFIX);
-                if (callBack != null) {
-                    callBack.onMapList(data);
+                if (callback != null) {
+                    callback.onMapList(data);
                 }
             }
         });
     }
 
-    public void requestMapPathList(final Context context, final MapRequestCallBack callBack) {
+    public void requestMapPathList(final Context context, final MapRequestCallback callback) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -126,20 +132,20 @@ public class DataHelper {
                     }
                 }
 
-                if (callBack != null) {
-                    callBack.onMapList(path);
+                if (callback != null) {
+                    callback.onMapList(path);
                 }
             }
         });
     }
 
-    private void callBackNavigateCondition(boolean isCanNavigate, String reason, NavigateConditionCallBack callBack) {
-        if (callBack != null) {
-            callBack.onResult(isCanNavigate, reason);
+    private void callbackNavigateCondition(boolean isCanNavigate, String reason, NavigateConditionCallback callback) {
+        if (callback != null) {
+            callback.onResult(isCanNavigate, reason);
         }
     }
 
-    public interface NavigateConditionCallBack {
+    public interface NavigateConditionCallback {
         /**
          * 导航条件的结果
          *
@@ -149,7 +155,7 @@ public class DataHelper {
         void onResult(boolean isCanNavigate, String reason);
     }
 
-    public interface MapRequestCallBack {
+    public interface MapRequestCallback {
         /**
          * 地图请求的列表
          *
@@ -275,6 +281,18 @@ public class DataHelper {
         return mLogType;
     }
 
+    public void setRelocationType(Context context, int type) {
+        mRelocationType = type;
+        SharedPreferencesUtils.getInstance(context).putInt(RELOCATION_TYPE_KEY, type);
+    }
+
+    public int getRelocationType(Context context) {
+        if (mRelocationType == 0) {
+            mRelocationType = SharedPreferencesUtils.getInstance(context).getInt(RELOCATION_TYPE_KEY, SlamCode.RELOCATION_PART);
+        }
+        return mRelocationType;
+    }
+
     public void setChassisRadius(Context context, float value) {
         mChassisRadius = value;
         SharedPreferencesUtils.getInstance(context).putFloat(CHASSIS_RADIUS_KEY, value);
@@ -282,9 +300,57 @@ public class DataHelper {
 
     public float getChassisRadius(Context context) {
         if (mChassisRadius == 0) {
-            mChassisRadius = SharedPreferencesUtils.getInstance(context).getFloat(CHASSIS_RADIUS_KEY, BaseConstant.CHASSIS_RADIUS_DEFAULT);
+            mChassisRadius = SharedPreferencesUtils.getInstance(context).getFloat(CHASSIS_RADIUS_KEY, SlamCode.CHASSIS_RADIUS_DEFAULT);
         }
         return mChassisRadius;
+    }
+
+    public void setRelocationQualityMin(Context context, int value) {
+        mRelocationQuality = value;
+        SharedPreferencesUtils.getInstance(context).putInt(RELOCATION_MIN_KEY, value);
+    }
+
+    public int getRelocationQualityMin(Context context) {
+        if (mRelocationQuality == 0) {
+            mRelocationQuality = SharedPreferencesUtils.getInstance(context).getInt(RELOCATION_MIN_KEY, SlamCode.RELOCATION_QUALITY_MIN);
+        }
+        return mRelocationQuality;
+    }
+
+    public void setRelocationQualitySafe(Context context, int value) {
+        mRelocationSafeValue = value;
+        SharedPreferencesUtils.getInstance(context).putInt(RELOCATION_SAFE_KEY, value);
+    }
+
+    public int getRelocationQualitySafe(Context context) {
+        if (mRelocationSafeValue == 0) {
+            mRelocationSafeValue = SharedPreferencesUtils.getInstance(context).getInt(RELOCATION_SAFE_KEY, SlamCode.RELOCATION_QUALITY_SAFE);
+        }
+        return mRelocationSafeValue;
+    }
+
+    public void setChargeDistance(Context context, float value) {
+        mChargeDistance = value;
+        SharedPreferencesUtils.getInstance(context).putFloat(CHARGE_DISTANCE_KEY, value);
+    }
+
+    public float getChargeDistance(Context context) {
+        if (mChargeDistance == 0) {
+            mChargeDistance = SharedPreferencesUtils.getInstance(context).getFloat(CHARGE_DISTANCE_KEY, SlamCode.CHARGE_DISTANCE_X);
+        }
+        return mChargeDistance;
+    }
+
+    public void setChargeOffset(Context context, float value) {
+        mChargeOffset = value;
+        SharedPreferencesUtils.getInstance(context).putFloat(CHARGE_OFFSET_KEY, value);
+    }
+
+    public float getChargeOffset(Context context) {
+        if (mChargeOffset == 0) {
+            mChargeOffset = SharedPreferencesUtils.getInstance(context).getFloat(CHARGE_OFFSET_KEY, SlamCode.CHARGE_OFFSET_Y);
+        }
+        return mChargeOffset;
     }
 
     public void setWarningData(WarningInfo info) {

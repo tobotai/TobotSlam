@@ -48,6 +48,7 @@ public class MapService extends Service implements OnDownloadListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.i(BaseConstant.TAG, "onCreate()");
         new FolderCreate(this);
         if (DataHelper.getInstance().getLogType(this) == BaseConstant.LOG_ADB) {
             mLogRunnable = new LogRunnable(this, "tobotSlam | slamLog", BaseConstant.getLogDirectory(this), BaseConstant.getAdbLogFileName(this));

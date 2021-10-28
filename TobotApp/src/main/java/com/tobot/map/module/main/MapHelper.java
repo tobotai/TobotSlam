@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 class MapHelper {
     private Context mContext;
     private MapThread mMapThread;
+    private MapDataThread mMapDataThread;
     private MainActivity mActivity;
     private MapView mMapView;
     private boolean isStart, isFirstRefresh, isLastCharge, isInit;
@@ -39,7 +40,6 @@ class MapHelper {
         mActivity = activityWeakReference.get();
         mMapView = mapViewWeakReference.get();
         isInit = true;
-        isFirstRefresh = true;
         startUpdateMap();
     }
 
@@ -55,13 +55,23 @@ class MapHelper {
     void updateMap() {
         isFirstRefresh = true;
         mRefreshCount = 0;
+        if (mMapDataThread != null) {
+            mMapDataThread.interrupt();
+        }
     }
 
     void startUpdateMap() {
+        isFirstRefresh = true;
+        mRefreshCount = 0;
+        isStart = true;
         if (mMapThread == null) {
-            isStart = true;
             mMapThread = new MapThread();
             mMapThread.start();
+        }
+
+        if (mMapDataThread == null) {
+            mMapDataThread = new MapDataThread();
+            mMapDataThread.start();
         }
     }
 
@@ -73,8 +83,13 @@ class MapHelper {
             mMapThread = null;
         }
 
+        if (mMapDataThread != null) {
+            mMapDataThread.interrupt();
+            mMapDataThread = null;
+        }
+
         if (mMapView != null) {
-            mMapView.setMapUpdate(false);
+            mMapView.setMapUpdate(false, true);
         }
     }
 
@@ -85,7 +100,6 @@ class MapHelper {
             handleControlPanelSoftwareVersion();
             int count = 0;
             int mRssid = 1;
-            mRefreshCount = 0;
 
             while (isStart) {
                 if (mActivity == null || mMapView == null) {
@@ -111,15 +125,12 @@ class MapHelper {
                     }
 
                     if ((count % 20) == 0) {
-                        // 更新地图
-                        updateMap();
                         // 获取虚拟墙
                         mMapView.setLines(ArtifactUsage.ArtifactUsageVirutalWall, SlamManager.getInstance().getLines(ArtifactUsage.ArtifactUsageVirutalWall));
                         // 获取轨道
                         mMapView.setLines(ArtifactUsage.ArtifactUsageVirtualTrack, SlamManager.getInstance().getLines(ArtifactUsage.ArtifactUsageVirtualTrack));
-                        // 获取运动状态
-                        mMapView.setRemainingMilestones(SlamManager.getInstance().getRemainingMilestones());
-                        mMapView.setRemainingPath(SlamManager.getInstance().getRemainingPath());
+                        // 获取剩余路径
+                        mMapView.setRemaining(SlamManager.getInstance().getRemainingMilestones(), SlamManager.getInstance().getRemainingPath());
                         // 获取机器状态
                         updateStatus();
                     }
@@ -128,13 +139,9 @@ class MapHelper {
                         return;
                     }
 
-                    if ((count % 30) == 0) {
+                    if (count % 50 == 0) {
                         // 获取充电桩位置
                         mMapView.setHomePose(SlamManager.getInstance().getHomePose());
-                    }
-
-                    if (!isStart) {
-                        return;
                     }
 
                     if (count % 60 == 0) {
@@ -169,22 +176,6 @@ class MapHelper {
                     mActivity.updatePoseShow(pose);
                 }
             }
-        }
-
-        private void updateMap() {
-            if (isFirstRefresh || SlamManager.getInstance().isMapUpdate()) {
-                mRefreshCount++;
-                int refreshCount = 3;
-                if (mRefreshCount > refreshCount) {
-                    mRefreshCount = 0;
-                    isFirstRefresh = false;
-                }
-                // 更新地图
-                mMapView.setMap(SlamManager.getInstance().getMap());
-                return;
-            }
-
-            mMapView.setMapUpdate(false);
         }
 
         private void updateStatus() {
@@ -225,6 +216,57 @@ class MapHelper {
                 String errorVersion = "1.0";
                 if (TextUtils.equals(errorVersion, version) && mActivity != null) {
                     mActivity.showTipsDialog(mContext.getString(R.string.control_software_version_not_match));
+                }
+            }
+        }
+    }
+
+    private class MapDataThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            int refreshCount = 3;
+            boolean isSetMap = false;
+            long delayTime;
+
+            while (isStart) {
+                if (mMapView == null) {
+                    return;
+                }
+
+                try {
+                    // 更新地图
+                    boolean isMapUpdate = SlamManager.getInstance().isMapUpdate();
+                    if (isFirstRefresh || isMapUpdate) {
+                        if (isMapUpdate) {
+                            delayTime = 500;
+                        } else {
+                            delayTime = 1000;
+                            mRefreshCount++;
+                            if (mRefreshCount > refreshCount) {
+                                mRefreshCount = 0;
+                                isFirstRefresh = false;
+                            }
+                        }
+
+                        isSetMap = false;
+                        mMapView.setMap(SlamManager.getInstance().getMap());
+                    } else {
+                        delayTime = 6000;
+                        if (!isSetMap) {
+                            isSetMap = true;
+                            mMapView.setMapUpdate(false, false);
+                        }
+                    }
+
+                    if (isStart) {
+                        Thread.sleep(delayTime);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (!isStart) {
+                        return;
+                    }
                 }
             }
         }
