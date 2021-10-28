@@ -6,6 +6,7 @@ import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.AbstractPathMonitor;
+import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.main.MainActivity;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnChargeListener;
@@ -25,6 +26,7 @@ public class Charge extends AbstractPathMonitor implements OnChargeListener {
     @Override
     public void onChargeSensorTrigger(boolean isEnabled) {
         Logger.i(BaseConstant.TAG, "onChargeSensorTrigger() isEnabled=" + isEnabled);
+        showToast("sensor isEnabled=" + isEnabled);
     }
 
     @Override
@@ -37,6 +39,12 @@ public class Charge extends AbstractPathMonitor implements OnChargeListener {
     public void onChargeRelocateEnd(boolean isRelocateSuccess) {
         Logger.i(BaseConstant.TAG, "onChargeRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
         handleRelocateResult(isRelocateSuccess);
+    }
+
+    @Override
+    public void onChargeToPileNearby() {
+        Logger.i(BaseConstant.TAG, "onChargeToPileNearby()");
+        isChargeToPileNearby = true;
     }
 
     @Override
@@ -66,18 +74,27 @@ public class Charge extends AbstractPathMonitor implements OnChargeListener {
     @Override
     public void onObstacleTrigger() {
         Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
+        // 充电桩附近不处理
+        if (isChargeToPileNearby) {
+            return;
+        }
+
         SlamManager.getInstance().cancelAction();
     }
 
     @Override
     public void onObstacleDisappear() {
         Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
+        if (isChargeToPileNearby) {
+            return;
+        }
+
         goCharge();
     }
 
     public void goCharge() {
         startMonitor();
-        SlamManager.getInstance().goHome(this);
+        SlamManager.getInstance().goHome(DataHelper.getInstance().getChargeDistance(mContext), DataHelper.getInstance().getChargeOffset(mContext), this);
     }
 
     public void stop() {

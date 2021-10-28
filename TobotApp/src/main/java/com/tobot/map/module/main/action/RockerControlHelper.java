@@ -21,7 +21,7 @@ class RockerControlHelper implements RockerView.OnShakeListener {
 
     RockerControlHelper(WeakReference<RockerView> rockerViewWeakReference) {
         RockerView rockerView = rockerViewWeakReference.get();
-        rockerView.setCallBackMode(RockerView.CallBackMode.CALL_BACK_MODE_STATE_CHANGE);
+        rockerView.setCallbackMode(RockerView.CallbackMode.CALL_BACK_MODE_STATE_CHANGE);
         rockerView.setOnShakeListener(RockerView.DirectionMode.DIRECTION_4_ROTATE_45, this);
     }
 

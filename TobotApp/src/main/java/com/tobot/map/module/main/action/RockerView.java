@@ -29,7 +29,6 @@ import com.tobot.map.module.log.Logger;
  * @date 2018/3/8
  */
 public class RockerView extends View {
-    private static final String TAG = "RockerView";
     private static final int DEFAULT_SIZE = 400;
     private static final int DEFAULT_ROCKER_RADIUS = DEFAULT_SIZE / 8;
     private Paint mAreaBackgroundPaint;
@@ -38,7 +37,7 @@ public class RockerView extends View {
     private Point mCenterPoint;
     private int mAreaRadius;
     private int mRockerRadius;
-    private CallBackMode mCallBackMode = CallBackMode.CALL_BACK_MODE_MOVE;
+    private CallbackMode mCallbackMode = CallbackMode.CALL_BACK_MODE_MOVE;
     private OnAngleChangeListener mOnAngleChangeListener;
     private OnShakeListener mOnShakeListener;
     private DirectionMode mDirectionMode;
@@ -258,7 +257,7 @@ public class RockerView extends View {
             case MotionEvent.ACTION_DOWN:
                 // 按下
                 // 回调 开始
-                callBackStart();
+                callbackStart();
             case MotionEvent.ACTION_MOVE:
                 // 移动
                 float moveX = event.getX();
@@ -271,7 +270,7 @@ public class RockerView extends View {
             case MotionEvent.ACTION_CANCEL:
                 // 移出区域
                 // 回调 结束
-                callBackFinish();
+                callbackFinish();
                 moveRocker(mCenterPoint.x, mCenterPoint.y);
                 break;
             default:
@@ -306,7 +305,7 @@ public class RockerView extends View {
 //        float min = regionRadius - rockerRadius;
         // 至少移动一个摇杆的半径的时候再回调
         if (len >= rockerRadius) {
-            callBackDirection(angle);
+            callbackDirection(angle);
         }
 
         if (len + rockerRadius <= regionRadius) {
@@ -367,7 +366,7 @@ public class RockerView extends View {
      * 回调
      * 开始
      */
-    private void callBackStart() {
+    private void callbackStart() {
         isStart = true;
         tempDirection = Direction.DIRECTION_CENTER;
         if (null != mOnAngleChangeListener) {
@@ -385,7 +384,7 @@ public class RockerView extends View {
      *
      * @param angle 摇动角度
      */
-    private void callBackDirection(double angle) {
+    private void callbackDirection(double angle) {
         // 避免多次回调的问题
         if (!isStart) {
             return;
@@ -397,12 +396,12 @@ public class RockerView extends View {
         }
 
         if (null != mOnShakeListener) {
-            if (CallBackMode.CALL_BACK_MODE_MOVE == mCallBackMode) {
+            if (CallbackMode.CALL_BACK_MODE_MOVE == mCallbackMode) {
                 modeMove(angle);
                 return;
             }
 
-            if (CallBackMode.CALL_BACK_MODE_STATE_CHANGE == mCallBackMode) {
+            if (CallbackMode.CALL_BACK_MODE_STATE_CHANGE == mCallbackMode) {
                 modeStateChange(angle);
             }
         }
@@ -605,7 +604,7 @@ public class RockerView extends View {
     /**
      * 回调结束
      */
-    private void callBackFinish() {
+    private void callbackFinish() {
         isStart = false;
         tempDirection = Direction.DIRECTION_CENTER;
         if (null != mOnAngleChangeListener) {
@@ -620,7 +619,7 @@ public class RockerView extends View {
     /**
      * 回调模式
      */
-    public enum CallBackMode {
+    public enum CallbackMode {
         /**
          * 有移动就立刻回调
          */
@@ -636,8 +635,8 @@ public class RockerView extends View {
      *
      * @param mode 回调模式
      */
-    public void setCallBackMode(CallBackMode mode) {
-        mCallBackMode = mode;
+    public void setCallbackMode(CallbackMode mode) {
+        mCallbackMode = mode;
     }
 
     /**
