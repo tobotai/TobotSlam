@@ -23,44 +23,44 @@ public class HttpApi {
         sListener = RetrofitHelper.create(BuildConfig.BASE_URL, HttpListener.class);
     }
 
-    public static void queryVersion(String url, final HttpResultCallBack<Response<ResponseBody>> callBack) {
+    public static void queryVersion(String url, final HttpResultCallback<Response<ResponseBody>> callback) {
         if (sListener != null) {
             sListener.downloadFile(url).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     Logger.i(BaseConstant.TAG, "queryVersion onResponse()");
-                    if (callBack != null) {
-                        callBack.onHttpRequestResult(response);
+                    if (callback != null) {
+                        callback.onHttpRequestResult(response);
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     Logger.i(BaseConstant.TAG, "queryVersion() onFailure() error=" + throwable.getMessage());
-                    if (callBack != null) {
-                        callBack.onHttpRequestResult(null);
+                    if (callback != null) {
+                        callback.onHttpRequestResult(null);
                     }
                 }
             });
         }
     }
 
-    public static void downloadFile(String url, final HttpResultCallBack<Response<ResponseBody>> callBack) {
+    public static void downloadFile(String url, final HttpResultCallback<Response<ResponseBody>> callback) {
         if (sListener != null) {
             sListener.downloadFile(url).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     Logger.i(BaseConstant.TAG, "downloadFile onResponse()");
-                    if (callBack != null) {
-                        callBack.onHttpRequestResult(response);
+                    if (callback != null) {
+                        callback.onHttpRequestResult(response);
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable throwable) {
                     Logger.i(BaseConstant.TAG, "downloadFile() onFailure() error=" + throwable.getMessage());
-                    if (callBack != null) {
-                        callBack.onHttpRequestResult(null);
+                    if (callback != null) {
+                        callback.onHttpRequestResult(null);
                     }
                 }
             });
