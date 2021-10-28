@@ -67,7 +67,6 @@ public class DeviceInfoFragment extends BaseFragment {
             bean.setName(name);
             data.add(bean);
         }
-
         return data;
     }
 
