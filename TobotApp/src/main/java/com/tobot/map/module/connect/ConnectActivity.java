@@ -24,7 +24,9 @@ import com.tobot.map.module.main.MainActivity;
 import com.tobot.map.module.main.MapService;
 import com.tobot.map.module.set.SetActivity;
 import com.tobot.map.module.upgrade.UpgradeTipsDialog;
+import com.tobot.map.util.AppUtils;
 import com.tobot.map.util.SystemUtils;
+import com.tobot.slam.SlamManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,6 +59,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
 
     @Override
     protected void init() {
+        Logger.i(BaseConstant.TAG, "version=" + AppUtils.getVersion(this, getPackageName()));
         SystemUtils.requestDisplayInfo(this);
         Logger.i(BaseConstant.TAG, "valueSize=" + getResources().getDimension(R.dimen.base_values));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -75,6 +78,8 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
         // 默认数据库中不保存任何数据
         MyDBSource.getInstance(this).deleteAllLocation();
         DataHelper.getInstance().clearWarningList();
+        SlamManager.getInstance().setRelocationQualityMin(DataHelper.getInstance().getRelocationQualityMin(this));
+        SlamManager.getInstance().setRelocationQualitySafe(DataHelper.getInstance().getRelocationQualitySafe(this));
         EventBus.getDefault().register(this);
         startService(new Intent(getApplicationContext(), MapService.class));
         PermissionHelper.isRequestPermission(this);
