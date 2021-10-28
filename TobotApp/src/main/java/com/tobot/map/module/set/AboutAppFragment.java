@@ -2,7 +2,6 @@ package com.tobot.map.module.set;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.TextView;
@@ -48,10 +47,7 @@ public class AboutAppFragment extends BaseFragment implements UpgradeTipsDialog.
         EventBus.getDefault().register(this);
         Activity activity = getActivity();
         if (activity != null) {
-            PackageInfo packageInfo = AppUtils.getPackageInfo(activity, activity.getPackageName());
-            if (packageInfo != null) {
-                tvVersion.setText(getString(R.string.tv_version, getString(R.string.app_name), packageInfo.versionName));
-            }
+            tvVersion.setText(getString(R.string.tv_version, getString(R.string.app_name), AppUtils.getVersion(activity, activity.getPackageName())));
         }
     }
 

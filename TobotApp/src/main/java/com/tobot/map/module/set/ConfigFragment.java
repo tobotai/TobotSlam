@@ -6,9 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -19,13 +17,13 @@ import com.tobot.map.R;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.common.MoveData;
-import com.tobot.map.module.common.TipsDialog;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.set.firmware.FirmwareUpgradeActivity;
 import com.tobot.map.module.set.firmware.SetSensorDataReportedActivity;
 import com.tobot.map.util.NumberUtils;
 import com.tobot.slam.SlamManager;
+import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnResultListener;
 
 import java.lang.ref.WeakReference;
@@ -41,10 +39,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private static final int MSG_REQUEST_SPEED = 1;
     private static final int MSG_SET_SPEED = 2;
     private static final int MSG_REQUEST_ROTATE_SPEED = 3;
-    @BindView(R.id.tv_current_speed_tips)
-    TextView tvCurrentSpeed;
-    @BindView(R.id.sb_speed)
-    StripSeekBar sbSpeed;
+    @BindView(R.id.rb_speed_low)
+    RadioButton rbSpeedLow;
+    @BindView(R.id.rb_speed_medium)
+    RadioButton rbSpeedMedium;
+    @BindView(R.id.rb_speed_high)
+    RadioButton rbSpeedHigh;
     @BindView(R.id.tv_current_rotate_speed_tips)
     TextView tvCurrentRotateSpeed;
     @BindView(R.id.sb_rotate_speed)
@@ -69,12 +69,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     TextView tvTryTime;
     @BindView(R.id.sb_try_time)
     StripSeekBar sbTryTime;
-    @BindView(R.id.tv_chassis_radius)
-    TextView tvChassisRadius;
-    @BindView(R.id.et_chassis_radius)
-    EditText etChassisRadius;
     private MainHandler mMainHandler;
-    private TipsDialog mTipsDialog;
     private float mSpeed;
     private int mTime;
 
@@ -89,30 +84,23 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     @Override
     protected void init() {
-        sbSpeed.setOnSeekBarChangeListener(this);
         sbRotateSpeed.setOnSeekBarChangeListener(this);
         sbTryTime.setOnSeekBarChangeListener(this);
         mMainHandler = new MainHandler(new WeakReference<>(this));
         setNavigateMode(MoveData.getInstance().getNavigateMode());
         setMotionMode(MoveData.getInstance().getMotionMode());
         setObstacleMode(MoveData.getInstance().getObstacleMode());
-        requestSpeed();
+        requestNavigateSpeed();
         requestRotateSpeed();
-        setChassisRadiusTips(DataHelper.getInstance().getChassisRadius(getActivity()));
     }
 
     @Override
     public void onPause() {
         super.onPause();
         closeLoadTipsDialog();
+        closeConfirmDialog();
         if (mMainHandler != null) {
             mMainHandler.removeCallbacksAndMessages(null);
-        }
-
-        closeConfirmDialog();
-        if (isTipsDialogShow()) {
-            mTipsDialog.getDialog().dismiss();
-            mTipsDialog = null;
         }
     }
 
@@ -141,9 +129,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     public void onSeekBarStop(View view, float progress) {
         setSpeed(view, progress);
         switch (view.getId()) {
-            case R.id.sb_speed:
-                setSpeed(mSpeed);
-                break;
             case R.id.sb_rotate_speed:
                 setRotateSpeed(mSpeed);
                 break;
@@ -156,9 +141,19 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     @OnClick({R.id.rb_navigate_free, R.id.rb_navigate_track, R.id.rb_navigate_track_first, R.id.rb_motion_exact, R.id.rb_motion_ordinary,
-            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.btn_set_chassis_radius})
+            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.rl_navigate_parameter,
+            R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high})
     public void onClickView(View v) {
         switch (v.getId()) {
+            case R.id.rb_speed_low:
+                setNavigateSpeed(SlamCode.SPEED_LOW);
+                break;
+            case R.id.rb_speed_medium:
+                setNavigateSpeed(SlamCode.SPEED_MEDIUM);
+                break;
+            case R.id.rb_speed_high:
+                setNavigateSpeed(SlamCode.SPEED_HIGH);
+                break;
             case R.id.rb_navigate_free:
                 MoveData.getInstance().setNavigateMode(MoveData.NAVIGATE_FREE);
                 break;
@@ -188,8 +183,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             case R.id.rl_firmware_upgrade:
                 startActivityForResult(new Intent(getActivity(), FirmwareUpgradeActivity.class), 1);
                 break;
-            case R.id.btn_set_chassis_radius:
-                setChassisRadius();
+            case R.id.rl_navigate_parameter:
+                startActivity(new Intent(getActivity(), RunParameterActivity.class));
                 break;
             default:
                 break;
@@ -238,17 +233,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private void setSpeed(View view, float progress) {
         float value;
         switch (view.getId()) {
-            case R.id.sb_speed:
-                value = progress * BaseConstant.MAX_NAVIGATE_SPEED;
-                // 限制最小速度
-                if (value < BaseConstant.MIN_NAVIGATE_SPEED) {
-                    value = BaseConstant.MIN_NAVIGATE_SPEED;
-                    sbSpeed.setProgress(value / BaseConstant.MAX_NAVIGATE_SPEED);
-                }
-
-                mSpeed = value;
-                tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, value));
-                break;
             case R.id.sb_rotate_speed:
                 value = progress * BaseConstant.MAX_ROTATE_SPEED;
                 // 限制最小速度
@@ -314,8 +298,17 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     private void updateSpeedView(float value) {
-        sbSpeed.setProgress(value / BaseConstant.MAX_NAVIGATE_SPEED);
-        tvCurrentSpeed.setText(getString(R.string.tv_current_speed_tips, value));
+        if (value <= SlamCode.SPEED_LOW) {
+            rbSpeedLow.setChecked(true);
+            return;
+        }
+
+        if (value <= SlamCode.SPEED_MEDIUM) {
+            rbSpeedMedium.setChecked(true);
+            return;
+        }
+
+        rbSpeedHigh.setChecked(true);
     }
 
     private void updateRotateSpeedView(float value) {
@@ -323,7 +316,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
     }
 
-    private void requestSpeed() {
+    private void requestNavigateSpeed() {
         if (SlamManager.getInstance().isConnected()) {
             SlamManager.getInstance().requestSpeedAsync(new OnResultListener<String>() {
                 @Override
@@ -334,14 +327,10 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                     }
                 }
             });
-            return;
         }
-
-        // 显示默认速度
-        updateSpeedView(MoveData.DEFAULT_SPEED);
     }
 
-    private void setSpeed(float value) {
+    private void setNavigateSpeed(float value) {
         if (SlamManager.getInstance().isConnected()) {
             SlamManager.getInstance().setSpeedAsync(String.valueOf(value), new OnResultListener<Boolean>() {
                 @Override
@@ -368,11 +357,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                     }
                 }
             });
-            return;
         }
-
-        // 显示默认速度
-        updateRotateSpeedView(MoveData.DEFAULT_ROTATE_SPEED);
     }
 
     private void setRotateSpeed(float value) {
@@ -393,30 +378,5 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void handleSpeedSetResult(boolean isSuccess) {
         showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
-    }
-
-    private void setChassisRadius() {
-        String content = etChassisRadius.getText().toString().trim();
-        if (TextUtils.isEmpty(content)) {
-            showToastTips(getString(R.string.chassis_radius_empty_tips));
-            return;
-        }
-
-        if (NumberUtils.isDoubleOrFloat(content)) {
-            float value = Float.parseFloat(content);
-            DataHelper.getInstance().setChassisRadius(getActivity(), value);
-            setChassisRadiusTips(value);
-            showToastTips(getString(R.string.set_success_tips));
-            etChassisRadius.setText("");
-        }
-    }
-
-    private void setChassisRadiusTips(float value) {
-        Logger.i(BaseConstant.TAG, "chassisRadius=" + value);
-        tvChassisRadius.setText(getString(R.string.tv_chassis_radius_tips, String.valueOf(value)));
-    }
-
-    private boolean isTipsDialogShow() {
-        return mTipsDialog != null && mTipsDialog.getDialog() != null && mTipsDialog.getDialog().isShowing();
     }
 }

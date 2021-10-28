@@ -35,7 +35,7 @@ import butterknife.BindView;
  * @author houdeming
  * @date 2019/10/21
  */
-public class MapListFragment extends BaseFragment implements DataHelper.MapRequestCallBack, MapAdapter.OnMapListener<String>, NameInputDialog.OnNameListener {
+public class MapListFragment extends BaseFragment implements DataHelper.MapRequestCallback, MapAdapter.OnMapListener<String>, NameInputDialog.OnNameListener {
     private static final int MSG_GET_MAP = 1;
     private static final int MSG_MAP_LOAD = 2;
     private static final long TIME_SWITCH_MAP_DELAY = 3 * 1000;
@@ -79,7 +79,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         if (mMainHandler != null) {
             mMainHandler.removeCallbacksAndMessages(null);
         }
-
         closeNameInputDialog();
         closeLoadTipsDialog();
         closeConfirmDialog();
@@ -134,14 +133,16 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
                 @Override
                 public void onFinish(List<LocationBean> data) {
                     MyDBSource.getInstance(getActivity()).deleteAllLocation();
-                    List<LocationBean> sensorList = new ArrayList<>();
+
+                    List<LocationBean> sensorList = null;
                     if (data != null && !data.isEmpty()) {
                         MyDBSource.getInstance(getActivity()).insertLocationList(data);
-                        // 设置传感区域
+                        // 设置传感器区域
+                        sensorList = new ArrayList<>();
                         for (LocationBean bean : data) {
-                            // 只获取超声波关闭状态的位置点
-                            if (bean.getSensorStatus() == SlamCode.ULTRASONIC_STATUS_CLOSE) {
-                                if (bean.getStartX() != 0 || bean.getEndX() != 0) {
+                            // 只获取传感器关闭状态的位置点
+                            if (bean.getSensorStatus() != SlamCode.STATUS_SENSOR_OPEN) {
+                                if (bean.getStartX() != 0 && bean.getEndX() != 0) {
                                     sensorList.add(bean);
                                 }
                             }
