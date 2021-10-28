@@ -109,6 +109,24 @@
             android:launchMode="standard"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".module.set.RunParameterActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".module.set.firmware.SensorInfoActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".module.main.map.CloseSensorActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
         <service android:name=".module.main.MapService" />
 
         <provider
