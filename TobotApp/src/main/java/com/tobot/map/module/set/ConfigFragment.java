@@ -36,9 +36,9 @@ import butterknife.OnClick;
  * @date 2019/10/21
  */
 public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarChangeListener {
-    private static final int MSG_REQUEST_SPEED = 1;
-    private static final int MSG_SET_SPEED = 2;
-    private static final int MSG_REQUEST_ROTATE_SPEED = 3;
+    private static final int MSG_REQUEST_NAVIGATE_SPEED = 1;
+    private static final int MSG_REQUEST_ROTATE_SPEED = 2;
+    private static final int MSG_SET_SPEED_RESULT = 3;
     @BindView(R.id.rb_speed_low)
     RadioButton rbSpeedLow;
     @BindView(R.id.rb_speed_medium)
@@ -122,12 +122,12 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     @Override
     public void onProgressChange(View view, float progress) {
-        setSpeed(view, progress);
+        setProgress(view, progress);
     }
 
     @Override
     public void onSeekBarStop(View view, float progress) {
-        setSpeed(view, progress);
+        setProgress(view, progress);
         switch (view.getId()) {
             case R.id.sb_rotate_speed:
                 setRotateSpeed(mSpeed);
@@ -202,27 +202,25 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+            if (mFragment == null) {
+                return;
+            }
+
             switch (msg.what) {
-                case MSG_REQUEST_SPEED:
-                    if (mFragment != null) {
-                        String speed = (String) msg.obj;
-                        if (NumberUtils.isDoubleOrFloat(speed)) {
-                            mFragment.updateSpeedView(Float.parseFloat(speed));
-                        }
-                    }
-                    break;
-                case MSG_SET_SPEED:
-                    if (mFragment != null) {
-                        mFragment.handleSpeedSetResult((boolean) msg.obj);
+                case MSG_REQUEST_NAVIGATE_SPEED:
+                    String navigateSpeed = (String) msg.obj;
+                    if (NumberUtils.isDoubleOrFloat(navigateSpeed)) {
+                        mFragment.updateNavigateSpeedView(Float.parseFloat(navigateSpeed));
                     }
                     break;
                 case MSG_REQUEST_ROTATE_SPEED:
-                    if (mFragment != null) {
-                        String speed = (String) msg.obj;
-                        if (NumberUtils.isDoubleOrFloat(speed)) {
-                            mFragment.updateRotateSpeedView(Float.parseFloat(speed));
-                        }
+                    String rotateSpeed = (String) msg.obj;
+                    if (NumberUtils.isDoubleOrFloat(rotateSpeed)) {
+                        mFragment.updateRotateSpeedView(Float.parseFloat(rotateSpeed));
                     }
+                    break;
+                case MSG_SET_SPEED_RESULT:
+                    mFragment.handleSpeedSetResult((boolean) msg.obj);
                     break;
                 default:
                     break;
@@ -230,7 +228,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         }
     }
 
-    private void setSpeed(View view, float progress) {
+    private void setProgress(View view, float progress) {
         float value;
         switch (view.getId()) {
             case R.id.sb_rotate_speed:
@@ -253,8 +251,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         }
     }
 
-    private void setNavigateMode(int navigateMode) {
-        switch (navigateMode) {
+    private void setNavigateMode(int mode) {
+        switch (mode) {
             case MoveData.NAVIGATE_FREE:
                 rbNavigateFree.setChecked(true);
                 break;
@@ -269,8 +267,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         }
     }
 
-    private void setMotionMode(int motionMode) {
-        if (motionMode == MoveData.MOTION_TO_POINT_EXACT) {
+    private void setMotionMode(int mode) {
+        if (mode == MoveData.MOTION_TO_POINT_EXACT) {
             rbMotionExact.setChecked(true);
             return;
         }
@@ -278,8 +276,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         rbMotionOrdinary.setChecked(true);
     }
 
-    private void setObstacleMode(int obstacleMode) {
-        if (obstacleMode == MoveData.MEET_OBSTACLE_AVOID) {
+    private void setObstacleMode(int mode) {
+        if (mode == MoveData.MEET_OBSTACLE_AVOID) {
             rbObstacleAvoid.setChecked(true);
             setTryTime();
             return;
@@ -297,7 +295,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         sbTryTime.setProgress(progress);
     }
 
-    private void updateSpeedView(float value) {
+    private void updateNavigateSpeedView(float value) {
         if (value <= SlamCode.SPEED_LOW) {
             rbSpeedLow.setChecked(true);
             return;
@@ -321,29 +319,13 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             SlamManager.getInstance().requestSpeedAsync(new OnResultListener<String>() {
                 @Override
                 public void onResult(String speed) {
-                    Logger.i(BaseConstant.TAG, "speed=" + speed);
+                    Logger.i(BaseConstant.TAG, "navigate speed=" + speed);
                     if (mMainHandler != null) {
-                        mMainHandler.obtainMessage(MSG_REQUEST_SPEED, speed).sendToTarget();
+                        mMainHandler.obtainMessage(MSG_REQUEST_NAVIGATE_SPEED, speed).sendToTarget();
                     }
                 }
             });
         }
-    }
-
-    private void setNavigateSpeed(float value) {
-        if (SlamManager.getInstance().isConnected()) {
-            SlamManager.getInstance().setSpeedAsync(String.valueOf(value), new OnResultListener<Boolean>() {
-                @Override
-                public void onResult(Boolean data) {
-                    if (mMainHandler != null) {
-                        mMainHandler.obtainMessage(MSG_SET_SPEED, data).sendToTarget();
-                    }
-                }
-            });
-            return;
-        }
-
-        showToastTips(getString(R.string.slam_not_connect_tips));
     }
 
     private void requestRotateSpeed() {
@@ -360,13 +342,29 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
         }
     }
 
+    private void setNavigateSpeed(float value) {
+        if (SlamManager.getInstance().isConnected()) {
+            SlamManager.getInstance().setSpeedAsync(String.valueOf(value), new OnResultListener<Boolean>() {
+                @Override
+                public void onResult(Boolean data) {
+                    if (mMainHandler != null) {
+                        mMainHandler.obtainMessage(MSG_SET_SPEED_RESULT, data).sendToTarget();
+                    }
+                }
+            });
+            return;
+        }
+
+        showToastTips(getString(R.string.slam_not_connect_tips));
+    }
+
     private void setRotateSpeed(float value) {
         if (SlamManager.getInstance().isConnected()) {
             SlamManager.getInstance().setRotateSpeedAsync(String.valueOf(value), new OnResultListener<Boolean>() {
                 @Override
                 public void onResult(Boolean data) {
                     if (mMainHandler != null) {
-                        mMainHandler.obtainMessage(MSG_SET_SPEED, data).sendToTarget();
+                        mMainHandler.obtainMessage(MSG_SET_SPEED_RESULT, data).sendToTarget();
                     }
                 }
             });
