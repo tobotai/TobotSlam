@@ -32,7 +32,7 @@
             android:layout_marginLeft="@dimen/dialog_layout_margin_left"
             android:layout_marginTop="@dimen/dialog_layout_margin_top"
             android:layout_marginRight="@dimen/dialog_layout_margin_left"
-            android:lineSpacingExtra="@dimen/item_split_size"
+            android:lineSpacingExtra="@dimen/tv_line_space"
             android:textColor="@color/tv_white"
             android:textSize="@dimen/tv_content" />
     </LinearLayout>
