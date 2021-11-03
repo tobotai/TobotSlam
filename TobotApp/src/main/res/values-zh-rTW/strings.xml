@@ -83,6 +83,7 @@
     <string name="et_hint_edit_location_english_tips">請輸入英文名稱（選填）</string>
     <string name="btn_update_location">更新點位置</string>
     <string name="tv_mark_location">標定點</string>
+    <string name="tv_arrive_not_rotate">到點不旋轉</string>
     <string name="et_relocation_area_width">重定位區域寬(單位:米)</string>
     <string name="et_relocation_area_height">重定位區域高(單位:米)</string>
     <string name="tv_relocation_area_tips">當重定位區域寬或高為0時，則默認全局重定位。</string>
@@ -197,6 +198,7 @@
     <string name="tv_chassis_radius_tips">當重置充電樁時需要減去底盤半徑。</string>
     <string name="chassis_radius_empty_tips">底盤半徑不能為空，請輸入…</string>
     <string name="btn_set">設置</string>
+    <string name="tv_speed_multiplier">倍速（打開後速度翻倍）</string>
     <string name="tv_navigate_parameter">運行參數</string>
     <string name="tv_relocation_quality_min">重定位最低定位質量：%1$d</string>
     <string name="et_relocation_quality_hint">請輸入定位質量(1~100)</string>
@@ -219,4 +221,5 @@
     <string name="area_width_empty_tips">寬不能為空，請輸入…</string>
     <string name="area_height_empty_tips">高不能為空，請輸入…</string>
     <string name="tv_relocation_part_tips">請選擇機器在地圖實際位置的區域，如果選擇的區域太小則不起作用，點擊“停止”按鈕可以取消當前操作。</string>
+    <string name="tv_location_load_tips">是否加載上一次的位置點坐標？（請在地圖位置未發生變化的前提下使用）</string>
 </resources>
