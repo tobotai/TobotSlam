@@ -74,6 +74,12 @@
                         style="@style/rb_speed"
                         android:layout_marginLeft="@dimen/rb_wall_margin"
                         android:text="@string/tv_relocation" />
+
+                    <RadioButton
+                        android:id="@+id/rb_arrive_not_rotate"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/tv_arrive_not_rotate" />
                 </RadioGroup>
             </RelativeLayout>
 
