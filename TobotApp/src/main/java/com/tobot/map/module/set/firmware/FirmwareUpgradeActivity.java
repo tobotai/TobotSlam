@@ -85,20 +85,22 @@ public class FirmwareUpgradeActivity extends BaseActivity implements UpgradeFile
     }
 
     @Override
-    public void onConfirm() {
-        String filePath = mDir + File.separator + mFileName;
-        // 删除
-        if (mTipsStatus == DELETE) {
-            FileUtils.deleteFile(filePath);
-            new MediaScanner().scanFile(this, filePath);
-            mAdapter.setData(FileUtils.getFileNameList(mDir, BaseConstant.FILE_FIRMWARE_NAME_SUFFIX));
-            showToastTips(getString(R.string.delete_success));
-            return;
-        }
+    public void onConfirm(boolean isConfirm) {
+        if (isConfirm) {
+            String filePath = mDir + File.separator + mFileName;
+            // 删除
+            if (mTipsStatus == DELETE) {
+                FileUtils.deleteFile(filePath);
+                new MediaScanner().scanFile(this, filePath);
+                mAdapter.setData(FileUtils.getFileNameList(mDir, BaseConstant.FILE_FIRMWARE_NAME_SUFFIX));
+                showToastTips(getString(R.string.delete_success));
+                return;
+            }
 
-        // 升级
-        showUpgradeProgressDialog();
-        SlamManager.getInstance().upgradeControlPanelAsync(filePath, this);
+            // 升级
+            showUpgradeProgressDialog();
+            SlamManager.getInstance().upgradeControlPanelAsync(filePath, this);
+        }
     }
 
     @Override
