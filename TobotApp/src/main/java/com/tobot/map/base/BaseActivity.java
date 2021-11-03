@@ -51,7 +51,7 @@ public abstract class BaseActivity extends FragmentActivity implements ConfirmDi
     }
 
     @Override
-    public void onConfirm() {
+    public void onConfirm(boolean isConfirm) {
     }
 
     /**

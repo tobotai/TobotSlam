@@ -32,7 +32,7 @@ public abstract class BaseFragment extends Fragment implements ConfirmDialog.OnC
     }
 
     @Override
-    public void onConfirm() {
+    public void onConfirm(boolean isConfirm) {
     }
 
     /**
