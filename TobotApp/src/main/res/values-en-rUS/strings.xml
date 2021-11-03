@@ -101,6 +101,7 @@
     <string name="et_hint_edit_location_english_tips">input English name(optional)</string>
     <string name="btn_update_location">update location</string>
     <string name="tv_mark_location">Mark point</string>
+    <string name="tv_arrive_not_rotate">Not rotate</string>
     <string name="et_relocation_area_width">relocation area width(unit:m)</string>
     <string name="et_relocation_area_height">relocation area height(unit:m)</string>
     <string name="tv_relocation_area_tips">When the relocation area is 0 in width or height,the relocation is global by default.</string>
@@ -236,6 +237,7 @@
     <string name="tv_chassis_radius_tips">Subtract the chassis radius when resetting the charging pile.</string>
     <string name="chassis_radius_empty_tips">Chassis radius cannot be empty…</string>
     <string name="btn_set">Set</string>
+    <string name="tv_speed_multiplier">Speed Multiplier(Double the speed when opened)</string>
     <string name="tv_navigate_parameter">Run parameter</string>
     <string name="tv_relocation_quality_min">The lowest relocation quality:%1$d</string>
     <string name="et_relocation_quality_hint">enter relocation quality(1~100)</string>
@@ -262,4 +264,5 @@
     <string name="relocation_global">Relocation Global</string>
     <string name="relocation_part">Relocation Part</string>
     <string name="tv_relocation_part_tips">Please select the area where the machine is located on the map.If the selected area is too small,it will not work.Click the "Stop" button to cancel the current operation.</string>
+    <string name="tv_location_load_tips">Is the last position point coordinates loaded?(Please use it on the premise that the map position has not changed)</string>
 </resources>
