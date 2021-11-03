@@ -174,14 +174,16 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     }
 
     @Override
-    public void onConfirm() {
-        // 删除确认的操作
-        if (mLocationBean != null) {
-            String number = mLocationBean.getLocationNumber();
-            MyDBSource.getInstance(getActivity()).deleteLocation(number);
-            showLocationData(MyDBSource.getInstance(getActivity()).queryLocationList());
-            if (mOnPointListener != null) {
-                mOnPointListener.onDeleteLocationLabel(number);
+    public void onConfirm(boolean isConfirm) {
+        if (isConfirm) {
+            // 删除确认的操作
+            if (mLocationBean != null) {
+                String number = mLocationBean.getLocationNumber();
+                MyDBSource.getInstance(getActivity()).deleteLocation(number);
+                showLocationData(MyDBSource.getInstance(getActivity()).queryLocationList());
+                if (mOnPointListener != null) {
+                    mOnPointListener.onDeleteLocationLabel(number);
+                }
             }
         }
     }

@@ -45,6 +45,8 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
     RadioButton rbMarkLocation;
     @BindView(R.id.rb_relocation)
     RadioButton rbRelocation;
+    @BindView(R.id.rb_arrive_not_rotate)
+    RadioButton rbArriveNotRotate;
     @BindView(R.id.rg_location_type)
     RadioGroup rgLocationType;
     @BindView(R.id.ll_show_relocation_area)
@@ -119,6 +121,9 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
             case R.id.rb_relocation:
                 handleRadioButtonClick(id, SlamCode.TYPE_RELOCATION);
                 break;
+            case R.id.rb_arrive_not_rotate:
+                handleRadioButtonClick(id, SlamCode.TYPE_ARRIVE_NOT_ROTATE);
+                break;
             default:
                 break;
         }
@@ -160,6 +165,11 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
                 llShowRelocationArea.setVisibility(View.VISIBLE);
                 etRelocationWidth.setText(String.valueOf(Math.abs(bean.getEndX() - bean.getStartX())));
                 etRelocationHeight.setText(String.valueOf(Math.abs(bean.getEndY() - bean.getStartY())));
+                break;
+            case SlamCode.TYPE_ARRIVE_NOT_ROTATE:
+                rbArriveNotRotate.setChecked(true);
+                llShowRelocationArea.setVisibility(View.GONE);
+                btnCloseSensor.setVisibility(View.GONE);
                 break;
             default:
                 break;

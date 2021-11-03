@@ -17,6 +17,7 @@ import com.tobot.map.module.common.LoadTipsDialog;
 import com.tobot.map.module.common.NameInputDialog;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.main.MainActivity;
+import com.tobot.map.util.MediaScanner;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
@@ -151,9 +152,10 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
     }
 
     @Override
-    public void onConfirm() {
-        dismiss();
-        clearMap();
+    public void onConfirm(boolean isConfirm) {
+        if (isConfirm) {
+            clearMap();
+        }
     }
 
     @Override
@@ -247,7 +249,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                     MyDBSource.getInstance(mContext).deleteAllLocation();
                     // 删除设置的传感器区域
                     SlamManager.getInstance().setSensorArea(null);
-                    DataHelper.getInstance().setCurrentMapName("");
+                    DataHelper.getInstance().setCurrentMapFile("");
                 }
 
                 mActivity.runOnUiThread(new Runnable() {
@@ -262,9 +264,9 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         });
     }
 
-    private void saveMap(String number) {
-        final List<LocationBean> beanList = DataHelper.getInstance().getLocationBeanList(mContext, number);
-        String mapFile = BaseConstant.getMapFileName(number);
+    private void saveMap(String name) {
+        final List<LocationBean> beanList = DataHelper.getInstance().getLocationBeanList(mContext, name);
+        String mapFile = BaseConstant.getMapFileName(name);
         SlamManager.getInstance().saveMapAsync(BaseConstant.getMapDirectory(mContext), mapFile, beanList, new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {
@@ -273,7 +275,8 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                     public void run() {
                         closeLoadTipsDialog();
                         if (data) {
-                            DataHelper.getInstance().setCurrentMapName(mapFile);
+                            DataHelper.getInstance().setCurrentMapFile(mapFile);
+                            new MediaScanner().scanFile(mContext, BaseConstant.getMapFilePath(mContext, mapFile));
                         }
                         ToastUtils.getInstance(mContext).show(data ? R.string.map_save_success_tips : R.string.map_save_fail_tips);
                     }
