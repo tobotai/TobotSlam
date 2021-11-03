@@ -104,6 +104,7 @@
     <string name="et_hint_edit_location_english_tips">请输入英文名称（选填）</string>
     <string name="btn_update_location">更新点位置</string>
     <string name="tv_mark_location">标定点</string>
+    <string name="tv_arrive_not_rotate">到点不旋转</string>
     <string name="et_relocation_area_width">重定位区域宽(单位:米)</string>
     <string name="et_relocation_area_height">重定位区域高(单位:米)</string>
     <string name="tv_relocation_area_tips">当重定位区域宽或高为0时，则默认全局重定位。</string>
@@ -251,6 +252,7 @@
     <string name="tv_chassis_radius_tips">当重置充电桩时需要減去底盘半径。</string>
     <string name="chassis_radius_empty_tips">底盘半径不能为空，请输入…</string>
     <string name="btn_set">设置</string>
+    <string name="tv_speed_multiplier">倍速（打开后速度翻倍）</string>
     <string name="tv_navigate_parameter">运行参数</string>
     <string name="tv_relocation_quality_min">重定位最低定位质量：%1$d</string>
     <string name="et_relocation_quality_hint">请输入定位质量(1~100)</string>
@@ -277,4 +279,5 @@
     <string name="relocation_global">全局重定位</string>
     <string name="relocation_part">局部重定位</string>
     <string name="tv_relocation_part_tips">请选择机器在地图实际位置的区域，如果选择的区域太小则不起作用，点击“停止”按钮可以取消当前操作。</string>
+    <string name="tv_location_load_tips">是否加载上一次的位置点坐标？（请在地图位置未发生变化的前提下使用）</string>
 </resources>
