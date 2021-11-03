@@ -47,7 +47,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     private MapAdapter mAdapter;
     private List<String> mMapData;
     private NameInputDialog mNameInputDialog;
-    private String mMapName;
+    private String mMapFile;
     private static final int MAP_SWITCH = 0;
     private static final int MAP_DELETE = 1;
     private int mTipsStatus;
@@ -98,7 +98,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
             return;
         }
 
-        mMapName = data;
+        mMapFile = data;
         mTipsStatus = MAP_SWITCH;
         showConfirmDialog(getString(R.string.tv_map_switch_tips));
     }
@@ -106,7 +106,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     @Override
     public void onMapEdit(int position, String data) {
         if (!isNameInputDialogShow()) {
-            mMapName = data;
+            mMapFile = data;
             mNameInputDialog = NameInputDialog.newInstance(getString(R.string.tv_title_edit_map), getString(R.string.map_edit_rule_tips), getString(R.string.et_hint_edit_map_tips));
             mNameInputDialog.setOnNameListener(this);
             FragmentManager fragmentManager = getFragmentManager();
@@ -118,62 +118,62 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
 
     @Override
     public void onMapDelete(int position, String data) {
-        mMapName = data;
+        mMapFile = data;
         mTipsStatus = MAP_DELETE;
         showConfirmDialog(getString(R.string.tv_map_delete_tips));
     }
 
     @Override
-    public void onConfirm() {
-        super.onConfirm();
-        if (mTipsStatus == MAP_SWITCH) {
-            showLoadTipsDialog(getString(R.string.map_load_tips));
-            DataHelper.getInstance().setCurrentMapName(mMapName);
-            SlamManager.getInstance().loadMapAsync(BaseConstant.getMapNamePath(getActivity(), mMapName), new OnFinishListener<List<LocationBean>>() {
-                @Override
-                public void onFinish(List<LocationBean> data) {
-                    MyDBSource.getInstance(getActivity()).deleteAllLocation();
-
-                    List<LocationBean> sensorList = null;
-                    if (data != null && !data.isEmpty()) {
-                        MyDBSource.getInstance(getActivity()).insertLocationList(data);
-                        // 设置传感器区域
-                        sensorList = new ArrayList<>();
-                        for (LocationBean bean : data) {
-                            // 只获取传感器关闭状态的位置点
-                            if (bean.getSensorStatus() != SlamCode.STATUS_SENSOR_OPEN) {
-                                if (bean.getStartX() != 0 && bean.getEndX() != 0) {
-                                    sensorList.add(bean);
+    public void onConfirm(boolean isConfirm) {
+        if (isConfirm) {
+            if (mTipsStatus == MAP_SWITCH) {
+                showLoadTipsDialog(getString(R.string.map_load_tips));
+                DataHelper.getInstance().setCurrentMapFile(mMapFile);
+                SlamManager.getInstance().loadMapAsync(BaseConstant.getMapFilePath(getActivity(), mMapFile), new OnFinishListener<List<LocationBean>>() {
+                    @Override
+                    public void onFinish(List<LocationBean> data) {
+                        MyDBSource.getInstance(getActivity()).deleteAllLocation();
+                        List<LocationBean> sensorList = null;
+                        if (data != null && !data.isEmpty()) {
+                            MyDBSource.getInstance(getActivity()).insertLocationList(data);
+                            // 设置传感器区域
+                            sensorList = new ArrayList<>();
+                            for (LocationBean bean : data) {
+                                // 只获取传感器关闭状态的位置点
+                                if (bean.getSensorStatus() != SlamCode.STATUS_SENSOR_OPEN) {
+                                    if (bean.getStartX() != 0 && bean.getEndX() != 0) {
+                                        sensorList.add(bean);
+                                    }
                                 }
                             }
                         }
+
+                        SlamManager.getInstance().setSensorArea(sensorList);
+                        // 这里必须要做延时处理，不然不能重定位成功
+                        if (mMainHandler != null) {
+                            mMainHandler.sendMessageDelayed(mMainHandler.obtainMessage(MSG_MAP_LOAD, true), TIME_SWITCH_MAP_DELAY);
+                        }
                     }
 
-                    SlamManager.getInstance().setSensorArea(sensorList);
-                    // 这里必须要做延时处理，不然不能重定位成功
-                    if (mMainHandler != null) {
-                        mMainHandler.sendMessageDelayed(mMainHandler.obtainMessage(MSG_MAP_LOAD, true), TIME_SWITCH_MAP_DELAY);
+                    @Override
+                    public void onError() {
+                        if (mMainHandler != null) {
+                            mMainHandler.obtainMessage(MSG_MAP_LOAD, false).sendToTarget();
+                        }
                     }
-                }
+                });
+                return;
+            }
 
-                @Override
-                public void onError() {
-                    if (mMainHandler != null) {
-                        mMainHandler.obtainMessage(MSG_MAP_LOAD, false).sendToTarget();
-                    }
-                }
-            });
-            return;
+            // 删除地图
+            if (TextUtils.equals(mMapFile, DataHelper.getInstance().getCurrentMapFile())) {
+                DataHelper.getInstance().setCurrentMapFile("");
+            }
+            String filePath = BaseConstant.getMapFilePath(getActivity(), mMapFile);
+            SlamManager.getInstance().deleteFile(filePath);
+            new MediaScanner().scanFile(getActivity(), filePath);
+            DataHelper.getInstance().requestMapFileList(getActivity(), this);
         }
-
-        // 删除地图
-        if (TextUtils.equals(mMapName, DataHelper.getInstance().getCurrentMapName())) {
-            DataHelper.getInstance().setCurrentMapName("");
-        }
-        String filePath = BaseConstant.getMapNamePath(getActivity(), mMapName);
-        SlamManager.getInstance().deleteFile(filePath);
-        new MediaScanner().scanFile(getActivity(), filePath);
-        DataHelper.getInstance().requestMapFileList(getActivity(), this);
     }
 
     @Override
@@ -190,8 +190,8 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
 
         closeNameInputDialog();
         // 只是更改了地图的文件名字，文件内容并没有改变
-        String oldPath = BaseConstant.getMapNamePath(getActivity(), mMapName);
-        String newPath = BaseConstant.getMapNumPath(getActivity(), name);
+        String oldPath = BaseConstant.getMapFilePath(getActivity(), mMapFile);
+        String newPath = BaseConstant.getMapNamePath(getActivity(), name);
         boolean isSuccess = SlamManager.getInstance().renameFile(oldPath, newPath);
         if (isSuccess) {
             showToastTips(getString(R.string.map_edit_success_tips));
@@ -234,7 +234,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     private void updateRecyclerView(List<String> data) {
         mMapData = data;
         if (mAdapter != null) {
-            mAdapter.setCurrentMap(DataHelper.getInstance().getCurrentMapName());
+            mAdapter.setCurrentMap(DataHelper.getInstance().getCurrentMapFile());
             mAdapter.setData(data);
         }
     }
@@ -254,8 +254,8 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         showToastTips(getString(R.string.map_load_fail_tips));
     }
 
-    private boolean isHasExitMap(String number) {
-        return mMapData != null && !mMapData.isEmpty() && mMapData.contains(BaseConstant.getMapFileName(number));
+    private boolean isHasExitMap(String name) {
+        return mMapData != null && !mMapData.isEmpty() && mMapData.contains(BaseConstant.getMapFileName(name));
     }
 
     private void closeNameInputDialog() {

@@ -22,6 +22,7 @@ import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.set.firmware.FirmwareUpgradeActivity;
 import com.tobot.map.module.set.firmware.SetSensorDataReportedActivity;
 import com.tobot.map.util.NumberUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnResultListener;
@@ -39,6 +40,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private static final int MSG_REQUEST_NAVIGATE_SPEED = 1;
     private static final int MSG_REQUEST_ROTATE_SPEED = 2;
     private static final int MSG_SET_SPEED_RESULT = 3;
+    private static final int MSG_SET_FAST = 4;
     @BindView(R.id.rb_speed_low)
     RadioButton rbSpeedLow;
     @BindView(R.id.rb_speed_medium)
@@ -69,6 +71,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     TextView tvTryTime;
     @BindView(R.id.sb_try_time)
     StripSeekBar sbTryTime;
+    @BindView(R.id.tv_speed_multiplier)
+    TextView tvSpeedMultiplier;
     private MainHandler mMainHandler;
     private float mSpeed;
     private int mTime;
@@ -86,6 +90,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     protected void init() {
         sbRotateSpeed.setOnSeekBarChangeListener(this);
         sbTryTime.setOnSeekBarChangeListener(this);
+        tvSpeedMultiplier.setSelected(BaseConstant.isSpeedFast);
         mMainHandler = new MainHandler(new WeakReference<>(this));
         setNavigateMode(MoveData.getInstance().getNavigateMode());
         setMotionMode(MoveData.getInstance().getMotionMode());
@@ -142,7 +147,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     @OnClick({R.id.rb_navigate_free, R.id.rb_navigate_track, R.id.rb_navigate_track_first, R.id.rb_motion_exact, R.id.rb_motion_ordinary,
             R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.rl_navigate_parameter,
-            R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high})
+            R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high, R.id.tv_speed_multiplier})
     public void onClickView(View v) {
         switch (v.getId()) {
             case R.id.rb_speed_low:
@@ -186,6 +191,10 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             case R.id.rl_navigate_parameter:
                 startActivity(new Intent(getActivity(), RunParameterActivity.class));
                 break;
+            case R.id.tv_speed_multiplier:
+                tvSpeedMultiplier.setSelected(!tvSpeedMultiplier.isSelected());
+                ThreadPoolManager.getInstance().execute(new SpeedRunnable(tvSpeedMultiplier.isSelected()));
+                break;
             default:
                 break;
         }
@@ -221,6 +230,9 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                     break;
                 case MSG_SET_SPEED_RESULT:
                     mFragment.handleSpeedSetResult((boolean) msg.obj);
+                    break;
+                case MSG_SET_FAST:
+                    mFragment.handleSetFastResult((Boolean) msg.obj);
                     break;
                 default:
                     break;
@@ -376,5 +388,30 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void handleSpeedSetResult(boolean isSuccess) {
         showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
+    }
+
+    private void handleSetFastResult(boolean isSuccess) {
+        if (!isSuccess) {
+            tvSpeedMultiplier.setSelected(!tvSpeedMultiplier.isSelected());
+        }
+        BaseConstant.isSpeedFast = tvSpeedMultiplier.isSelected();
+        showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
+    }
+
+    private class SpeedRunnable implements Runnable {
+        private boolean isFast;
+
+        private SpeedRunnable(boolean isFast) {
+            this.isFast = isFast;
+        }
+
+        @Override
+        public void run() {
+            boolean isSuccess = SlamManager.getInstance().setDefinedMoveFast(isFast);
+            Logger.i(BaseConstant.TAG, "set fast isSuccess=" + isSuccess);
+            if (mMainHandler != null) {
+                mMainHandler.obtainMessage(MSG_SET_FAST, isSuccess).sendToTarget();
+            }
+        }
     }
 }
