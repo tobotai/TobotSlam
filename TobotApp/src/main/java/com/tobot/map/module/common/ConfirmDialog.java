@@ -58,10 +58,8 @@ public class ConfirmDialog extends BaseDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         dismiss();
-        if (v.getId() == R.id.btn_confirm) {
-            if (mListener != null) {
-                mListener.onConfirm();
-            }
+        if (mListener != null) {
+            mListener.onConfirm(v.getId() == R.id.btn_confirm);
         }
     }
 
@@ -72,7 +70,9 @@ public class ConfirmDialog extends BaseDialog implements View.OnClickListener {
     public interface OnConfirmListener {
         /**
          * 确认
+         *
+         * @param isConfirm
          */
-        void onConfirm();
+        void onConfirm(boolean isConfirm);
     }
 }
