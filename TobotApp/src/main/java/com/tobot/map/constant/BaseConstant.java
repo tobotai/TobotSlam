@@ -62,16 +62,16 @@ public class BaseConstant {
         return simpleDateFormat.format(new Date()) + "_adb" + ".log";
     }
 
-    public static String getMapFileName(String number) {
-        return number.concat(FILE_MAP_NAME_SUFFIX);
+    public static String getMapFileName(String mapName) {
+        return mapName.concat(FILE_MAP_NAME_SUFFIX);
+    }
+
+    public static String getMapFilePath(Context context, String mapFile) {
+        return getMapDirectory(context).concat(File.separator).concat(mapFile);
     }
 
     public static String getMapNamePath(Context context, String mapName) {
-        return getMapDirectory(context).concat(File.separator).concat(mapName);
-    }
-
-    public static String getMapNumPath(Context context, String number) {
-        return getMapDirectory(context).concat(File.separator).concat(number).concat(FILE_MAP_NAME_SUFFIX);
+        return getMapDirectory(context).concat(File.separator).concat(mapName).concat(FILE_MAP_NAME_SUFFIX);
     }
 
     public static final String DATA_KEY = "data_key";
@@ -118,4 +118,6 @@ public class BaseConstant {
 
     public static final String SPLIT = "，";
     public static final String SENSOR_STATUS_SPLIT = ":";
+
+    public static boolean isSpeedFast;
 }
