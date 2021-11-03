@@ -99,6 +99,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     private static final int LOW_BATTERY = 1;
     private TipsDialog mTipsDialog;
     private SensorWarningDialog mSensorWarningDialog;
+    private List<LocationBean> mLocationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +122,11 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         mNavigate = new Navigate(new WeakReference<>(this), new WeakReference<>(this));
         mTask = new Task(new WeakReference<>(this), new WeakReference<>(this));
         mCharge = new Charge(new WeakReference<>(this), new WeakReference<>(this));
+        // 如果有位置点的话提示
+        mLocationList = MyDBSource.getInstance(this).queryLocationList();
+        if (mLocationList != null && !mLocationList.isEmpty()) {
+            showConfirmDialog(getString(R.string.tv_location_load_tips));
+        }
     }
 
     @Override
@@ -196,6 +202,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     protected void onPause() {
         super.onPause();
         closeLoadTipsDialog();
+        closeConfirmDialog();
         if (isTipsDialogShow()) {
             mTipsDialog.getDialog().dismiss();
             mTipsDialog = null;
@@ -222,6 +229,16 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
         isClosePopupWindow();
         stopService(new Intent(getApplicationContext(), MapService.class));
+    }
+
+    @Override
+    public void onConfirm(boolean isConfirm) {
+        if (isConfirm) {
+            mapView.addLocationLabel(true, mLocationList);
+            return;
+        }
+
+        MyDBSource.getInstance(this).deleteAllLocation();
     }
 
     @Override

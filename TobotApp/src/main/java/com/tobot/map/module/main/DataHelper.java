@@ -34,7 +34,7 @@ public class DataHelper {
     private static final String RELOCATION_SAFE_KEY = "relocation_safe_key";
     private static final String CHARGE_DISTANCE_KEY = "charge_distance_key";
     private static final String CHARGE_OFFSET_KEY = "charge_offset_key";
-    private String mMapName, mIp;
+    private String mMapFile, mIp;
     private int mLowBattery, mTryTime, mLogType, mRelocationQuality, mRelocationSafeValue, mRelocationType;
     private List<WarningInfo> mWarningList;
     private float mChassisRadius, mChargeDistance, mChargeOffset;
@@ -47,12 +47,12 @@ public class DataHelper {
         return BaseDataHolder.INSTANCE;
     }
 
-    public void setCurrentMapName(String number) {
-        mMapName = number;
+    public void setCurrentMapFile(String mapFile) {
+        mMapFile = mapFile;
     }
 
-    public String getCurrentMapName() {
-        return mMapName;
+    public String getCurrentMapFile() {
+        return mMapFile;
     }
 
     public void requestNavigateCondition(Context context, NavigateConditionCallback callback) {
