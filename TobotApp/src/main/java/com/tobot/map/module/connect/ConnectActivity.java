@@ -62,6 +62,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
         Logger.i(BaseConstant.TAG, "version=" + AppUtils.getVersion(this, getPackageName()));
         SystemUtils.requestDisplayInfo(this);
         Logger.i(BaseConstant.TAG, "valueSize=" + getResources().getDimension(R.dimen.base_values));
+        BaseConstant.isSpeedFast = false;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new ItemSplitLineDecoration(this, ItemSplitLineDecoration.VERTICAL, true));
         mAdapter = new ConnectIpAdapter(this, R.layout.recycler_item_ip);
@@ -74,9 +75,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
         }
         DataHelper.getInstance().setLowBattery(0);
         // 默认没有查看过任何地图
-        DataHelper.getInstance().setCurrentMapName("");
-        // 默认数据库中不保存任何数据
-        MyDBSource.getInstance(this).deleteAllLocation();
+        DataHelper.getInstance().setCurrentMapFile("");
         DataHelper.getInstance().clearWarningList();
         SlamManager.getInstance().setRelocationQualityMin(DataHelper.getInstance().getRelocationQualityMin(this));
         SlamManager.getInstance().setRelocationQualitySafe(DataHelper.getInstance().getRelocationQualitySafe(this));
