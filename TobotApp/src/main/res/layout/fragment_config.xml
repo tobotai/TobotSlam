@@ -57,7 +57,9 @@
                         android:text="@string/speed_high" />
                 </RadioGroup>
 
-                <View style="@style/view_line" />
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,7 +99,9 @@
                         app:bar_textShow="false" />
                 </LinearLayout>
 
-                <View style="@style/view_line" />
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
 
                 <TextView
                     android:layout_width="wrap_content"

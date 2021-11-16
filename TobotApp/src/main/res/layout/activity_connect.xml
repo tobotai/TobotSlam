@@ -48,7 +48,7 @@
 
         <TextView
             style="@style/tv_connect_tips"
-            android:text="@string/tv_sta_tips" />
+            android:text="@string/tv_chassis_connect_tips" />
 
         <EditText
             android:id="@+id/et_ip_input"

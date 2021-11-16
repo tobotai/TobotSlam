@@ -62,7 +62,9 @@
                         app:bar_textShow="false" />
                 </LinearLayout>
 
-                <View style="@style/view_line" />
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
 
                 <TextView
                     android:id="@+id/tv_log_out_tips"

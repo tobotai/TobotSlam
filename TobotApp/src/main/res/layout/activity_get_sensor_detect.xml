@@ -52,6 +52,7 @@
     <View
         style="@style/view_line"
         android:layout_marginLeft="@dimen/view_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
         android:layout_marginRight="@dimen/view_margin_left_right" />
 
     <LinearLayout
