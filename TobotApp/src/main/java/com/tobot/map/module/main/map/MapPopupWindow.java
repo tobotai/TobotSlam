@@ -107,6 +107,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                 }
                 break;
             case R.id.tv_reset_charge:
+                dismiss();
                 if (mOnMapListener != null) {
                     mOnMapListener.onMapResetCharge();
                 }
@@ -124,6 +125,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                 relocationGlobal();
                 break;
             case R.id.tv_clear_map:
+                dismiss();
                 if (mOnMapListener != null) {
                     mOnMapListener.onMapClear();
                 }
@@ -266,7 +268,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
 
     private void saveMap(String name) {
         final List<LocationBean> beanList = DataHelper.getInstance().getLocationBeanList(mContext, name);
-        String mapFile = BaseConstant.getMapFileName(name);
+        String mapFile = BaseConstant.getMapFile(name);
         SlamManager.getInstance().saveMapAsync(BaseConstant.getMapDirectory(mContext), mapFile, beanList, new OnResultListener<Boolean>() {
             @Override
             public void onResult(Boolean data) {

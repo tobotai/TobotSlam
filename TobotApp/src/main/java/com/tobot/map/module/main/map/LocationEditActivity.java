@@ -205,7 +205,7 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void setRelocationArea() {
-        SystemUtils.hideKeyBoard(this);
+        SystemUtils.hideKeyboard(this);
         String widthStr = etRelocationWidth.getText().toString().trim();
         String heightStr = etRelocationHeight.getText().toString().trim();
         if (mLocationBean == null) {
@@ -267,6 +267,7 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
             }
         }
 
+        SystemUtils.hideKeyboard(this);
         if (mLocationBean != null) {
             mLocationBean.setLocationNumber(number);
             mLocationBean.setLocationNameChina(nameChina);

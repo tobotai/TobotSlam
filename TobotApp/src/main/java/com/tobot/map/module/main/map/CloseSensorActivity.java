@@ -14,6 +14,7 @@ import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.util.NumberUtils;
+import com.tobot.map.util.SystemUtils;
 import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.data.LocationBean;
 
@@ -128,6 +129,7 @@ public class CloseSensorActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void confirm() {
+        SystemUtils.hideKeyboard(this);
         float widthHalf = 0;
         float heightHalf = 0;
         if (mSensorStatus != SlamCode.STATUS_SENSOR_OPEN) {
