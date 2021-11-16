@@ -72,9 +72,13 @@ public abstract class BaseFragment extends Fragment implements ConfirmDialog.OnC
     }
 
     protected void closeLoadTipsDialog() {
-        if (isLoadTipsDialogShow()) {
-            mLoadTipsDialog.getDialog().dismiss();
-            mLoadTipsDialog = null;
+        if (mLoadTipsDialog != null) {
+            try {
+                mLoadTipsDialog.dismiss();
+                mLoadTipsDialog = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

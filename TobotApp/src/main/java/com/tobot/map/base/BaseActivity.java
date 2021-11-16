@@ -89,15 +89,13 @@ public abstract class BaseActivity extends FragmentActivity implements ConfirmDi
     }
 
     protected void closeLoadTipsDialog() {
-        // 避免刚打开就关闭的情况
         if (mLoadTipsDialog != null) {
             try {
-                mLoadTipsDialog.getDialog().dismiss();
+                mLoadTipsDialog.dismiss();
+                mLoadTipsDialog = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            mLoadTipsDialog = null;
         }
     }
 
