@@ -418,6 +418,13 @@ public class MyDBSource {
         return bean;
     }
 
+    public synchronized void clearRouteId() {
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        resetId(database, MySQLiteHelper.TABLE_ROUTE);
+        resetId(database, MySQLiteHelper.TABLE_ROUTE_DETAIL);
+        mHelper.close();
+    }
+
     public synchronized void insertRouteDetail(String routeName, List<LocationBean> data) {
         if (data != null && !data.isEmpty()) {
             SQLiteDatabase database = mHelper.getWritableDatabase();
@@ -516,13 +523,6 @@ public class MyDBSource {
         cursor.close();
         mHelper.close();
         return beanList;
-    }
-
-    public synchronized void clearRouteId() {
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-        resetId(database, MySQLiteHelper.TABLE_ROUTE);
-        resetId(database, MySQLiteHelper.TABLE_ROUTE_DETAIL);
-        mHelper.close();
     }
 
     private void deleteAll(String tab) {
