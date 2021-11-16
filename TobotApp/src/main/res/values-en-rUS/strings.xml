@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TongBu Map</string>
-    <string name="tv_sta_tips">please connect to the wireless network connected to the chassis first</string>
+    <string name="tv_chassis_connect_tips">please connect to the wireless network connected to the chassis first</string>
     <string name="et_ip_hint_tips">input the IP address of the chassis</string>
     <string name="btn_connect">connect</string>
     <string name="tv_connect_history">connection history</string>
@@ -14,7 +14,6 @@
     <string name="tv_test">test</string>
     <string name="tv_about_app">about app</string>
     <string name="tv_set_speed">navigation speed</string>
-    <string name="tv_current_speed_tips">maximum movement speed %.2fM/S</string>
     <string name="speed_low">speed low</string>
     <string name="speed_medium">speed medium</string>
     <string name="speed_high">speed high</string>
@@ -92,9 +91,7 @@
     <string name="map_name_empty_tips">The map name cannot be empty,please enter…</string>
     <string name="slam_connect_not_tips">sorry,not connected to the chassis yet</string>
     <string name="tv_title_save_map">save map</string>
-    <string name="tv_title_edit_map">rename map</string>
     <string name="et_hint_map_tips">input the map name</string>
-    <string name="et_hint_edit_map_tips">input a new map name</string>
     <string name="et_hint_location_tips">Please enter the location point name</string>
     <string name="et_hint_edit_location_tips">Please enter the location point name(required)</string>
     <string name="et_hint_edit_location_china_tips">input Chinese name(optional)</string>
@@ -108,7 +105,6 @@
     <string name="name_rule_tips">Please name the locations and points appropriately according to the requirements.It is suggested to name them after the number type.</string>
     <string name="name_edit_rule_tips">Location point name,Chinese and English name can be modified,but can not be repeated!The marking point is used to set the current position of the robot,and the relocation is used to perform the positioning operation at the current position point.</string>
     <string name="map_rule_tips">Please name the map properly according to the requirements.If the saved map name is consistent with the existing map name,the saved map name will be overwritten.</string>
-    <string name="map_edit_rule_tips">Please name the map properly according to the requirements.If the saved map name is consistent with the existing map name,the saved map name will be overwritten.</string>
     <string name="map_load_tips">map loading…</string>
     <string name="map_load_fail_tips">map loading fail…</string>
     <string name="map_load_success_tips">map loaded success…</string>
@@ -118,9 +114,6 @@
     <string name="map_save_tips">map saving…</string>
     <string name="map_save_success_tips">map save success…</string>
     <string name="map_save_fail_tips">map save fail…</string>
-    <string name="map_edit_success_tips">map edit success…</string>
-    <string name="map_edit_fail_tips">map edit fail…</string>
-    <string name="map_exist_tips">the map name already exists,please rename…</string>
     <string name="number_edit_fail_tips">The location point name already exists,please rename it…</string>
     <string name="name_china_edit_fail_tips">the Chinese name already exists.Please rename it…</string>
     <string name="name_english_edit_fail_tips">the English name already exists.Please rename it…</string>
@@ -248,11 +241,11 @@
     <string name="tv_charge_start_distance">Test the distance of pile when charging:%1$sM</string>
     <string name="et_charge_start_distance_hint">enter charging distance(unit:meter)</string>
     <string name="charge_distance_empty_tips">charging distance cannot be empty…</string>
-    <string name="tv_charge_start_distance_tips">The detection distance of pile refers to the distance between lidar and pile.If the test starts 0.2 meters ahead of the charging pile and the chassis radius is 0.25 meters,the test distance is 0.45 meters.</string>
+    <string name="tv_charge_start_distance_tips">The detection distance of pile refers to the distance between lidar and pile.If the test starts 0.2 meters ahead of the charging pile and the chassis radius is 0.25 meters,the test distance is 0.45 meters(Not detected if the value is 0).</string>
     <string name="tv_charge_offset">Offset value to pile when charging:%1$sM</string>
     <string name="et_charge_offset_hint">enter Offset value(unit:meter)</string>
     <string name="charge_offset_empty_tips">Offset value cannot be empty…</string>
-    <string name="tv_charge_offset_tips">When charging back to pile,if it is greater than the set offset value,it will continue to try.After a certain number of attempts,it will stop and return the result of charging failure.</string>
+    <string name="tv_charge_offset_tips">When charging back to pile,if it is greater than the set offset value,it will continue to try.After a certain number of attempts,it will stop and return the result of charging failure(Not detected if the value is 0).</string>
     <string name="set_pose_tips">marking…</string>
     <string name="btn_close_sensor">close sensor</string>
     <string name="all">All</string>
