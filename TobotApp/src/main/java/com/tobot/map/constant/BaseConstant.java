@@ -62,7 +62,7 @@ public class BaseConstant {
         return simpleDateFormat.format(new Date()) + "_adb" + ".log";
     }
 
-    public static String getMapFileName(String mapName) {
+    public static String getMapFile(String mapName) {
         return mapName.concat(FILE_MAP_NAME_SUFFIX);
     }
 
