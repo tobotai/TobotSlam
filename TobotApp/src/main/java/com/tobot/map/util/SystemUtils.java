@@ -16,7 +16,7 @@ import com.tobot.map.module.log.Logger;
  */
 public class SystemUtils {
 
-    public static void hideKeyBoard(Activity activity) {
+    public static void hideKeyboard(Activity activity) {
         try {
             InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             if (manager != null && manager.isActive()) {
