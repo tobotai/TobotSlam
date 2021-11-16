@@ -78,14 +78,6 @@ public class MapAdapter extends BaseRecyclerAdapter<String> {
         void onMapSwitch(int position, T data);
 
         /**
-         * 重命名地图
-         *
-         * @param position
-         * @param data
-         */
-        void onMapEdit(int position, T data);
-
-        /**
          * 删除地图
          *
          * @param position

@@ -16,6 +16,7 @@ import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.set.firmware.GetSensorDetectActivity;
 import com.tobot.map.module.set.firmware.SensorInfoActivity;
+import com.tobot.map.util.SystemUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 
@@ -136,6 +137,7 @@ public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChang
     }
 
     private void send() {
+        SystemUtils.hideKeyboard(getActivity());
         String speed = etSpeed.getText().toString().trim();
         if (TextUtils.isEmpty(speed)) {
             showToastTips(getString(R.string.rotate_speed_empty_tips));

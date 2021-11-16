@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,10 +15,8 @@ import com.tobot.map.base.BaseFragment;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
-import com.tobot.map.module.common.NameInputDialog;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.MediaScanner;
-import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnFinishListener;
@@ -35,7 +32,7 @@ import butterknife.BindView;
  * @author houdeming
  * @date 2019/10/21
  */
-public class MapListFragment extends BaseFragment implements DataHelper.MapRequestCallback, MapAdapter.OnMapListener<String>, NameInputDialog.OnNameListener {
+public class MapListFragment extends BaseFragment implements DataHelper.MapRequestCallback, MapAdapter.OnMapListener<String> {
     private static final int MSG_GET_MAP = 1;
     private static final int MSG_MAP_LOAD = 2;
     private static final long TIME_SWITCH_MAP_DELAY = 3 * 1000;
@@ -45,8 +42,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     RecyclerView recyclerView;
     private MainHandler mMainHandler;
     private MapAdapter mAdapter;
-    private List<String> mMapData;
-    private NameInputDialog mNameInputDialog;
     private String mMapFile;
     private static final int MAP_SWITCH = 0;
     private static final int MAP_DELETE = 1;
@@ -79,7 +74,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         if (mMainHandler != null) {
             mMainHandler.removeCallbacksAndMessages(null);
         }
-        closeNameInputDialog();
         closeLoadTipsDialog();
         closeConfirmDialog();
     }
@@ -101,19 +95,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         mMapFile = data;
         mTipsStatus = MAP_SWITCH;
         showConfirmDialog(getString(R.string.tv_map_switch_tips));
-    }
-
-    @Override
-    public void onMapEdit(int position, String data) {
-        if (!isNameInputDialogShow()) {
-            mMapFile = data;
-            mNameInputDialog = NameInputDialog.newInstance(getString(R.string.tv_title_edit_map), getString(R.string.map_edit_rule_tips), getString(R.string.et_hint_edit_map_tips));
-            mNameInputDialog.setOnNameListener(this);
-            FragmentManager fragmentManager = getFragmentManager();
-            if (fragmentManager != null) {
-                mNameInputDialog.show(fragmentManager, "MAP_EDIT_DIALOG");
-            }
-        }
     }
 
     @Override
@@ -176,33 +157,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         }
     }
 
-    @Override
-    public void onName(String name) {
-        if (TextUtils.isEmpty(name)) {
-            ToastUtils.getInstance(getActivity()).show(R.string.map_name_empty_tips);
-            return;
-        }
-
-        if (isHasExitMap(name)) {
-            showToastTips(getString(R.string.map_exist_tips));
-            return;
-        }
-
-        closeNameInputDialog();
-        // 只是更改了地图的文件名字，文件内容并没有改变
-        String oldPath = BaseConstant.getMapFilePath(getActivity(), mMapFile);
-        String newPath = BaseConstant.getMapNamePath(getActivity(), name);
-        boolean isSuccess = SlamManager.getInstance().renameFile(oldPath, newPath);
-        if (isSuccess) {
-            showToastTips(getString(R.string.map_edit_success_tips));
-            new MediaScanner().scanFile(getActivity(), new String[]{oldPath, newPath});
-            DataHelper.getInstance().requestMapFileList(getActivity(), this);
-            return;
-        }
-
-        showToastTips(getString(R.string.map_edit_fail_tips));
-    }
-
     private static class MainHandler extends Handler {
         private MapListFragment mFragment;
 
@@ -232,7 +186,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     }
 
     private void updateRecyclerView(List<String> data) {
-        mMapData = data;
         if (mAdapter != null) {
             mAdapter.setCurrentMap(DataHelper.getInstance().getCurrentMapFile());
             mAdapter.setData(data);
@@ -252,20 +205,5 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
         }
 
         showToastTips(getString(R.string.map_load_fail_tips));
-    }
-
-    private boolean isHasExitMap(String name) {
-        return mMapData != null && !mMapData.isEmpty() && mMapData.contains(BaseConstant.getMapFileName(name));
-    }
-
-    private void closeNameInputDialog() {
-        if (isNameInputDialogShow()) {
-            mNameInputDialog.getDialog().dismiss();
-            mNameInputDialog = null;
-        }
-    }
-
-    private boolean isNameInputDialogShow() {
-        return mNameInputDialog != null && mNameInputDialog.getDialog() != null && mNameInputDialog.getDialog().isShowing();
     }
 }

@@ -12,6 +12,7 @@ import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.NumberUtils;
+import com.tobot.map.util.SystemUtils;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 
@@ -129,6 +130,7 @@ public class RunParameterActivity extends BaseActivity {
             return;
         }
 
+        SystemUtils.hideKeyboard(this);
         if (NumberUtils.isDoubleOrFloat(content)) {
             float value = Float.parseFloat(content);
             DataHelper.getInstance().setChassisRadius(this, value);
@@ -145,6 +147,7 @@ public class RunParameterActivity extends BaseActivity {
             return;
         }
 
+        SystemUtils.hideKeyboard(this);
         if (TextUtils.isDigitsOnly(content)) {
             int value = Integer.parseInt(content);
             DataHelper.getInstance().setRelocationQualityMin(this, value);
@@ -162,6 +165,7 @@ public class RunParameterActivity extends BaseActivity {
             return;
         }
 
+        SystemUtils.hideKeyboard(this);
         if (TextUtils.isDigitsOnly(content)) {
             int value = Integer.parseInt(content);
             DataHelper.getInstance().setRelocationQualitySafe(this, value);
@@ -179,6 +183,7 @@ public class RunParameterActivity extends BaseActivity {
             return;
         }
 
+        SystemUtils.hideKeyboard(this);
         if (NumberUtils.isDoubleOrFloat(content)) {
             float value = Float.parseFloat(content);
             DataHelper.getInstance().setChargeDistance(this, value);
@@ -195,6 +200,7 @@ public class RunParameterActivity extends BaseActivity {
             return;
         }
 
+        SystemUtils.hideKeyboard(this);
         if (NumberUtils.isDoubleOrFloat(content)) {
             float value = Float.parseFloat(content);
             DataHelper.getInstance().setChargeOffset(this, value);
