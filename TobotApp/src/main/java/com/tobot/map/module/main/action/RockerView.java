@@ -19,8 +19,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.tobot.map.R;
-import com.tobot.map.constant.BaseConstant;
-import com.tobot.map.module.log.Logger;
 
 /**
  * 摇杆控件
@@ -108,9 +106,6 @@ public class RockerView extends View {
         super(context, attrs);
         // 获取自定义属性
         initAttribute(context, attrs);
-        if (isInEditMode()) {
-            Logger.i(BaseConstant.TAG, "RockerView: isInEditMode");
-        }
         // 移动区域画笔
         mAreaBackgroundPaint = new Paint();
         mAreaBackgroundPaint.setAntiAlias(true);
@@ -295,7 +290,7 @@ public class RockerView extends View {
         // 两点在Y轴距离
         float lenY = (float) (touchPoint.y - centerPoint.y);
         // 两点距离
-        float len = (float) Math.sqrt((double) (lenX * lenX + lenY * lenY));
+        float len = (float) Math.sqrt(lenX * lenX + lenY * lenY);
         // 计算弧度
         double radian = Math.acos(lenX / len) * (touchPoint.y < centerPoint.y ? -1 : 1);
         // 计算角度
