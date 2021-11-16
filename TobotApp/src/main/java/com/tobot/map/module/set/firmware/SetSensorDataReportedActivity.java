@@ -14,6 +14,7 @@ import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.entity.SetBean;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
 import com.tobot.map.module.set.SetAdapter;
+import com.tobot.map.util.SystemUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.firmware.IdType;
@@ -119,6 +120,7 @@ public class SetSensorDataReportedActivity extends BaseActivity implements BaseR
     }
 
     private void send() {
+        SystemUtils.hideKeyboard(this);
         String content = etNum.getText().toString().trim();
         // 执行全部
         if (TextUtils.isEmpty(content)) {
