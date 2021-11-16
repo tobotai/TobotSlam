@@ -182,6 +182,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
 
     private void connect(String ip) {
         mIp = ip;
+        SystemUtils.hideKeyboard(this);
         showLoadTipsDialog(getString(R.string.tv_connect_ing), null);
         EventBus.getDefault().post(new ConnectSlamEvent(ip));
     }
