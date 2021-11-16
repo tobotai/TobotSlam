@@ -81,12 +81,12 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     implementation 'com.jakewharton:butterknife:9.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation(name: 'TobotBar-1.1.6', ext: 'aar')
     implementation(name: 'TobotWheelView-1.2.1', ext: 'aar')
     implementation files('libs/TobotNet-1.2.0.jar')
-    implementation files('libs/TobotSlam-2.10.2.jar')
+    implementation files('libs/TobotSlam-2.10.3.jar')
 }
