@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">瞳步建圖</string>
-    <string name="tv_sta_tips">請先連接到底盤連接的無線網絡</string>
+    <string name="tv_chassis_connect_tips">請先連接到底盤連接的無線網絡</string>
     <string name="et_ip_hint_tips">請輸入底盤的ip地址</string>
     <string name="btn_connect">連接</string>
     <string name="tv_connect_history">連接歷史記錄</string>
@@ -12,7 +12,6 @@
     <string name="tv_test">測試</string>
     <string name="tv_about_app">關於APP</string>
     <string name="tv_set_speed">導航速度</string>
-    <string name="tv_current_speed_tips">最大運動速度%.2fM/S</string>
     <string name="tv_rotate_speed">旋轉角速度</string>
     <string name="tv_current_rotate_speed_tips">最大旋轉角速度%.2fM/S</string>
     <string name="navigate_mode">導航模式</string>
@@ -74,9 +73,7 @@
     <string name="map_name_empty_tips">地圖名稱不能為空，請輸入…</string>
     <string name="slam_connect_not_tips">抱歉，還沒連接到底盤</string>
     <string name="tv_title_save_map">保存地圖</string>
-    <string name="tv_title_edit_map">重命名地圖</string>
     <string name="et_hint_map_tips">請輸入地圖名稱</string>
-    <string name="et_hint_edit_map_tips">請輸入新的地圖名稱</string>
     <string name="et_hint_location_tips">請輸入位置點名稱</string>
     <string name="et_hint_edit_location_tips">請輸入位置點名稱（必填）</string>
     <string name="et_hint_edit_location_china_tips">請輸入中文名稱（選填）</string>
@@ -90,7 +87,6 @@
     <string name="name_rule_tips">請按需求合理命名位置點名稱，建議以數字類型命名。</string>
     <string name="name_edit_rule_tips">位置點名稱、中英文名稱均可修改，但不能重復！標定點用來設置機器人當前位置，重定位用於當前位置點執行定位操作。</string>
     <string name="map_rule_tips">請按需求合理命名地圖名稱，當保存的地圖名稱與現有地圖名稱壹致時，將會覆蓋保存。</string>
-    <string name="map_edit_rule_tips">請按需求合理命名地圖名稱，當保存的地圖名稱與現有地圖名稱壹致時，將會覆蓋保存。</string>
     <string name="map_load_tips">地圖加載中…</string>
     <string name="map_load_fail_tips">地圖加載失敗…</string>
     <string name="map_load_success_tips">地圖加載成功…</string>
@@ -100,9 +96,6 @@
     <string name="map_save_tips">地圖保存中…</string>
     <string name="map_save_success_tips">地圖保存成功…</string>
     <string name="map_save_fail_tips">地圖保存失敗…</string>
-    <string name="map_edit_success_tips">地圖修改成功…</string>
-    <string name="map_edit_fail_tips">地圖修改失敗…</string>
-    <string name="map_exist_tips">該地圖名稱已存在，請重新命名…</string>
     <string name="number_edit_fail_tips">該位置點名稱已存在，請重新命名…</string>
     <string name="name_china_edit_fail_tips">該中文名稱已存在，請重新命名…</string>
     <string name="name_english_edit_fail_tips">該英文名稱已存在，請重新命名…</string>
@@ -208,11 +201,11 @@
     <string name="tv_charge_start_distance">充電時對樁檢測距離：%1$sM</string>
     <string name="et_charge_start_distance_hint">請輸入檢測距離(單位:米)</string>
     <string name="charge_distance_empty_tips">檢測距離不能為空，請輸入…</string>
-    <string name="tv_charge_start_distance_tips">對樁檢測距離是指激光雷達到樁的距離。如果在充電樁前0.2米開始檢測對樁，底盤半徑為0.25米，則檢測距離為0.45米。</string>
+    <string name="tv_charge_start_distance_tips">對樁檢測距離是指激光雷達到樁的距離。如果在充電樁前0.2米開始檢測對樁，底盤半徑為0.25米，則檢測距離為0.45米（如果值為0則不檢測）。</string>
     <string name="tv_charge_offset">充電時對樁偏移值：%1$sM</string>
     <string name="et_charge_offset_hint">請輸入對樁偏移值(單位:米)</string>
     <string name="charge_offset_empty_tips">偏移值不能為空，請輸入…</string>
-    <string name="tv_charge_offset_tips">當充電後退對樁時，如果大於設定的偏移值時，將會繼續嘗試，嘗試一定次數後將停止，並返回充電失敗的結果。</string>
+    <string name="tv_charge_offset_tips">當充電後退對樁時，如果大於設定的偏移值時，將會繼續嘗試，嘗試一定次數後將停止，並返回充電失敗的結果（如果值為0則不檢測）。</string>
     <string name="set_pose_tips">標定中…</string>
     <string name="btn_close_sensor">關閉傳感器</string>
     <string name="et_area_width_hint">請輸入寬(單位:米)</string>
