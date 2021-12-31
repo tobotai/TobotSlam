@@ -88,5 +88,5 @@ dependencies {
     implementation(name: 'TobotBar-1.1.6', ext: 'aar')
     implementation(name: 'TobotWheelView-1.2.1', ext: 'aar')
     implementation files('libs/TobotNet-1.2.0.jar')
-    implementation files('libs/TobotSlam-2.10.3.jar')
+    implementation files('libs/TobotSlam-2.10.4.jar')
 }
