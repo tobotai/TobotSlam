@@ -65,14 +65,8 @@
                     android:orientation="horizontal">
 
                     <RadioButton
-                        android:id="@+id/rb_mark_location"
-                        style="@style/rb_speed"
-                        android:text="@string/tv_mark_location" />
-
-                    <RadioButton
                         android:id="@+id/rb_relocation"
                         style="@style/rb_speed"
-                        android:layout_marginLeft="@dimen/rb_wall_margin"
                         android:text="@string/tv_relocation" />
 
                     <RadioButton
@@ -80,6 +74,13 @@
                         style="@style/rb_speed"
                         android:layout_marginLeft="@dimen/rb_wall_margin"
                         android:text="@string/tv_arrive_not_rotate" />
+
+                    <RadioButton
+                        android:id="@+id/rb_mark_location"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/tv_mark_location"
+                        android:visibility="gone" />
                 </RadioGroup>
             </RelativeLayout>
 

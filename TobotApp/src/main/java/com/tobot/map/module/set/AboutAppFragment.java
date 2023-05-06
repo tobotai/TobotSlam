@@ -1,5 +1,6 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +29,7 @@ import butterknife.OnClick;
  * @date 2019/10/21
  */
 public class AboutAppFragment extends BaseFragment implements UpgradeTipsDialog.OnUpgradeListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_version)
     TextView tvVersion;
     private UpgradeTipsDialog mUpgradeTipsDialog;
@@ -75,6 +77,7 @@ public class AboutAppFragment extends BaseFragment implements UpgradeTipsDialog.
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @OnClick({R.id.rl_version_update, R.id.rl_contact_us})
     public void onClickView(View v) {
         switch (v.getId()) {

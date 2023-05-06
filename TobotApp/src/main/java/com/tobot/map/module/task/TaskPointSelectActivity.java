@@ -1,5 +1,6 @@
 package com.tobot.map.module.task;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
@@ -28,20 +29,24 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2020/3/17
  */
-public class TaskPointSelectActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<LocationBean>, TaskSaveDialog.OnNameListener {
+public class TaskPointSelectActivity extends BaseBackActivity implements BaseRecyclerAdapter.OnItemClickListener<LocationBean>, TaskSaveDialog.OnNameListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_select_all)
     TextView tvSelectAll;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.btn_confirm)
     Button btnConfirm;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_point)
     RecyclerView recyclerView;
     private static final int SPAN_COUNT = 6;
     private TaskPointSelectAdapter mAdapter;
     private List<LocationBean> mAllData;
     private int mAllSize;
-    private List<LocationBean> mSelectList = new ArrayList<>();
+    private final List<LocationBean> mSelectList = new ArrayList<>();
     private TaskSaveDialog mTaskSaveDialog;
 
     @Override

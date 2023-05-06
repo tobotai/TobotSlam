@@ -1,5 +1,6 @@
 package com.tobot.map.module.set.device;
 
+import android.annotation.SuppressLint;
 import android.graphics.RectF;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import butterknife.BindView;
  * @date 2020/3/18
  */
 public class DeviceInfoFragment extends BaseFragment {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_device)
     RecyclerView recyclerView;
     private DeviceAdapter mDeviceAdapter;

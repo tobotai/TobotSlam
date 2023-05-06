@@ -1,14 +1,17 @@
 package com.tobot.map.module.task;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
@@ -28,10 +31,15 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2020/3/16
  */
-public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<RouteBean>, TaskAdapter.OnItemLongClickListener,
+public class TaskActivity extends BaseBackActivity implements BaseRecyclerAdapter.OnItemClickListener<RouteBean>, TaskAdapter.OnItemLongClickListener,
         TaskDetailDialog.OnDeleteListener, TaskExecuteConfirmDialog.OnExecuteListener {
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.tv_head)
+    TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_task_tips)
     TextView tvTips;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_route)
     RecyclerView recyclerView;
     private TaskAdapter mAdapter;
@@ -45,6 +53,15 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
 
     @Override
     protected void init() {
+        tvHead.setText(R.string.tv_create_task);
+        Drawable drawable;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            drawable = getResources().getDrawable(R.drawable.ic_add, null);
+        } else {
+            drawable = getResources().getDrawable(R.drawable.ic_add);
+        }
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        tvHead.setCompoundDrawables(drawable, null, null, null);
         int space = getResources().getDimensionPixelSize(R.dimen.item_split_size);
         recyclerView.addItemDecoration(new GridItemDecoration(space, space));
         recyclerView.setLayoutManager(new FlowLayoutManager());
@@ -111,9 +128,11 @@ public class TaskActivity extends BaseActivity implements BaseRecyclerAdapter.On
         finish();
     }
 
-    @OnClick({R.id.tv_create_task})
+    @OnClick({R.id.tv_head})
     public void onClickView(View view) {
-        createTask();
+        if (view.getId() == R.id.tv_head) {
+            createTask();
+        }
     }
 
     private void setData(boolean isDelete) {

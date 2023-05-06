@@ -223,7 +223,7 @@
 
 -dontwarn com.slamtec.slamware.**
 -keep class com.slamtec.slamware.** { *; }
-
 # 忽略混淆json使用到的bean类
 -keep public class com.tobot.map.entity.RouteBean { *;}
 -keep public class com.tobot.slam.data.LocationBean { *;}
+-keep public class com.tobot.map.entity.RecordInfo { *;}

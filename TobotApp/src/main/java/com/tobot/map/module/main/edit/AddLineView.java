@@ -22,7 +22,7 @@ import java.util.List;
  * @date 2020/5/9
  */
 public class AddLineView extends LinearLayout {
-    private PointAdapter mPointAdapter;
+    private final PointAdapter mPointAdapter;
 
     public AddLineView(Context context) {
         this(context, null);

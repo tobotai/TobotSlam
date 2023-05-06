@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/view_set_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_set_margin_left_right"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_url"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/et_height"
+            android:background="@drawable/shape_edit_bg"
+            android:gravity="center"
+            android:hint="@string/et_download_url_hint_tips"
+            android:inputType="textUri"
+            android:textColor="@color/et_tv"
+            android:textSize="@dimen/et_tv" />
+
+        <Button
+            android:id="@+id/btn_download"
+            style="@style/btn_connect"
+            android:text="@string/firmware_download" />
+    </LinearLayout>
+</RelativeLayout>

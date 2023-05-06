@@ -19,11 +19,11 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
     private int verticalScrollOffset = 0;
     private int totalHeight = 0;
     private Row row = new Row();
-    private List<Row> lineRows = new ArrayList<>();
+    private final List<Row> lineRows = new ArrayList<>();
     /**
      * 保存所有的Item的上下左右的偏移量信息
      */
-    private SparseArray<Rect> allItemFrames = new SparseArray<>();
+    private final SparseArray<Rect> allItemFrames = new SparseArray<>();
 
     public FlowLayoutManager() {
         // 设置主动测量规则，适应recyclerView高度为wrap_content
@@ -256,8 +256,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
      * 每个item的定义
      */
     private static class Item {
-        private int useHeight;
-        private View view;
+        private final int useHeight;
+        private final View view;
         private Rect rect;
 
         private void setRect(Rect rect) {

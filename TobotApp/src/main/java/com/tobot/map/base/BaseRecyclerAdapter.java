@@ -1,5 +1,6 @@
 package com.tobot.map.base;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -18,8 +19,8 @@ import java.util.List;
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
     protected List<T> mData = new ArrayList<>();
     protected Context mContext;
-    private int mLayoutId;
-    private LayoutInflater mLayoutInflater;
+    private final int mLayoutId;
+    private final LayoutInflater mLayoutInflater;
     protected OnItemClickListener<T> mOnItemClickListener;
 
     public BaseRecyclerAdapter(Context context, int itemLayoutId) {
@@ -56,6 +57,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
      */
     public abstract void convert(BaseRecyclerHolder viewHolder, T data, int position);
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setData(List<T> data) {
         mData = data;
         notifyDataSetChanged();

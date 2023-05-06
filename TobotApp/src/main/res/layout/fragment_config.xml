@@ -27,11 +27,8 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tv_set_speed"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
+                    style="@style/tv_content"
+                    android:text="@string/tv_set_speed" />
 
                 <RadioGroup
                     android:layout_width="wrap_content"
@@ -62,12 +59,9 @@
                     android:layout_marginTop="@dimen/view_margin_top" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/tv_content"
                     android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/tv_rotate_speed"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
+                    android:text="@string/tv_rotate_speed" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -80,6 +74,7 @@
                         android:id="@+id/tv_current_rotate_speed_tips"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/tv_current_rotate_speed_tips"
                         android:textColor="@color/tv_tips"
                         android:textSize="@dimen/tv_tips" />
 
@@ -87,135 +82,7 @@
                         android:id="@+id/sb_rotate_speed"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sb_speed_height"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
-                        android:paddingLeft="@dimen/sb_speed_padding_left"
-                        android:paddingRight="@dimen/sb_speed_padding_left"
-                        app:bar_bgColor="@color/sb_speed_bg"
-                        app:bar_centerColor="@color/sb_speed_center"
-                        app:bar_circleColor="@color/sb_speed_circle"
-                        app:bar_endColor="@color/sb_speed_end"
-                        app:bar_height="@dimen/sb_speed_bar_height"
-                        app:bar_startColor="@color/sb_speed_start"
-                        app:bar_textShow="false" />
-                </LinearLayout>
-
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/navigate_mode"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <RadioGroup
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/rb_navigate_free"
-                        style="@style/rb_speed"
-                        android:text="@string/navigate_free" />
-
-                    <RadioButton
-                        android:id="@+id/rb_navigate_track"
-                        style="@style/rb_speed"
-                        android:layout_marginLeft="@dimen/rb_wall_margin"
-                        android:text="@string/navigate_track" />
-
-                    <RadioButton
-                        android:id="@+id/rb_navigate_track_first"
-                        style="@style/rb_speed"
-                        android:layout_marginLeft="@dimen/rb_wall_margin"
-                        android:text="@string/navigate_track_first" />
-                </RadioGroup>
-
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/motion_to_point_mode"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <RadioGroup
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/rb_motion_ordinary"
-                        style="@style/rb_speed"
-                        android:text="@string/motion_to_point_ordinary" />
-
-                    <RadioButton
-                        android:id="@+id/rb_motion_exact"
-                        style="@style/rb_speed"
-                        android:layout_marginLeft="@dimen/rb_wall_margin"
-                        android:text="@string/motion_to_point_exact" />
-                </RadioGroup>
-
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/avoid_obstacle_mode"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <RadioGroup
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/rb_obstacle_avoid"
-                        style="@style/rb_speed"
-                        android:text="@string/meet_obstacle_avoid" />
-
-                    <RadioButton
-                        android:id="@+id/rb_obstacle_suspend"
-                        style="@style/rb_speed"
-                        android:layout_marginLeft="@dimen/rb_wall_margin"
-                        android:text="@string/meet_obstacle_suspend" />
-                </RadioGroup>
-
-                <LinearLayout
-                    android:id="@+id/ll_try_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tv_try_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/tv_try_time_tips"
-                        android:textColor="@color/tv_tips"
-                        android:textSize="@dimen/tv_tips" />
-
-                    <com.tobot.bar.seekbar.StripSeekBar
-                        android:id="@+id/sb_try_time"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/sb_speed_height"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
+                        android:layout_marginLeft="@dimen/sb_speed_margin_left"
                         android:paddingLeft="@dimen/sb_speed_padding_left"
                         android:paddingRight="@dimen/sb_speed_padding_left"
                         app:bar_bgColor="@color/sb_speed_bg"
@@ -232,26 +99,17 @@
                     android:layout_marginTop="@dimen/view_margin_top" />
 
                 <RelativeLayout
+                    android:id="@+id/rl_navigate_option"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_item_height"
                     android:background="@drawable/selector_item_bg"
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/tv_speed_multiplier"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_navigate_option" />
 
-                    <TextView
-                        android:id="@+id/tv_speed_multiplier"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/selector_switch" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
@@ -264,19 +122,10 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/tv_navigate_parameter"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_navigate_parameter" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
@@ -289,19 +138,10 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/set_sensor_status"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/set_sensor_status" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
@@ -314,19 +154,10 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/firmware_upgrade"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/firmware_upgrade" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />

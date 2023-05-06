@@ -37,5 +37,6 @@ public class BaseApplication extends Application implements CrashHandler.OnUncau
     @Override
     public void onUncaughtException(String error) {
         Logger.i(BaseConstant.TAG, "error=" + error);
+        DataHelper.getInstance().recordImportantInfo(this, error);
     }
 }

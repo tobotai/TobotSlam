@@ -1,5 +1,6 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
@@ -7,7 +8,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -16,13 +16,10 @@ import com.tobot.bar.seekbar.StripSeekBar;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.constant.BaseConstant;
-import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.log.Logger;
-import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.module.set.firmware.FirmwareUpgradeActivity;
 import com.tobot.map.module.set.firmware.SetSensorDataReportedActivity;
 import com.tobot.map.util.NumberUtils;
-import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnResultListener;
@@ -40,42 +37,23 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     private static final int MSG_REQUEST_NAVIGATE_SPEED = 1;
     private static final int MSG_REQUEST_ROTATE_SPEED = 2;
     private static final int MSG_SET_SPEED_RESULT = 3;
-    private static final int MSG_SET_FAST = 4;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_speed_low)
     RadioButton rbSpeedLow;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_speed_medium)
     RadioButton rbSpeedMedium;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_speed_high)
     RadioButton rbSpeedHigh;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_current_rotate_speed_tips)
     TextView tvCurrentRotateSpeed;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.sb_rotate_speed)
     StripSeekBar sbRotateSpeed;
-    @BindView(R.id.rb_navigate_free)
-    RadioButton rbNavigateFree;
-    @BindView(R.id.rb_navigate_track)
-    RadioButton rbNavigateTrack;
-    @BindView(R.id.rb_navigate_track_first)
-    RadioButton rbNavigateTrackFirst;
-    @BindView(R.id.rb_motion_ordinary)
-    RadioButton rbMotionOrdinary;
-    @BindView(R.id.rb_motion_exact)
-    RadioButton rbMotionExact;
-    @BindView(R.id.rb_obstacle_avoid)
-    RadioButton rbObstacleAvoid;
-    @BindView(R.id.rb_obstacle_suspend)
-    RadioButton rbObstacleSuspend;
-    @BindView(R.id.ll_try_time)
-    LinearLayout llTryTime;
-    @BindView(R.id.tv_try_time)
-    TextView tvTryTime;
-    @BindView(R.id.sb_try_time)
-    StripSeekBar sbTryTime;
-    @BindView(R.id.tv_speed_multiplier)
-    TextView tvSpeedMultiplier;
     private MainHandler mMainHandler;
     private float mSpeed;
-    private int mTime;
 
     public static ConfigFragment newInstance() {
         return new ConfigFragment();
@@ -89,12 +67,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     @Override
     protected void init() {
         sbRotateSpeed.setOnSeekBarChangeListener(this);
-        sbTryTime.setOnSeekBarChangeListener(this);
-        tvSpeedMultiplier.setSelected(BaseConstant.isSpeedFast);
         mMainHandler = new MainHandler(new WeakReference<>(this));
-        setNavigateMode(MoveData.getInstance().getNavigateMode());
-        setMotionMode(MoveData.getInstance().getMotionMode());
-        setObstacleMode(MoveData.getInstance().getObstacleMode());
         requestNavigateSpeed();
         requestRotateSpeed();
     }
@@ -133,21 +106,14 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     @Override
     public void onSeekBarStop(View view, float progress) {
         setProgress(view, progress);
-        switch (view.getId()) {
-            case R.id.sb_rotate_speed:
-                setRotateSpeed(mSpeed);
-                break;
-            case R.id.sb_try_time:
-                DataHelper.getInstance().setTryTime(getActivity(), mTime);
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.sb_rotate_speed) {
+            setRotateSpeed(mSpeed);
         }
     }
 
-    @OnClick({R.id.rb_navigate_free, R.id.rb_navigate_track, R.id.rb_navigate_track_first, R.id.rb_motion_exact, R.id.rb_motion_ordinary,
-            R.id.rb_obstacle_avoid, R.id.rb_obstacle_suspend, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.rl_navigate_parameter,
-            R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high, R.id.tv_speed_multiplier})
+    @SuppressLint("NonConstantResourceId")
+    @OnClick({R.id.rl_navigate_option, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.rl_navigate_parameter,
+            R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high})
     public void onClickView(View v) {
         switch (v.getId()) {
             case R.id.rb_speed_low:
@@ -159,28 +125,8 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             case R.id.rb_speed_high:
                 setNavigateSpeed(SlamCode.SPEED_HIGH);
                 break;
-            case R.id.rb_navigate_free:
-                MoveData.getInstance().setNavigateMode(MoveData.NAVIGATE_FREE);
-                break;
-            case R.id.rb_navigate_track:
-                MoveData.getInstance().setNavigateMode(MoveData.NAVIGATE_TRACK);
-                break;
-            case R.id.rb_navigate_track_first:
-                MoveData.getInstance().setNavigateMode(MoveData.NAVIGATE_TRACK_FIRST);
-                break;
-            case R.id.rb_motion_exact:
-                MoveData.getInstance().setMotionMode(MoveData.MOTION_TO_POINT_EXACT);
-                break;
-            case R.id.rb_motion_ordinary:
-                MoveData.getInstance().setMotionMode(MoveData.MOTION_TO_POINT_ORDINARY);
-                break;
-            case R.id.rb_obstacle_avoid:
-                MoveData.getInstance().setObstacleMode(MoveData.MEET_OBSTACLE_AVOID);
-                setTryTime();
-                break;
-            case R.id.rb_obstacle_suspend:
-                MoveData.getInstance().setObstacleMode(MoveData.MEET_OBSTACLE_SUSPEND);
-                llTryTime.setVisibility(View.GONE);
+            case R.id.rl_navigate_option:
+                startActivity(new Intent(getActivity(), NavigateOptionActivity.class));
                 break;
             case R.id.rl_set_sensor_status:
                 startActivity(new Intent(getActivity(), SetSensorDataReportedActivity.class));
@@ -191,17 +137,13 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
             case R.id.rl_navigate_parameter:
                 startActivity(new Intent(getActivity(), RunParameterActivity.class));
                 break;
-            case R.id.tv_speed_multiplier:
-                tvSpeedMultiplier.setSelected(!tvSpeedMultiplier.isSelected());
-                ThreadPoolManager.getInstance().execute(new SpeedRunnable(tvSpeedMultiplier.isSelected()));
-                break;
             default:
                 break;
         }
     }
 
     private static class MainHandler extends Handler {
-        private ConfigFragment mFragment;
+        private final ConfigFragment mFragment;
 
         private MainHandler(WeakReference<ConfigFragment> reference) {
             super(Looper.getMainLooper());
@@ -231,9 +173,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                 case MSG_SET_SPEED_RESULT:
                     mFragment.handleSpeedSetResult((boolean) msg.obj);
                     break;
-                case MSG_SET_FAST:
-                    mFragment.handleSetFastResult((Boolean) msg.obj);
-                    break;
                 default:
                     break;
             }
@@ -241,70 +180,17 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     private void setProgress(View view, float progress) {
-        float value;
-        switch (view.getId()) {
-            case R.id.sb_rotate_speed:
-                value = progress * BaseConstant.MAX_ROTATE_SPEED;
-                // 限制最小速度
-                if (value < BaseConstant.MIN_ROTATE_SPEED) {
-                    value = BaseConstant.MIN_ROTATE_SPEED;
-                    sbRotateSpeed.setProgress(value / BaseConstant.MAX_ROTATE_SPEED);
-                }
+        if (view.getId() == R.id.sb_rotate_speed) {
+            float value = progress * BaseConstant.MAX_ROTATE_SPEED;
+            // 限制最小速度
+            if (value < BaseConstant.MIN_ROTATE_SPEED) {
+                value = BaseConstant.MIN_ROTATE_SPEED;
+                sbRotateSpeed.setProgress(value / BaseConstant.MAX_ROTATE_SPEED);
+            }
 
-                mSpeed = value;
-                tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
-                break;
-            case R.id.sb_try_time:
-                mTime = (int) (progress * BaseConstant.TRY_TIME_MAX);
-                tvTryTime.setText(getString(R.string.tv_try_time_tips, mTime));
-                break;
-            default:
-                break;
+            mSpeed = value;
+            tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
         }
-    }
-
-    private void setNavigateMode(int mode) {
-        switch (mode) {
-            case MoveData.NAVIGATE_FREE:
-                rbNavigateFree.setChecked(true);
-                break;
-            case MoveData.NAVIGATE_TRACK:
-                rbNavigateTrack.setChecked(true);
-                break;
-            case MoveData.NAVIGATE_TRACK_FIRST:
-                rbNavigateTrackFirst.setChecked(true);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void setMotionMode(int mode) {
-        if (mode == MoveData.MOTION_TO_POINT_EXACT) {
-            rbMotionExact.setChecked(true);
-            return;
-        }
-
-        rbMotionOrdinary.setChecked(true);
-    }
-
-    private void setObstacleMode(int mode) {
-        if (mode == MoveData.MEET_OBSTACLE_AVOID) {
-            rbObstacleAvoid.setChecked(true);
-            setTryTime();
-            return;
-        }
-
-        rbObstacleSuspend.setChecked(true);
-        llTryTime.setVisibility(View.GONE);
-    }
-
-    private void setTryTime() {
-        llTryTime.setVisibility(View.VISIBLE);
-        mTime = DataHelper.getInstance().getTryTime(getActivity());
-        tvTryTime.setText(getString(R.string.tv_try_time_tips, mTime));
-        float progress = mTime / BaseConstant.TRY_TIME_MAX;
-        sbTryTime.setProgress(progress);
     }
 
     private void updateNavigateSpeedView(float value) {
@@ -337,7 +223,10 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                     }
                 }
             });
+            return;
         }
+
+        updateRotateSpeedView(0);
     }
 
     private void requestRotateSpeed() {
@@ -388,30 +277,5 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
 
     private void handleSpeedSetResult(boolean isSuccess) {
         showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
-    }
-
-    private void handleSetFastResult(boolean isSuccess) {
-        if (!isSuccess) {
-            tvSpeedMultiplier.setSelected(!tvSpeedMultiplier.isSelected());
-        }
-        BaseConstant.isSpeedFast = tvSpeedMultiplier.isSelected();
-        showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
-    }
-
-    private class SpeedRunnable implements Runnable {
-        private boolean isFast;
-
-        private SpeedRunnable(boolean isFast) {
-            this.isFast = isFast;
-        }
-
-        @Override
-        public void run() {
-            boolean isSuccess = SlamManager.getInstance().setDefinedMoveFast(isFast);
-            Logger.i(BaseConstant.TAG, "set fast isSuccess=" + isSuccess);
-            if (mMainHandler != null) {
-                mMainHandler.obtainMessage(MSG_SET_FAST, isSuccess).sendToTarget();
-            }
-        }
     }
 }

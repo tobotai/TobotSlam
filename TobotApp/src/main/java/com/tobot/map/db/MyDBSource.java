@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
 
+import com.tobot.map.entity.RecordInfo;
 import com.tobot.map.entity.RouteBean;
 import com.tobot.slam.data.LocationBean;
 
@@ -18,8 +19,8 @@ import java.util.List;
  * @date 2018/6/28
  */
 public class MyDBSource {
-    private static MyDBSource sDBSource;
-    private MySQLiteHelper mHelper;
+    private static volatile MyDBSource sDBSource;
+    private final MySQLiteHelper mHelper;
 
     private MyDBSource(Context context) {
         mHelper = new MySQLiteHelper(context);
@@ -523,6 +524,128 @@ public class MyDBSource {
         cursor.close();
         mHelper.close();
         return beanList;
+    }
+
+    public synchronized void insertRecordWarningList(List<RecordInfo> dataList) {
+        if (dataList == null || dataList.isEmpty()) {
+            return;
+        }
+
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        String sql = "insert into " + MySQLiteHelper.TABLE_RECORD_WARNING + "("
+                + MySQLiteHelper.TYPE + ","
+                + MySQLiteHelper.CODE + ","
+                + MySQLiteHelper.COUNT + ","
+                + MySQLiteHelper.TIME + ","
+                + MySQLiteHelper.CONTENT + ") "
+                + "values(?, ?, ?, ?, ?)";
+        SQLiteStatement statement = database.compileStatement(sql);
+        database.beginTransaction();
+        try {
+            for (RecordInfo info : dataList) {
+                statement.bindLong(1, info.getType());
+                statement.bindLong(2, info.getCode());
+                statement.bindLong(3, info.getCount());
+                String time = info.getTime();
+                // 为空的时候要做空处理，不然当空的时候读到的数据会是上一次的数据
+                statement.bindString(4, !TextUtils.isEmpty(time) ? time : "");
+                String content = info.getContent();
+                statement.bindString(5, !TextUtils.isEmpty(content) ? content : "");
+                statement.executeInsert();
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            mHelper.close();
+        }
+    }
+
+    public synchronized void deleteAllRecordWarning() {
+        deleteAll(MySQLiteHelper.TABLE_RECORD_WARNING);
+    }
+
+    public synchronized List<RecordInfo> queryRecordWarningList() {
+        List<RecordInfo> infoList = new ArrayList<>();
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        String orderBy = MySQLiteHelper.ID + " asc";
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_RECORD_WARNING, null, null,
+                null, null, null, orderBy);
+        cursor.moveToFirst();
+        RecordInfo info = new RecordInfo();
+        while (!cursor.isAfterLast()) {
+            info = info.clone();
+            info.setType(cursor.getInt(1));
+            info.setCode(cursor.getInt(2));
+            info.setCount(cursor.getInt(3));
+            info.setTime(cursor.getString(4));
+            info.setContent(cursor.getString(5));
+            infoList.add(info);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        mHelper.close();
+        return infoList;
+    }
+
+    public synchronized void insertRecordInfo(RecordInfo info) {
+        if (info != null) {
+            SQLiteDatabase database = mHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.TYPE, info.getType());
+            values.put(MySQLiteHelper.CODE, info.getCode());
+            values.put(MySQLiteHelper.TIME, info.getTime());
+            values.put(MySQLiteHelper.CONTENT, info.getContent());
+            database.insert(MySQLiteHelper.TABLE_RECORD_INFO, null, values);
+            mHelper.close();
+        }
+    }
+
+    public synchronized void deleteAllRecordInfo() {
+        deleteAll(MySQLiteHelper.TABLE_RECORD_INFO);
+    }
+
+    public synchronized int deleteRecordInfo(RecordInfo info) {
+        if (info == null) {
+            return -1;
+        }
+
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        String whereClause = MySQLiteHelper.TIME + "=? and " + MySQLiteHelper.CONTENT + "=?";
+        String[] whereArgs = {info.getTime(), info.getContent()};
+        int deleteId = database.delete(MySQLiteHelper.TABLE_RECORD_INFO, whereClause, whereArgs);
+        mHelper.close();
+        return deleteId;
+    }
+
+    public synchronized List<RecordInfo> queryRecordInfoList() {
+        return queryRecordInfoList(null, null);
+    }
+
+    public synchronized List<RecordInfo> queryRecordInfoList(int pageIndex, int pageCount) {
+        return queryRecordInfoList(MySQLiteHelper.ID + " desc", pageIndex + "," + pageCount);
+    }
+
+    private List<RecordInfo> queryRecordInfoList(String orderBy, String limit) {
+        List<RecordInfo> infoList = new ArrayList<>();
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_RECORD_INFO, null, null,
+                null, null, null, orderBy, limit);
+        cursor.moveToFirst();
+        RecordInfo info = new RecordInfo();
+        while (!cursor.isAfterLast()) {
+            info = info.clone();
+            info.setType(cursor.getInt(1));
+            info.setCode(cursor.getInt(2));
+            info.setTime(cursor.getString(3));
+            info.setContent(cursor.getString(4));
+            infoList.add(info);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        mHelper.close();
+        return infoList;
     }
 
     private void deleteAll(String tab) {

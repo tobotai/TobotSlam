@@ -21,11 +21,11 @@ import java.lang.ref.WeakReference;
  * @date 2019/10/23
  */
 class MapHelper {
-    private Context mContext;
+    private final Context mContext;
     private MapThread mMapThread;
     private MapDataThread mMapDataThread;
-    private MainActivity mActivity;
-    private MapView mMapView;
+    private final MainActivity mActivity;
+    private final MapView mMapView;
     private boolean isStart, isFirstRefresh, isLastCharge, isInit;
     private int mRefreshCount, mQuality;
     /**
@@ -33,7 +33,11 @@ class MapHelper {
      */
     private int mBattery = -100;
     private ActionStatus mActionStatus;
-    private float mX, mY, mYaw;
+    private float mLastX, mLastY;
+    /**
+     * 360度的弧度是6.28，只要比360度大就行
+     */
+    private float mLastYaw = 10f;
 
     MapHelper(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference, WeakReference<MapView> mapViewWeakReference) {
         mContext = contextWeakReference.get();
@@ -118,6 +122,8 @@ class MapHelper {
                         mMapView.setHealth(SlamManager.getInstance().getRobotHealthInfo(), pose);
                         // 获取传感器信息
                         mMapView.setSensors(SlamManager.getInstance().getSensors(), SlamManager.getInstance().getSensorValues(), pose);
+                        // 获取重定位的区域
+                        mMapView.setArea(SlamManager.getInstance().getRelocationArea());
                     }
 
                     if (!isStart) {
@@ -166,14 +172,15 @@ class MapHelper {
 
         private void updatePoseShow(Pose pose) {
             if (pose != null) {
-                float x = pose.getX();
-                float y = pose.getY();
-                float yaw = pose.getYaw();
-                if (mX - x != 0 || mY - y != 0 || mYaw - yaw != 0) {
-                    mX = x;
-                    mY = y;
-                    mYaw = yaw;
-                    mActivity.updatePoseShow(pose);
+                float accuracy = 1000.0f;
+                float x = (float) (Math.round(pose.getX() * accuracy) / accuracy);
+                float y = (float) (Math.round(pose.getY() * accuracy) / accuracy);
+                float yaw = (float) (Math.round(pose.getYaw() * accuracy) / accuracy);
+                if (x - mLastX != 0 || y - mLastY != 0 || yaw - mLastYaw != 0) {
+                    mLastX = x;
+                    mLastY = y;
+                    mLastYaw = yaw;
+                    mActivity.updatePoseShow(x, y, yaw);
                 }
             }
         }
@@ -189,7 +196,11 @@ class MapHelper {
                 isLastCharge = isCharge;
                 mQuality = locationQuality;
                 mActionStatus = actionStatus;
-                mActivity.updateStatus(battery, isCharge, locationQuality, actionStatus);
+                boolean isDockingStatus = SlamManager.getInstance().isDockingStatus();
+                boolean isDirectCharge = SlamManager.getInstance().isDirectCharge();
+                String chargeMode = getChargeMode(isDockingStatus, isDirectCharge);
+                String status = actionStatus != null ? actionStatus.toString() : mContext.getString(R.string.unknown);
+                mActivity.updateStatus(battery, isCharge, chargeMode, locationQuality, status);
             }
         }
 
@@ -205,6 +216,18 @@ class MapHelper {
             }
 
             return mContext.getString(R.string.signal_3);
+        }
+
+        private String getChargeMode(boolean isDockingStatus, boolean isDirectCharge) {
+            if (isDockingStatus) {
+                return mContext.getString(R.string.charging_docking);
+            }
+
+            if (isDirectCharge) {
+                return mContext.getString(R.string.charging_direct);
+            }
+
+            return "";
         }
 
         private void handleControlPanelSoftwareVersion() {

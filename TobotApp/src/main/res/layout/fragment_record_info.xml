@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_delete"
+        style="@style/btn_over_style"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:text="@string/btn_delete" />
+
+    <LinearLayout
+        android:id="@+id/ll_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/view_set_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_set_margin_left_right"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/tv_content_weight"
+            android:text="@string/tv_time" />
+
+        <TextView
+            style="@style/tv_content_weight"
+            android:layout_weight="2"
+            android:text="@string/tv_describe" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_line"
+        style="@style/view_line"
+        android:layout_marginLeft="@dimen/view_set_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_set_margin_left_right" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/view_set_margin_left_right"
+        android:layout_marginRight="@dimen/view_set_margin_left_right"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:overScrollMode="never" />
+</LinearLayout>

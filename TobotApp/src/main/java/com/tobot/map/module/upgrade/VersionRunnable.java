@@ -27,9 +27,9 @@ import retrofit2.Response;
  * @date 2019/7/19
  */
 public class VersionRunnable implements Runnable {
-    private Context mContext;
-    private Response<ResponseBody> mResponse;
-    private OnDownloadListener mOnDownloadListener;
+    private final Context mContext;
+    private final Response<ResponseBody> mResponse;
+    private final OnDownloadListener mOnDownloadListener;
 
     public VersionRunnable(@NonNull WeakReference<Context> contextReference, @NonNull WeakReference<Response<ResponseBody>> responseReference,
                            @NonNull WeakReference<OnDownloadListener> listenerReference) {

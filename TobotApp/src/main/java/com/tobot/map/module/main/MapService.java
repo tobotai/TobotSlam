@@ -67,6 +67,7 @@ public class MapService extends Service implements OnDownloadListener {
     public void onDestroy() {
         super.onDestroy();
         Logger.i(BaseConstant.TAG, "onDestroy()");
+        DownloadManager.getInstance(this).destroy();
         unregisterReceiver(receiver);
         EventBus.getDefault().unregister(this);
         if (mConnectSlamThread != null) {
@@ -111,13 +112,13 @@ public class MapService extends Service implements OnDownloadListener {
         DownloadManager.getInstance(this).checkUpdate(BuildConfig.VERSION_TXT_URL, this);
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
                 // 第一次检测到网络的时候，要检测新版本
                 boolean isConnect = NetworkUtils.isConnected(MapService.this);
-                Logger.i(BaseConstant.TAG, "net isConnect=" + isConnect);
+                Logger.i(BaseConstant.TAG, "wifi=" + NetworkUtils.getConnectWifiName(MapService.this) + ",net isConnect=" + isConnect);
                 if (isConnect) {
                     if (isFirst) {
                         isFirst = false;

@@ -29,13 +29,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String END_Y = "endY";
     public static final String IP = "ip";
     public static final String ROUTE_NAME = "routeName";
+    public static final String CODE = "code";
+    public static final String TIME = "time";
+    public static final String COUNT = "count";
 
     private static final String DATABASE_NAME = "map.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     public static final String TABLE_IP = "ip";
     public static final String TABLE_LOCATION = "location";
     public static final String TABLE_ROUTE = "route";
     public static final String TABLE_ROUTE_DETAIL = "routeDetail";
+    public static final String TABLE_RECORD_WARNING = "recordWarning";
+    public static final String TABLE_RECORD_INFO = "recordInfo";
 
     private static final String IP_CREATE = "create table " + TABLE_IP +
             "("
@@ -90,6 +95,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + END_Y + " real"
             + " );";
 
+    private static final String RECORD_WARNING_CREATE = "create table " + TABLE_RECORD_WARNING +
+            "("
+            + ID + " integer primary key autoincrement,"
+            + TYPE + " integer,"
+            + CODE + " integer,"
+            + COUNT + " integer,"
+            + TIME + " text,"
+            + CONTENT + " text"
+            + " );";
+
+    private static final String RECORD_INFO_CREATE = "create table " + TABLE_RECORD_INFO +
+            "("
+            + ID + " integer primary key autoincrement,"
+            + TYPE + " integer,"
+            + CODE + " integer,"
+            + TIME + " text,"
+            + CONTENT + " text"
+            + " );";
+
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -107,8 +131,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // 数据库升级
         Logger.i(BaseConstant.TAG, "oldVersion=" + oldVersion + ",newVersion=" + newVersion);
         for (int i = oldVersion; i < newVersion; i++) {
-            if (i == oldVersion) {
-                addTaskTab(db);
+            switch (i) {
+                case 1:
+                    addTaskTab(db);
+                    break;
+                case 2:
+                    addRecordTab(db);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -116,5 +147,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private void addTaskTab(SQLiteDatabase db) {
         db.execSQL(ROUTE_CREATE);
         db.execSQL(ROUTE_DETAIL_CREATE);
+    }
+
+    private void addRecordTab(SQLiteDatabase db) {
+        db.execSQL(RECORD_WARNING_CREATE);
+        db.execSQL(RECORD_INFO_CREATE);
     }
 }

@@ -17,15 +17,15 @@ import retrofit2.Response;
  * @date 2018/7/20
  */
 public class HttpApi {
-    private static HttpListener sListener;
+    private static final HttpListener LISTENER;
 
     static {
-        sListener = RetrofitHelper.create(BuildConfig.BASE_URL, HttpListener.class);
+        LISTENER = RetrofitHelper.create(BuildConfig.BASE_URL, HttpListener.class);
     }
 
     public static void queryVersion(String url, final HttpResultCallback<Response<ResponseBody>> callback) {
-        if (sListener != null) {
-            sListener.downloadFile(url).enqueue(new Callback<ResponseBody>() {
+        if (LISTENER != null) {
+            LISTENER.downloadFile(url).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     Logger.i(BaseConstant.TAG, "queryVersion onResponse()");
@@ -46,8 +46,8 @@ public class HttpApi {
     }
 
     public static void downloadFile(String url, final HttpResultCallback<Response<ResponseBody>> callback) {
-        if (sListener != null) {
-            sListener.downloadFile(url).enqueue(new Callback<ResponseBody>() {
+        if (LISTENER != null) {
+            LISTENER.downloadFile(url).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                     Logger.i(BaseConstant.TAG, "downloadFile onResponse()");

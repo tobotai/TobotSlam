@@ -29,10 +29,10 @@ import com.tobot.map.R;
 public class RockerView extends View {
     private static final int DEFAULT_SIZE = 400;
     private static final int DEFAULT_ROCKER_RADIUS = DEFAULT_SIZE / 8;
-    private Paint mAreaBackgroundPaint;
-    private Paint mRockerPaint;
+    private final Paint mAreaBackgroundPaint;
+    private final Paint mRockerPaint;
     private Point mRockerPosition;
-    private Point mCenterPoint;
+    private final Point mCenterPoint;
     private int mAreaRadius;
     private int mRockerRadius;
     private CallbackMode mCallbackMode = CallbackMode.CALL_BACK_MODE_MOVE;

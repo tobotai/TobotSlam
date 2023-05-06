@@ -1,14 +1,16 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.entity.SetBean;
@@ -25,7 +27,11 @@ import butterknife.BindView;
  * @author houdeming
  * @date 2019/10/19
  */
-public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<SetBean> {
+public class SetActivity extends BaseBackActivity implements BaseRecyclerAdapter.OnItemClickListener<SetBean> {
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.tv_head)
+    TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     private static final int TAG_DEVICE_INFO = 0;
@@ -47,6 +53,7 @@ public class SetActivity extends BaseActivity implements BaseRecyclerAdapter.OnI
 
     @Override
     protected void init() {
+        tvHead.setText(R.string.btn_set);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new ItemSplitLineDecoration(this, ItemSplitLineDecoration.VERTICAL, true));
         mAdapter = new SetAdapter(this, R.layout.recycler_item_set);

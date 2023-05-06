@@ -10,7 +10,7 @@ import java.util.Map;
  * @date 2021/01/28
  */
 public final class Logger {
-    private static HashMap<String, ILogger> loggerHashMap = new HashMap<>();
+    private static final HashMap<String, ILogger> loggerHashMap = new HashMap<>();
     private static boolean isLogEnable = true;
 
     private Logger() {

@@ -9,8 +9,8 @@ import android.view.View;
  * @date 2018/6/27
  */
 public class BaseRecyclerHolder extends RecyclerView.ViewHolder {
-    private SparseArray<View> mViews;
-    private View mConvertView;
+    private final SparseArray<View> mViews;
+    private final View mConvertView;
 
     public BaseRecyclerHolder(View itemView) {
         super(itemView);

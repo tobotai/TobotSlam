@@ -1,9 +1,10 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 
 import butterknife.BindView;
 
@@ -11,7 +12,8 @@ import butterknife.BindView;
  * @author houdeming
  * @date 2019/10/19
  */
-public class ContactUsActivity extends BaseActivity {
+public class ContactUsActivity extends BaseBackActivity {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
 

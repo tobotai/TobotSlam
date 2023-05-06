@@ -1,6 +1,12 @@
 package com.tobot.map.module.connect;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -42,10 +48,13 @@ import butterknife.OnClick;
  * @date 2019/10/18
  */
 public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<String>, UpgradeTipsDialog.OnUpgradeListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_ip_input)
     EditText etIp;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_ip)
     RecyclerView recyclerView;
+    private static final int CODE_FILES_PERMISSION = 1;
     private ConnectIpAdapter mAdapter;
     private List<String> mIpList;
     private UpgradeTipsDialog mUpgradeTipsDialog;
@@ -73,15 +82,44 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
         if (dataList != null && !dataList.isEmpty()) {
             mAdapter.setData(dataList);
         }
-        DataHelper.getInstance().setLowBattery(0);
+        DataHelper.getInstance().setLowBattery(BaseConstant.BATTERY_LOW_DEFAULT);
         // 默认没有查看过任何地图
         DataHelper.getInstance().setCurrentMapFile("");
-        DataHelper.getInstance().clearWarningList();
         SlamManager.getInstance().setRelocationQualityMin(DataHelper.getInstance().getRelocationQualityMin(this));
         SlamManager.getInstance().setRelocationQualitySafe(DataHelper.getInstance().getRelocationQualitySafe(this));
+        SlamManager.getInstance().setRelocationAreaRadius(DataHelper.getInstance().getRelocationAreaRadius(this));
+        // 底盘半径默认0.25米，可以设置不同大小底盘
+        SlamManager.getInstance().setChassisRadius(DataHelper.getInstance().getChassisRadius(this));
         EventBus.getDefault().register(this);
         startService(new Intent(getApplicationContext(), MapService.class));
-        PermissionHelper.isRequestPermission(this);
+        // Android11以上版本请求读写权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            boolean isExternalStorageManager = Environment.isExternalStorageManager();
+            Logger.i(BaseConstant.TAG, "isExternalStorageManager=" + isExternalStorageManager);
+            if (!isExternalStorageManager) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, CODE_FILES_PERMISSION);
+                return;
+            }
+        }
+
+        PermissionHelper.checkPermission(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CODE_FILES_PERMISSION && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            boolean isExternalStorageManager = Environment.isExternalStorageManager();
+            Logger.i(BaseConstant.TAG, "onActivityResult() isExternalStorageManager=" + isExternalStorageManager);
+            if (isExternalStorageManager) {
+                PermissionHelper.checkPermission(this);
+                return;
+            }
+
+            showToastTips(getString(R.string.file_permission_fail_tips));
+        }
     }
 
     @Override
@@ -133,6 +171,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @OnClick({R.id.iv_set, R.id.btn_sta_connect, R.id.tv_delete})
     public void onClickView(View view) {
         switch (view.getId()) {

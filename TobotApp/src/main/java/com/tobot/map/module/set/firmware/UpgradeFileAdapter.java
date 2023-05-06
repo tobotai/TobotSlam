@@ -1,5 +1,6 @@
 package com.tobot.map.module.set.firmware;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -56,6 +57,7 @@ public class UpgradeFileAdapter extends BaseRecyclerAdapter<String> {
         mListener = listener;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setSelectIndex(int position) {
         mSelectIndex = position;
         notifyDataSetChanged();

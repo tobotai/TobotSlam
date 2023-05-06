@@ -24,8 +24,8 @@ public class ConnectSlamThread extends Thread {
      */
     private static final int PORT = 1445;
     private static final long TIME_CONNECT = 2000;
-    private Context mContext;
-    private String mIp;
+    private final Context mContext;
+    private final String mIp;
     private boolean isStart;
 
     public ConnectSlamThread(WeakReference<Context> reference, String ip) {

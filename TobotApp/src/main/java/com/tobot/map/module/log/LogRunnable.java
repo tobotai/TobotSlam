@@ -18,7 +18,9 @@ import java.util.List;
 public class LogRunnable implements Runnable {
     private Context mContext;
     private Process mProcess;
-    private String mTag, mFileFolder, mFileName;
+    private final String mTag;
+    private final String mFileFolder;
+    private final String mFileName;
 
     public LogRunnable(Context context, String tag, String fileFolder, String fileName) {
         mContext = context;

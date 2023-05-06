@@ -4,19 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_create_task"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/head_height"
-        android:layout_gravity="center"
-        android:drawableLeft="@drawable/ic_add"
-        android:drawablePadding="@dimen/iv_drawable_padding"
-        android:gravity="center"
-        android:text="@string/tv_create_task"
-        android:textColor="@color/shape_cancel_bg_normal"
-        android:textSize="@dimen/tv_title" />
-
-    <View style="@style/view_line" />
+    <include layout="@layout/view_head" />
 
     <TextView
         android:id="@+id/tv_task_tips"

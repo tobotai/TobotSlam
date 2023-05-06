@@ -143,4 +143,86 @@
         <item name="android:paddingBottom">@dimen/view_margin_top</item>
         <item name="android:layout_marginRight">@dimen/view_margin_top</item>
     </style>
+
+    <style name="btn_over_dialog_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/selector_btn_oval_stroke_dialog_bg</item>
+        <item name="android:paddingLeft">@dimen/btn_over_content_padding_left</item>
+        <item name="android:paddingRight">@dimen/btn_over_content_padding_left</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+        <item name="android:textColor">@color/tv_white</item>
+    </style>
+
+    <style name="btn_over_style" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/btn_over_height</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/selector_btn_oval_stroke_bg</item>
+        <item name="android:paddingLeft">@dimen/btn_padding_left_right</item>
+        <item name="android:paddingRight">@dimen/btn_padding_left_right</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+        <item name="android:textColor">@drawable/selector_tv_item</item>
+    </style>
+
+    <style name="tv_content">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tv_content</item>
+        <item name="android:textSize">@dimen/tv_content</item>
+    </style>
+
+    <style name="tv_content_weight">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/tv_content</item>
+        <item name="android:textSize">@dimen/tv_content</item>
+    </style>
+
+    <style name="tv_content_click">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@drawable/selector_tv_item</item>
+        <item name="android:textSize">@dimen/tv_content</item>
+    </style>
+
+    <style name="iv_right_arrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/ic_right_arrow</item>
+    </style>
+
+    <style name="ll_et_weight">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/et_height</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:background">@drawable/shape_edit_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/et_tv</item>
+        <item name="android:textColor">@color/et_tv</item>
+    </style>
+
+    <style name="ll_btn_weight" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/btn_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/selector_btn_oval_bg</item>
+        <item name="android:textSize">@dimen/btn_tv_size</item>
+        <item name="android:textColor">@color/tv_white</item>
+        <item name="android:layout_marginLeft">@dimen/sb_speed_padding_left</item>
+    </style>
+
+    <style name="tv_match_tips">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/tips_margin_top</item>
+        <item name="android:textColor">@color/tv_tips</item>
+        <item name="android:textSize">@dimen/tv_tips</item>
+    </style>
 </resources>

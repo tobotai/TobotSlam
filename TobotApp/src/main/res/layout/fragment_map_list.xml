@@ -14,11 +14,24 @@
         android:textSize="@dimen/tv_tips" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_map"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginLeft="@dimen/view_set_margin_left_right"
         android:layout_marginTop="@dimen/view_margin_top"
         android:layout_marginRight="@dimen/view_set_margin_left_right"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:layout_weight="1"
         android:overScrollMode="never" />
+
+    <TextView
+        android:id="@+id/tv_pull_load_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:text="@string/pull_load_more"
+        android:textColor="@color/tv_tips"
+        android:textSize="@dimen/tv_tips"
+        android:visibility="gone" />
 </LinearLayout>

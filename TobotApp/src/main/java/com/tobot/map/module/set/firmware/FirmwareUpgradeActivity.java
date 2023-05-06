@@ -1,21 +1,21 @@
 package com.tobot.map.module.set.firmware;
 
+import android.annotation.SuppressLint;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
-import com.tobot.map.constant.BaseConstant;
+import com.tobot.map.base.BaseBackActivity;
+import com.tobot.map.base.BaseRecyclerAdapter;
+import com.tobot.map.entity.SetBean;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
-import com.tobot.map.module.common.TipsDialog;
-import com.tobot.map.module.log.Logger;
-import com.tobot.map.util.FileUtils;
-import com.tobot.map.util.MediaScanner;
-import com.tobot.slam.SlamManager;
-import com.tobot.slam.agent.listener.OnUpgradeListener;
+import com.tobot.map.module.set.SetAdapter;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -23,145 +23,133 @@ import butterknife.BindView;
  * @author houdeming
  * @date 2021/03/11
  */
-public class FirmwareUpgradeActivity extends BaseActivity implements UpgradeFileAdapter.OnUpgradeListener<String>, OnUpgradeListener {
+public class FirmwareUpgradeActivity extends BaseBackActivity implements BaseRecyclerAdapter.OnItemClickListener<SetBean>, OnDataUpdateListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
-    @BindView(R.id.tv_file_tips)
-    TextView tvTips;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    private UpgradeFileAdapter mAdapter;
-    private static final int UPGRADE = 0;
-    private static final int DELETE = 1;
-    private int mTipsStatus;
-    private String mDir, mFileName;
-    private UpgradeProgressDialog mUpgradeProgressDialog;
-    private TipsDialog mTipsDialog;
+    private static final int TAG_CONTROL_BOARD = 0;
+    private static final int TAG_SLAM_MODULE = 1;
+    private static final int TAG_DOWNLOAD = 2;
+    private SetAdapter mAdapter;
+    private ControlBoardFirmwareFragment mControlBoardFirmwareFragment;
+    private SlamModuleFirmwareFragment mSlamModuleFirmwareFragment;
+    private DownloadFragment mDownloadFragment;
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_firmware_upgrade;
+        return R.layout.activity_set;
     }
 
     @Override
     protected void init() {
         tvHead.setText(R.string.firmware_upgrade);
-        mDir = BaseConstant.getFirmwareDirectory(this);
-        tvTips.setText(getString(R.string.tv_file_catalog, mDir));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new ItemSplitLineDecoration(this, ItemSplitLineDecoration.VERTICAL, true));
-        mAdapter = new UpgradeFileAdapter(this, R.layout.recycler_item_upgrade_file);
-        mAdapter.setOnUpgradeListener(this);
+        mAdapter = new SetAdapter(this, R.layout.recycler_item_set);
+        mAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(mAdapter);
-        mAdapter.setData(FileUtils.getFileNameList(mDir, BaseConstant.FILE_FIRMWARE_NAME_SUFFIX));
+        mAdapter.setData(getTagList());
+        // 默认选中
+        setSelectFragment(TAG_CONTROL_BOARD);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        closeConfirmDialog();
-        closeUpgradeProgressDialog();
-        if (isTipsDialogShow()) {
-            mTipsDialog.getDialog().dismiss();
-            mTipsDialog = null;
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (mControlBoardFirmwareFragment == null && fragment instanceof ControlBoardFirmwareFragment) {
+            mControlBoardFirmwareFragment = (ControlBoardFirmwareFragment) fragment;
+        }
+
+        if (mSlamModuleFirmwareFragment == null && fragment instanceof SlamModuleFirmwareFragment) {
+            mSlamModuleFirmwareFragment = (SlamModuleFirmwareFragment) fragment;
+        }
+
+        if (mDownloadFragment == null && fragment instanceof DownloadFragment) {
+            mDownloadFragment = (DownloadFragment) fragment;
         }
     }
 
     @Override
-    public void onUpgrade(int position, String data) {
-        mFileName = data;
-        mTipsStatus = UPGRADE;
-        showConfirmDialog(getString(R.string.tv_upgrade_file_tips, data));
+    public void onItemClick(int position, SetBean data) {
         if (mAdapter != null) {
-            mAdapter.setSelectIndex(position);
+            mAdapter.setSelect(position);
+        }
+        setSelectFragment(data.getId());
+    }
+
+    @Override
+    public void onDataUpdate() {
+        if (mControlBoardFirmwareFragment != null) {
+            mControlBoardFirmwareFragment.updateData();
         }
     }
 
-    @Override
-    public void onDelete(int position, String data) {
-        mFileName = data;
-        mTipsStatus = DELETE;
-        showConfirmDialog(getString(R.string.tv_upgrade_file_delete_tips, data));
+    private List<SetBean> getTagList() {
+        List<SetBean> titles = new ArrayList<>();
+        SetBean bean = new SetBean(TAG_CONTROL_BOARD, getString(R.string.firmware_control_board));
+        titles.add(bean);
+
+//        bean = bean.clone();
+//        bean.setId(TAG_SLAM_MODULE);
+//        bean.setName(getString(R.string.firmware_slam_module));
+//        titles.add(bean);
+
+        bean = bean.clone();
+        bean.setId(TAG_DOWNLOAD);
+        bean.setName(getString(R.string.firmware_download));
+        titles.add(bean);
+        return titles;
     }
 
-    @Override
-    public void onConfirm(boolean isConfirm) {
-        if (isConfirm) {
-            String filePath = mDir + File.separator + mFileName;
-            // 删除
-            if (mTipsStatus == DELETE) {
-                FileUtils.deleteFile(filePath);
-                new MediaScanner().scanFile(this, filePath);
-                mAdapter.setData(FileUtils.getFileNameList(mDir, BaseConstant.FILE_FIRMWARE_NAME_SUFFIX));
-                showToastTips(getString(R.string.delete_success));
-                return;
-            }
-
-            // 升级
-            showUpgradeProgressDialog();
-            SlamManager.getInstance().upgradeControlPanelAsync(filePath, this);
-        }
-    }
-
-    @Override
-    public void onUpgradeProgress(int progress) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isUpgradeProgressDialogShow()) {
-                    mUpgradeProgressDialog.updateTips(progress);
-                    return;
+    private void setSelectFragment(int position) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        hideFragment(transaction);
+        switch (position) {
+            case TAG_CONTROL_BOARD:
+                if (mControlBoardFirmwareFragment == null) {
+                    mControlBoardFirmwareFragment = ControlBoardFirmwareFragment.newInstance();
+                    transaction.add(R.id.fl, mControlBoardFirmwareFragment);
+                } else {
+                    transaction.show(mControlBoardFirmwareFragment);
                 }
-
-                showUpgradeProgressDialog();
-            }
-        });
-    }
-
-    @Override
-    public void onUpgradeResult(boolean isSuccess) {
-        Logger.i(BaseConstant.TAG, "firmware upgrade isSuccess=" + isSuccess);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                closeUpgradeProgressDialog();
-                if (!isTipsDialogShow()) {
-                    String tips = getString(isSuccess ? R.string.firmware_upgrade_success_tips : R.string.firmware_upgrade_fail_tips);
-                    mTipsDialog = TipsDialog.newInstance(tips);
-                    mTipsDialog.setOnConfirmListener(new TipsDialog.OnConfirmListener() {
-                        @Override
-                        public void onConfirm() {
-                            // 退出应用
-                            setResult(BaseConstant.CODE_EXIT);
-                            finish();
-                        }
-                    });
-
-                    mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
+                break;
+            case TAG_SLAM_MODULE:
+                if (mSlamModuleFirmwareFragment == null) {
+                    mSlamModuleFirmwareFragment = SlamModuleFirmwareFragment.newInstance();
+                    transaction.add(R.id.fl, mSlamModuleFirmwareFragment);
+                } else {
+                    transaction.show(mSlamModuleFirmwareFragment);
                 }
-            }
-        });
-    }
-
-    private void showUpgradeProgressDialog() {
-        if (!isUpgradeProgressDialogShow()) {
-            mUpgradeProgressDialog = UpgradeProgressDialog.newInstance();
-            mUpgradeProgressDialog.show(getSupportFragmentManager(), "UPGRADE_PROGRESS_DIALOG");
+                break;
+            case TAG_DOWNLOAD:
+                if (mDownloadFragment == null) {
+                    mDownloadFragment = DownloadFragment.newInstance(this);
+                    transaction.add(R.id.fl, mDownloadFragment);
+                } else {
+                    transaction.show(mDownloadFragment);
+                }
+                break;
+            default:
+                break;
         }
+
+        transaction.commit();
     }
 
-    private void closeUpgradeProgressDialog() {
-        if (isUpgradeProgressDialogShow()) {
-            mUpgradeProgressDialog.getDialog().dismiss();
-            mUpgradeProgressDialog = null;
+    private void hideFragment(FragmentTransaction transaction) {
+        if (mControlBoardFirmwareFragment != null) {
+            transaction.hide(mControlBoardFirmwareFragment);
         }
-    }
 
-    private boolean isUpgradeProgressDialogShow() {
-        return mUpgradeProgressDialog != null && mUpgradeProgressDialog.getDialog() != null && mUpgradeProgressDialog.getDialog().isShowing();
-    }
+        if (mSlamModuleFirmwareFragment != null) {
+            transaction.hide(mSlamModuleFirmwareFragment);
+        }
 
-    private boolean isTipsDialogShow() {
-        return mTipsDialog != null && mTipsDialog.getDialog() != null && mTipsDialog.getDialog().isShowing();
+        if (mDownloadFragment != null) {
+            transaction.hide(mDownloadFragment);
+        }
     }
 }

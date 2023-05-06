@@ -1,5 +1,6 @@
 package com.tobot.map.module.main.edit;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import java.util.List;
  * @date 2020/5/9
  */
 public class EditLineView extends LinearLayout implements View.OnClickListener, BaseRecyclerAdapter.OnItemClickListener<LocationBean> {
-    private RadioGroup radioGroup;
+    private final RadioGroup radioGroup;
     private int mEditType;
     private MapView mMapView;
     private AddLineView mAddLineView;
@@ -50,6 +51,7 @@ public class EditLineView extends LinearLayout implements View.OnClickListener, 
         view.findViewById(R.id.rb_clear_line).setOnClickListener(this);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

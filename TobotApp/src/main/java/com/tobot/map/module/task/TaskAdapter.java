@@ -1,5 +1,6 @@
 package com.tobot.map.module.task;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -60,6 +61,7 @@ public class TaskAdapter extends BaseRecyclerAdapter<RouteBean> {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setSelectData(List<RouteBean> data) {
         mSelectList = data;
         notifyDataSetChanged();

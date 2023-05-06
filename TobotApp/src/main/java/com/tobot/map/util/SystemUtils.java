@@ -1,5 +1,6 @@
 package com.tobot.map.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -52,12 +53,14 @@ public class SystemUtils {
         return context.getResources().getDisplayMetrics().heightPixels;
     }
 
+    @SuppressLint("InternalInsetResource")
     public static int getStatusBarHeight(Context context) {
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
         return resources.getDimensionPixelSize(resourceId);
     }
 
+    @SuppressLint("InternalInsetResource")
     public static int getNavigationBarHeight(Context context) {
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");

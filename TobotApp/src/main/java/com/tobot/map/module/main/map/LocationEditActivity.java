@@ -1,5 +1,6 @@
 package com.tobot.map.module.main.map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.module.log.Logger;
@@ -32,29 +33,41 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2020/3/14
  */
-public class LocationEditActivity extends BaseActivity implements View.OnClickListener {
+public class LocationEditActivity extends BaseBackActivity implements View.OnClickListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_number)
     EditText etNumber;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_name_china)
     EditText etNameChina;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_name_english)
     EditText etNameEnglish;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_mark_location)
     RadioButton rbMarkLocation;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_relocation)
     RadioButton rbRelocation;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_arrive_not_rotate)
     RadioButton rbArriveNotRotate;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rg_location_type)
     RadioGroup rgLocationType;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.ll_show_relocation_area)
     LinearLayout llShowRelocationArea;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_relocation_area_width)
     EditText etRelocationWidth;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_relocation_area_height)
     EditText etRelocationHeight;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.btn_close_sensor)
     Button btnCloseSensor;
     private String mNumber;
@@ -111,6 +124,7 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -129,6 +143,7 @@ public class LocationEditActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @OnClick({R.id.btn_update_location, R.id.btn_set, R.id.btn_close_sensor, R.id.btn_confirm})
     public void onClickView(View view) {
         switch (view.getId()) {

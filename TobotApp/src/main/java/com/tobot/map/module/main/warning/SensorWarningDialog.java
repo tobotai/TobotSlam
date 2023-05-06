@@ -1,5 +1,6 @@
 package com.tobot.map.module.main.warning;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.view.View;
 
 import com.tobot.map.R;
 import com.tobot.map.base.BaseDialog;
+import com.tobot.map.entity.RecordInfo;
 import com.tobot.map.module.common.ItemSplitLineDecoration;
 import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.ToastUtils;
@@ -21,9 +23,9 @@ import java.util.List;
  */
 public class SensorWarningDialog extends BaseDialog implements View.OnClickListener, OnResultListener<Boolean> {
     private SensorWarningAdapter mAdapter;
-    private List<WarningInfo> mWarningList;
+    private List<RecordInfo> mWarningList;
 
-    public static SensorWarningDialog newInstance(List<WarningInfo> data) {
+    public static SensorWarningDialog newInstance(List<RecordInfo> data) {
         SensorWarningDialog dialog = new SensorWarningDialog();
         dialog.setData(data);
         return dialog;
@@ -57,6 +59,7 @@ public class SensorWarningDialog extends BaseDialog implements View.OnClickListe
         return getResources().getInteger(R.integer.dialog_width_weight) / 10.0;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -87,7 +90,7 @@ public class SensorWarningDialog extends BaseDialog implements View.OnClickListe
         }
     }
 
-    private void setData(List<WarningInfo> data) {
+    private void setData(List<RecordInfo> data) {
         mWarningList = data;
     }
 

@@ -23,10 +23,12 @@ import java.lang.ref.WeakReference;
 public class FileLogger extends AbstractLogger {
     private static final int MSG_WHAT = 1;
     private static final int CACHE_SIZE = 10 * 1024;
-    private StringBuffer mCacheLog;
-    private String mFileFolder, mFileName, packageName;
+    private final StringBuffer mCacheLog;
+    private final String mFileFolder;
+    private final String mFileName;
+    private final String packageName;
     private HandlerThread mLogThread;
-    private Handler mLogHandler;
+    private final Handler mLogHandler;
     private boolean isLogEnable = true;
 
     public FileLogger(Context context, String fileFolder, String fileName) {
@@ -145,7 +147,7 @@ public class FileLogger extends AbstractLogger {
 
     @SuppressLint("HandlerLeak")
     private static class LogHandle extends Handler {
-        private FileLogger mLog;
+        private final FileLogger mLog;
 
         private LogHandle(@NonNull Looper looper, WeakReference<FileLogger> reference) {
             super(looper);

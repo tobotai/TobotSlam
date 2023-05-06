@@ -1,5 +1,6 @@
 package com.tobot.map.module.main.map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -11,7 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.util.NumberUtils;
 import com.tobot.map.util.SystemUtils;
@@ -25,21 +26,29 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2021/08/31
  */
-public class CloseSensorActivity extends BaseActivity implements View.OnClickListener {
+public class CloseSensorActivity extends BaseBackActivity implements View.OnClickListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rg_sonar_status)
     RadioGroup rgSonarStatus;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_sonar)
     RadioButton rbSonar;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_cliff)
     RadioButton rbCliff;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_all)
     RadioButton rbAll;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.ll_show_area_edit)
     LinearLayout llShowArea;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_area_width)
     EditText etWidth;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_area_height)
     EditText etHeight;
     private LocationBean mLocationBean;
@@ -60,6 +69,7 @@ public class CloseSensorActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         int id = v.getId();

@@ -12,13 +12,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="@dimen/view_margin_top"
+            android:paddingBottom="@dimen/view_margin_top">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/view_set_margin_left_right"
-                android:layout_marginTop="@dimen/view_margin_top"
                 android:layout_marginRight="@dimen/view_set_margin_left_right"
                 android:orientation="horizontal">
 
@@ -85,19 +86,10 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/tv_version_update"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_version_update" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
@@ -110,22 +102,15 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/tv_contact_us"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_contact_us" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
-                <View style="@style/view_line" />
+                <View
+                    android:id="@+id/view_line"
+                    style="@style/view_line" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

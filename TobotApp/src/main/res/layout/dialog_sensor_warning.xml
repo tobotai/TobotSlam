@@ -62,31 +62,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
+            style="@style/tv_content_weight"
             android:text="@string/tv_type"
-            android:textColor="@color/tv_white"
-            android:textSize="@dimen/tv_content" />
+            android:textColor="@color/tv_white" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
+            style="@style/tv_content_weight"
             android:text="@string/tv_id"
-            android:textColor="@color/tv_white"
-            android:textSize="@dimen/tv_content" />
+            android:textColor="@color/tv_white" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
+            style="@style/tv_content_weight"
             android:text="@string/tv_count"
-            android:textColor="@color/tv_white"
-            android:textSize="@dimen/tv_content" />
+            android:textColor="@color/tv_white" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

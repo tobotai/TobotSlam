@@ -1,5 +1,6 @@
 package com.tobot.map.module.main.edit;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import com.tobot.map.module.common.BasePopupWindow;
  * @date 2020/3/15
  */
 public class EditPopupWindow extends BasePopupWindow {
-    private OnEditListener mOnEditListener;
+    private final OnEditListener mOnEditListener;
 
     public EditPopupWindow(Context context, OnEditListener listener) {
         super(context);
@@ -32,6 +33,7 @@ public class EditPopupWindow extends BasePopupWindow {
         view.findViewById(R.id.tv_rubber).setOnClickListener(this);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

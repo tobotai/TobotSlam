@@ -1,5 +1,6 @@
 package com.tobot.map.module.main;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.RectF;
@@ -13,9 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.geometry.PointF;
-import com.slamtec.slamware.robot.Pose;
 import com.slamtec.slamware.robot.SensorType;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
@@ -35,12 +34,12 @@ import com.tobot.map.module.main.map.AddPointViewDialog;
 import com.tobot.map.module.main.map.MapPopupWindow;
 import com.tobot.map.module.main.map.Navigate;
 import com.tobot.map.module.main.warning.SensorWarningDialog;
-import com.tobot.map.module.main.warning.WarningInfo;
 import com.tobot.map.module.set.SetActivity;
 import com.tobot.map.module.task.Task;
 import com.tobot.map.module.task.TaskActivity;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.SlamCode;
+import com.tobot.slam.agent.listener.OnActionListener;
 import com.tobot.slam.agent.listener.OnSlamExceptionListener;
 import com.tobot.slam.data.LocationBean;
 import com.tobot.slam.view.MapView;
@@ -55,34 +54,47 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2019/10/18
  */
-public class MainActivity extends BaseActivity implements MapView.OnMapListener, AddPointViewDialog.OnPointListener, MapPopupWindow.OnMapListener, OnEditListener,
-        ActionPopupWindow.OnChargeListener, OnSlamExceptionListener, OnDialogBackEventListener, TipsDialog.OnConfirmListener {
+public class MainActivity extends BaseActivity implements MapView.OnMapListener, AddPointViewDialog.OnPointListener, OnEditListener, ActionPopupWindow.OnChargeListener, OnSlamExceptionListener, OnActionListener, OnDialogBackEventListener, TipsDialog.OnConfirmListener, ReconnectSlamThread.OnReconnectResultListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.map_view)
     MapView mapView;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_status)
     TextView tvStatus;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_map)
     TextView tvMap;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_action)
     TextView tvAction;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_edit)
     TextView tvEdit;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_pose_show)
     TextView tvPoseShow;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_rssi)
     TextView tvRssi;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_count)
     TextView tvCount;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.ll_control)
     LinearLayout llControl;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.iv_set)
     ImageView ivSet;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_navigate)
     TextView tvNavigate;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.view_edit_line)
     EditLineView editLineView;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.view_rubber_edit)
     RubberEditView rubberEditView;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.view_add_line)
     AddLineView addLineView;
     private static final int CODE_SET = 1;
@@ -93,13 +105,16 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     private ActionPopupWindow mActionPopupWindow;
     private MapPopupWindow mMapPopupWindow;
     private EditPopupWindow mEditPopupWindow;
-    private int mLowBatteryStatus, mLocationQuality;
-    private boolean isHandleMove, isShowTips, isUpdateMap, isDisconnect, isShowRelocationTips;
+    private int mLowBatteryStatus, mLocationQuality, mLostCount;
+    private boolean isHandleMove, isShowTips, isUpdateMap, isDisconnect, isShowRelocationTips, isLowBatteryTips;
     private Charge mCharge;
     private static final int LOW_BATTERY = 1;
     private TipsDialog mTipsDialog;
     private SensorWarningDialog mSensorWarningDialog;
     private List<LocationBean> mLocationList;
+    private long mLostTime;
+    private String mLostError;
+    private ReconnectSlamThread mReconnectSlamThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +132,11 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     protected void init() {
         SlamManager.getInstance().setOnSlamExceptionListener(this);
+        SlamManager.getInstance().setOnActionListener(this);
         mapView.setOnMapListener(this);
+        mapView.setTouchMoveCount(DataHelper.getInstance().getTouchCount(this));
         mMapHelper = new MapHelper(new WeakReference<>(this), new WeakReference<>(this), new WeakReference<>(mapView));
         mNavigate = new Navigate(new WeakReference<>(this), new WeakReference<>(this));
-        mTask = new Task(new WeakReference<>(this), new WeakReference<>(this));
         mCharge = new Charge(new WeakReference<>(this), new WeakReference<>(this));
         // 如果有位置点的话提示
         mLocationList = MyDBSource.getInstance(this).queryLocationList();
@@ -154,9 +170,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                 boolean isAddCharge = data.getBooleanExtra(BaseConstant.CONTENT_KEY, false);
                 int loopCount = data.getIntExtra(BaseConstant.LOOP_KEY, 0);
 //                DataHelper.getInstance().clearWarningList();
-                if (mTask != null) {
-                    mTask.execute(locationBeanList, isAddCharge, loopCount);
+                if (mTask == null) {
+                    mTask = new Task(new WeakReference<>(this), new WeakReference<>(this));
                 }
+                mTask.execute(locationBeanList, isAddCharge, loopCount);
             }
         }
     }
@@ -192,6 +209,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     protected void onResume() {
         super.onResume();
+        // 切换过界面才会再去刷新地图
         if (isUpdateMap && mMapHelper != null) {
             isUpdateMap = false;
             mMapHelper.startUpdateMap();
@@ -201,6 +219,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     protected void onPause() {
         super.onPause();
+        closeReconnectSlamThread();
         closeLoadTipsDialog();
         closeConfirmDialog();
         if (isTipsDialogShow()) {
@@ -213,6 +232,8 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             mMapHelper.stopUpdateMap();
         }
 
+        // 记录传感器信息
+        DataHelper.getInstance().recordWarningList(this);
         if (isSensorWarningDialogShow()) {
             mSensorWarningDialog.getDialog().dismiss();
             mSensorWarningDialog = null;
@@ -258,9 +279,8 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onSensorStatus(SensorType sensorType, int id, boolean isTrigger) {
         if (isTrigger && sensorType != null) {
-            Logger.i(BaseConstant.TAG, "sensorType=" + sensorType.toString() + ",id=" + id);
             // 记录警告信息
-            recordWarningInfo(id, sensorType.toString());
+            DataHelper.getInstance().setWarningData(id, sensorType.toString());
             showTipsDialog(DataHelper.getInstance().getSensorTips(this, sensorType, id));
         }
     }
@@ -272,7 +292,8 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             handleTvStopClick();
         }
 
-        recordWarningInfo(code, info);
+        DataHelper.getInstance().setWarningData(code, info);
+        DataHelper.getInstance().recordImportantInfo(this, info);
 //        showTipsDialog(info);
     }
 
@@ -304,41 +325,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onDeleteLocationLabel(String number) {
         mapView.deleteLocationLabel(number);
-    }
-
-    @Override
-    public void onMapAddPoint() {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.showAddPointViewDialog(getSupportFragmentManager(), this);
-        }
-    }
-
-    @Override
-    public void onMapResetCharge() {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.showResetChargeDialog(getSupportFragmentManager());
-        }
-    }
-
-    @Override
-    public void onMapShowTipsDialog(String tips) {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.showLoadTipsDialog(getSupportFragmentManager(), tips);
-        }
-    }
-
-    @Override
-    public void onMapClear() {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.showConfirmDialog(getSupportFragmentManager(), getString(R.string.tv_clear_map_tips));
-        }
-    }
-
-    @Override
-    public void onMapSave() {
-        if (mMapPopupWindow != null) {
-            mMapPopupWindow.showNameInputDialog(getSupportFragmentManager());
-        }
     }
 
     @Override
@@ -381,20 +367,80 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     public void onSlamException(Exception e) {
         String error = e.getMessage();
         Logger.i(BaseConstant.TAG, "slam error=" + error);
-        if (!TextUtils.isEmpty(error)) {
-            String operationError = "Operation Failed";
-            if (error.contains(operationError)) {
-//                handleOperationFailed();
+        if (TextUtils.isEmpty(error)) {
+            return;
+        }
+
+//        if (error.contains("Operation Failed")) {
+//            handleOperationFailed();
+//            return;
+//        }
+
+        if (DataHelper.getInstance().isSlamError(error)) {
+            mLostError = error;
+            mLostCount++;
+            // 重连，在特定时间内连续断连一定次数后再去重连
+            long faultTime = 20000;
+            mLostTime = mLostTime == 0 ? System.currentTimeMillis() : mLostTime;
+            if (System.currentTimeMillis() - mLostTime <= faultTime) {
+                int maxCount = 15;
+                if (mLostCount > maxCount) {
+                    mLostCount = 0;
+                    if (mReconnectSlamThread == null) {
+                        mReconnectSlamThread = new ReconnectSlamThread(this);
+                        mReconnectSlamThread.start();
+                        DataHelper.getInstance().recordImportantInfo(this, "slam reconnect");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!isFinish) {
+                                    showLoadTipsDialog(getString(R.string.tv_reconnect_ing), null);
+                                }
+                            }
+                        });
+                    }
+                }
                 return;
             }
 
-            String[] connectionFailArray = {"Connection Failed", "Connection Lost"};
-            if (error.contains(connectionFailArray[0]) || error.contains(connectionFailArray[1])) {
-                handleConnectionFailed(error);
+            mLostCount = 0;
+            if (mReconnectSlamThread == null) {
+                mLostTime = 0;
             }
         }
     }
 
+    @Override
+    public void onActionReason(String actionName, String reason) {
+        DataHelper.getInstance().recordImportantInfo(this, actionName + ":" + reason);
+    }
+
+    @Override
+    public void onReconnectResult(boolean isSuccess) {
+        closeReconnectSlamThread();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                closeLoadTipsDialog();
+            }
+        });
+
+        mLostCount = 0;
+        mLostTime = 0;
+        if (isSuccess) {
+            DataHelper.getInstance().recordImportantInfo(this, "slam reconnect success");
+            showToastTips(getString(R.string.reconnect_success));
+            return;
+        }
+
+        if (!isDisconnect) {
+            isDisconnect = true;
+            DataHelper.getInstance().recordImportantInfo(this, "slam reconnect fail error=" + mLostError);
+            showTipsDialog(getString(R.string.slam_disconnect_tips, mLostError));
+        }
+    }
+
+    @SuppressLint("NonConstantResourceId")
     @OnClick({R.id.tv_map, R.id.tv_action, R.id.tv_edit, R.id.tv_stop, R.id.tv_task, R.id.tv_navigate, R.id.iv_set, R.id.iv_warning})
     public void onClickView(View view) {
         switch (view.getId()) {
@@ -430,29 +476,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         }
     }
 
-    private void handleConnectionFailed(String error) {
-        if (isFinish) {
-            return;
-        }
-
-        if (!isDisconnect) {
-            isDisconnect = true;
-            showTipsDialog(getString(R.string.slam_disconnect_tips, error));
-        }
-    }
-
     private void handleOperationFailed() {
         if (!isFinish) {
             showToastTips(getString(R.string.operate_error_tips));
         }
-    }
-
-    private void recordWarningInfo(int id, String content) {
-        WarningInfo info = WarningInfo.getWarningInfo();
-        info.setId(id);
-        info.setType(content);
-        info.setCount(1);
-        DataHelper.getInstance().setWarningData(info);
     }
 
     public void showToast(String tips) {
@@ -461,25 +488,28 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         }
     }
 
-    public void updatePoseShow(Pose pose) {
-        if (pose != null) {
+    public void updatePoseShow(float x, float y, float yaw) {
+        if (!isFinish) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvPoseShow.setText(getString(R.string.tv_pose_show, pose.getX(), pose.getY(), (float) (pose.getYaw() * 180 / Math.PI)));
+                    tvPoseShow.setText(getString(R.string.tv_pose_show, String.valueOf(x), String.valueOf(y), String.valueOf(yaw)));
                 }
             });
         }
     }
 
-    public void updateStatus(int battery, boolean isCharge, int locationQuality, ActionStatus actionStatus) {
+    public void updateStatus(int battery, boolean isCharge, String chargeMode, int locationQuality, String status) {
+        if (isFinish) {
+            return;
+        }
+
         mLocationQuality = locationQuality;
-        String chargeStatus = isCharge ? getString(R.string.tv_charge_true) : getString(R.string.tv_charge_false);
-        String status = actionStatus != null ? actionStatus.toString() : getString(R.string.unknown);
+        String chargeStatus = getString(isCharge ? R.string.tv_charge_true : R.string.tv_charge_false);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tvStatus.setText(getString(R.string.tv_status_show, locationQuality, chargeStatus, battery, status));
+                tvStatus.setText(getString(R.string.tv_status_show, locationQuality, chargeStatus, chargeMode, battery, status));
                 handleLowBattery(battery, isCharge);
             }
         });
@@ -506,7 +536,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     public void showTipsDialog(String tips) {
-        if (TextUtils.isEmpty(tips)) {
+        if (isFinish || TextUtils.isEmpty(tips)) {
             return;
         }
 
@@ -552,6 +582,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             @Override
             public void run() {
                 showLoadTipsDialog(getString(R.string.relocation_map_tips), null);
+                DataHelper.getInstance().recordImportantInfo(MainActivity.this, "relocate ing");
             }
         });
     }
@@ -566,24 +597,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             public void run() {
                 closeLoadTipsDialog();
                 showToastTips(getString(isRelocateSuccess ? R.string.relocation_map_success : R.string.relocation_map_fail));
-            }
-        });
-    }
-
-    public void handleNavigateSetPose(boolean isSetFinish) {
-        if (isFinish) {
-            return;
-        }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isSetFinish) {
-                    closeLoadTipsDialog();
-                    return;
-                }
-
-                showLoadTipsDialog(getString(R.string.set_pose_tips), null);
+                DataHelper.getInstance().recordImportantInfo(MainActivity.this, "relocate " + (isRelocateSuccess ? "success" : "fail"));
             }
         });
     }
@@ -591,6 +605,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     public void handleMoveFail() {
         // 建图时定位质量为0
         if (mLocationQuality > 0 && !isFinish) {
+            DataHelper.getInstance().recordImportantInfo(this, "current locationQuality=" + mLocationQuality);
             int minQuality = SlamManager.getInstance().getRelocationQualityMin();
             if (mLocationQuality < minQuality) {
                 showTipsDialog(getString(R.string.move_recover_quality_low_tips, minQuality));
@@ -614,12 +629,22 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             if (!isCharge && mLowBatteryStatus != LOW_BATTERY) {
                 mLowBatteryStatus = LOW_BATTERY;
                 handleTvStopClick();
+                DataHelper.getInstance().recordImportantInfo(this, "low battery=" + battery);
                 onCharge();
             }
             return;
         }
 
         mLowBatteryStatus = 0;
+        if (battery <= BaseConstant.BATTERY_LOW) {
+            if (!isCharge && !isLowBatteryTips) {
+                isLowBatteryTips = true;
+                showTipsDialog(getString(R.string.low_battery_tips, battery));
+            }
+            return;
+        }
+
+        isLowBatteryTips = false;
     }
 
     private void handleTvMapClick() {
@@ -665,14 +690,8 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         setRelocationPart(false);
         if (mTask != null) {
             mTask.stop();
-        }
-
-        if (mNavigate != null) {
-            mNavigate.stop();
-        }
-
-        if (mCharge != null) {
-            mCharge.stop();
+            mTask = null;
+            setTaskCount("");
         }
 
         if (mMapHelper != null) {
@@ -730,5 +749,12 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     private boolean isSensorWarningDialogShow() {
         return mSensorWarningDialog != null && mSensorWarningDialog.getDialog() != null && mSensorWarningDialog.getDialog().isShowing();
+    }
+
+    private void closeReconnectSlamThread() {
+        if (mReconnectSlamThread != null) {
+            mReconnectSlamThread.close();
+            mReconnectSlamThread = null;
+        }
     }
 }

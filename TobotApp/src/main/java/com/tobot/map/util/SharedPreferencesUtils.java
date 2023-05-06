@@ -10,9 +10,9 @@ import android.text.TextUtils;
  * @date 2018/4/27
  */
 public class SharedPreferencesUtils {
-    private static SharedPreferencesUtils sInstance = null;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private static volatile SharedPreferencesUtils sInstance = null;
+    private final SharedPreferences sharedPreferences;
+    private final SharedPreferences.Editor editor;
 
     @SuppressLint("CommitPrefEdits")
     private SharedPreferencesUtils(Context context) {

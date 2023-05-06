@@ -4,14 +4,10 @@ import android.content.Context;
 
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
-import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.log.Logger;
-import com.tobot.map.module.main.AbstractPathMonitor;
-import com.tobot.map.module.main.DataHelper;
+import com.tobot.map.module.main.AbstractMove;
 import com.tobot.map.module.main.MainActivity;
 import com.tobot.slam.SlamManager;
-import com.tobot.slam.agent.listener.OnChargeListener;
-import com.tobot.slam.agent.listener.OnNavigateListener;
 import com.tobot.slam.agent.listener.OnSystemStopListener;
 import com.tobot.slam.data.LocationBean;
 
@@ -22,7 +18,7 @@ import java.util.List;
  * @author houdeming
  * @date 2020/3/17
  */
-public class Task extends AbstractPathMonitor implements OnNavigateListener, OnChargeListener, OnSystemStopListener {
+public class Task extends AbstractMove implements OnSystemStopListener {
     private static final int MOVE_STATUS_IDLE = 0;
     private static final int MOVE_STATUS_NAVIGATE = 1;
     private static final int MOVE_STATUS_CHARGE = 2;
@@ -36,122 +32,22 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
     }
 
     @Override
-    public void onNavigateStartTry() {
-        Logger.i(BaseConstant.TAG, "onNavigateStartTry()");
-    }
-
-    @Override
-    public void onNavigateRemind() {
-        Logger.i(BaseConstant.TAG, "onNavigateRemind()");
-        showToast(mContext.getString(R.string.navigate_remind));
-    }
-
-    @Override
-    public void onNavigateSensorTrigger(boolean isEnabled) {
-        Logger.i(BaseConstant.TAG, "onNavigateSensorTrigger() isEnabled=" + isEnabled);
-        showToast("sensor isEnabled=" + isEnabled);
-    }
-
-    @Override
-    public void onNavigateRelocateBegin() {
-        Logger.i(BaseConstant.TAG, "onNavigateRelocateBegin()");
-        showRelocateTips();
-    }
-
-    @Override
     public void onNavigateRelocateEnd(boolean isRelocateSuccess) {
-        Logger.i(BaseConstant.TAG, "onNavigateRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
+        super.onNavigateRelocateEnd(isRelocateSuccess);
         this.isRelocateSuccess = isRelocateSuccess;
-        handleRelocateResult(isRelocateSuccess);
-    }
-
-    @Override
-    public void onNavigateSetPose(boolean isFinish) {
-        Logger.i(BaseConstant.TAG, "onNavigateSetPose() isFinish=" + isFinish);
-        handleNavigateSetPose(isFinish);
-    }
-
-    @Override
-    public void onNavigateError() {
-        Logger.i(BaseConstant.TAG, "onNavigateError()");
-        showToast(mContext.getString(R.string.navigate_error));
-        handleNavigateResult(false);
     }
 
     @Override
     public void onNavigateResult(boolean isNavigateSuccess) {
-        Logger.i(BaseConstant.TAG, "onNavigationResult() isNavigateSuccess=" + isNavigateSuccess);
-        showToast(mContext.getString(R.string.navigate_result, isNavigateSuccess));
+        super.onNavigateResult(isNavigateSuccess);
         handleNavigateResult(isNavigateSuccess);
     }
 
     @Override
-    public void onObstacleTrigger() {
-        Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
-        // 充电桩附近不处理
-        if (isChargeToPileNearby) {
-            return;
-        }
-
-        SlamManager.getInstance().cancelAction();
-    }
-
-    @Override
-    public void onObstacleDisappear() {
-        Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
-        if (isChargeToPileNearby) {
-            return;
-        }
-
-        navigate();
-    }
-
-    @Override
-    public void onChargeSensorTrigger(boolean isEnabled) {
-        Logger.i(BaseConstant.TAG, "onChargeSensorTrigger() isEnabled=" + isEnabled);
-        showToast("sensor isEnabled=" + isEnabled);
-    }
-
-    @Override
-    public void onChargeRelocateBegin() {
-        Logger.i(BaseConstant.TAG, "onChargeRelocateBegin()");
-        showRelocateTips();
-    }
-
-    @Override
-    public void onChargeRelocateEnd(boolean isRelocateSuccess) {
-        Logger.i(BaseConstant.TAG, "onChargeRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
-        handleRelocateResult(isRelocateSuccess);
-    }
-
-    @Override
-    public void onChargeToPileNearby() {
-        Logger.i(BaseConstant.TAG, "onChargeToPileNearby()");
-        isChargeToPileNearby = true;
-    }
-
-    @Override
-    public void onChargeError() {
-        Logger.i(BaseConstant.TAG, "onChargeError()");
-        stop();
-    }
-
-    @Override
-    public void onCharging() {
-        Logger.i(BaseConstant.TAG, "onCharging()");
-        onChargeResult(true);
-    }
-
-    @Override
     public void onChargeResult(boolean isChargeSuccess) {
-        Logger.i(BaseConstant.TAG, "onChargeResult() isChargeSuccess=" + isChargeSuccess);
-        showToast(mContext.getString(R.string.charge_result, isChargeSuccess));
+        super.onChargeResult(isChargeSuccess);
         if (isChargeSuccess) {
-            updateTaskCount();
-            if (mAllLoopCount == BaseConstant.LOOP_INFINITE || mCurrentLoopCount < mAllLoopCount) {
-                mItemCount = 0;
-                navigate();
-            }
+            loopNavigate();
             return;
         }
 
@@ -166,9 +62,8 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
 
     @Override
     public void onSystemStop(boolean isTrigger) {
-        Logger.i(BaseConstant.TAG, "isTrigger=" + isTrigger);
+        Logger.i(BaseConstant.TAG, "system stop isTrigger=" + isTrigger);
         if (!isTrigger && isStart) {
-            Logger.i(BaseConstant.TAG, "mMoveStatus=" + mMoveStatus);
             if (mMoveStatus == MOVE_STATUS_NAVIGATE) {
                 mMoveStatus = MOVE_STATUS_IDLE;
                 navigate();
@@ -193,43 +88,22 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
             isRelocateSuccess = true;
             isStart = true;
             mCurrentLoopCount = 0;
-            mItemCount = 0;
             updateTaskCount();
-            startMonitor();
+            mItemCount = 0;
             navigate();
             SlamManager.getInstance().startSystemStopMonitor(true, true, 1500, this);
         }
     }
 
     public void stop() {
-        Logger.i(BaseConstant.TAG, "task stop()");
         isStart = false;
-        stopMonitor();
         SlamManager.getInstance().stopSystemStopMonitor();
     }
 
     private void navigate() {
         if (isStart) {
             if (mItemCount < mLocationList.size()) {
-                LocationBean bean = mLocationList.get(mItemCount);
-                long tryTime = 0;
-                if (MoveData.getInstance().getObstacleMode() == MoveData.MEET_OBSTACLE_AVOID) {
-                    tryTime = DataHelper.getInstance().getTryTimeMillis(mContext);
-                }
-                SlamManager.getInstance().moveTo(bean, MoveData.getInstance().getMoveOption(), tryTime, this);
-                return;
-            }
-
-            mCurrentLoopCount++;
-            // 无限循环的情况
-            if (mAllLoopCount == BaseConstant.LOOP_INFINITE) {
-                continueNavigate();
-                return;
-            }
-
-            // 循环指定次数的情况
-            if (mCurrentLoopCount < mAllLoopCount) {
-                continueNavigate();
+                moveTo(mLocationList.get(mItemCount));
                 return;
             }
 
@@ -238,42 +112,35 @@ public class Task extends AbstractPathMonitor implements OnNavigateListener, OnC
                 return;
             }
 
-            updateTaskCount();
+            loopNavigate();
+            return;
         }
 
         stop();
     }
 
-    private void goCharge() {
-        SlamManager.getInstance().goHome(DataHelper.getInstance().getChargeDistance(mContext), DataHelper.getInstance().getChargeOffset(mContext), this);
-    }
-
-    private void continueNavigate() {
-        if (isAddCharge) {
-            goCharge();
-            return;
-        }
-
+    private void loopNavigate() {
+        mCurrentLoopCount++;
         updateTaskCount();
-        mItemCount = 0;
-        navigate();
-    }
-
-    private void handleNavigateResult(boolean isNavigateSuccess) {
-        if (isNavigateSuccess) {
-            mItemCount++;
+        // 无限循环的情况或按循环次数
+        if (mAllLoopCount == BaseConstant.LOOP_INFINITE || mCurrentLoopCount < mAllLoopCount) {
+            mItemCount = 0;
             navigate();
             return;
         }
 
+        stop();
+    }
+
+    private void handleNavigateResult(boolean isNavigateSuccess) {
         // 如果紧急停止后，则不再继续
-        if (isSystemStop()) {
+        if (!isNavigateSuccess && isSystemStop()) {
             mMoveStatus = MOVE_STATUS_NAVIGATE;
             return;
         }
 
         // 如果不是因为定位问题则继续导航去下一个点
-        if (isRelocateSuccess) {
+        if (isNavigateSuccess || isRelocateSuccess) {
             mItemCount++;
             navigate();
             return;

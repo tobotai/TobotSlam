@@ -5,7 +5,7 @@ package com.tobot.map.event;
  * @date 2018/8/1
  */
 public class CheckEndEvent {
-    private boolean isUpgrade;
+    private final boolean isUpgrade;
 
     public CheckEndEvent(boolean isUpgrade) {
         this.isUpgrade = isUpgrade;

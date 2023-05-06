@@ -1,5 +1,6 @@
 package com.tobot.map.module.set.firmware;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -42,6 +43,7 @@ public class SensorDetectAdapter extends BaseRecyclerAdapter<SetBean> {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setSelect(int position, boolean isSelectAll) {
         mSelectIndex = position;
         this.isSelectAll = isSelectAll;

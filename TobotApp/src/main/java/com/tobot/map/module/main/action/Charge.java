@@ -2,14 +2,8 @@ package com.tobot.map.module.main.action;
 
 import android.content.Context;
 
-import com.tobot.map.R;
-import com.tobot.map.constant.BaseConstant;
-import com.tobot.map.module.log.Logger;
-import com.tobot.map.module.main.AbstractPathMonitor;
-import com.tobot.map.module.main.DataHelper;
+import com.tobot.map.module.main.AbstractMove;
 import com.tobot.map.module.main.MainActivity;
-import com.tobot.slam.SlamManager;
-import com.tobot.slam.agent.listener.OnChargeListener;
 
 import java.lang.ref.WeakReference;
 
@@ -17,87 +11,17 @@ import java.lang.ref.WeakReference;
  * @author houdeming
  * @date 2019/10/23
  */
-public class Charge extends AbstractPathMonitor implements OnChargeListener {
+public class Charge extends AbstractMove {
 
     public Charge(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
         super(contextWeakReference, activityWeakReference);
     }
 
     @Override
-    public void onChargeSensorTrigger(boolean isEnabled) {
-        Logger.i(BaseConstant.TAG, "onChargeSensorTrigger() isEnabled=" + isEnabled);
-        showToast("sensor isEnabled=" + isEnabled);
-    }
-
-    @Override
-    public void onChargeRelocateBegin() {
-        Logger.i(BaseConstant.TAG, "onChargeRelocateBegin()");
-        showRelocateTips();
-    }
-
-    @Override
-    public void onChargeRelocateEnd(boolean isRelocateSuccess) {
-        Logger.i(BaseConstant.TAG, "onChargeRelocateEnd() isRelocateSuccess=" + isRelocateSuccess);
-        handleRelocateResult(isRelocateSuccess);
-    }
-
-    @Override
-    public void onChargeToPileNearby() {
-        Logger.i(BaseConstant.TAG, "onChargeToPileNearby()");
-        isChargeToPileNearby = true;
-    }
-
-    @Override
-    public void onChargeError() {
-        Logger.i(BaseConstant.TAG, "onChargeError()");
-        stop();
-        showToast(mContext.getString(R.string.charge_error_tips));
-    }
-
-    @Override
-    public void onCharging() {
-        Logger.i(BaseConstant.TAG, "onCharging()");
-        stop();
-        showToast(mContext.getString(R.string.charge_ing_tips));
-    }
-
-    @Override
     public void onChargeResult(boolean isChargeSuccess) {
-        Logger.i(BaseConstant.TAG, "onChargeResult()=" + isChargeSuccess);
-        stop();
-        showToast(mContext.getString(R.string.charge_result, isChargeSuccess));
+        super.onChargeResult(isChargeSuccess);
         if (!isChargeSuccess) {
             handleMoveFail(true);
         }
-    }
-
-    @Override
-    public void onObstacleTrigger() {
-        Logger.i(BaseConstant.TAG, "onObstacleTrigger()");
-        // 充电桩附近不处理
-        if (isChargeToPileNearby) {
-            return;
-        }
-
-        SlamManager.getInstance().cancelAction();
-    }
-
-    @Override
-    public void onObstacleDisappear() {
-        Logger.i(BaseConstant.TAG, "onObstacleDisappear()");
-        if (isChargeToPileNearby) {
-            return;
-        }
-
-        goCharge();
-    }
-
-    public void goCharge() {
-        startMonitor();
-        SlamManager.getInstance().goHome(DataHelper.getInstance().getChargeDistance(mContext), DataHelper.getInstance().getChargeOffset(mContext), this);
-    }
-
-    public void stop() {
-        stopMonitor();
     }
 }

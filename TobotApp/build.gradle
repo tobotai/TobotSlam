@@ -9,9 +9,10 @@ android {
         applicationId "com.tobot.map"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 58
-        versionName "3.2.2"
-        multiDexEnabled true // dex突破65535的限制
+        versionCode 80
+        versionName "4.0.1"
+        // dex突破65535的限制
+        multiDexEnabled true
         // 自定义配置信息
         buildConfigField("String", "BASE_URL", "${BASE_URL}")
         buildConfigField("String", "VERSION_TXT_URL", "${VERSION_TXT_URL}")
@@ -72,7 +73,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -85,8 +86,6 @@ dependencies {
     implementation 'com.jakewharton:butterknife:9.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation(name: 'TobotBar-1.1.6', ext: 'aar')
-    implementation(name: 'TobotWheelView-1.2.1', ext: 'aar')
-    implementation files('libs/TobotNet-1.2.0.jar')
-    implementation files('libs/TobotSlam-2.10.4.jar')
+    implementation files('libs/TobotNet-1.2.4.jar')
+    implementation files('libs/TobotSlam-2.12.0.jar')
 }

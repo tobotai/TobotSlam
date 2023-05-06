@@ -11,7 +11,8 @@ import android.view.View;
  * @date 2020/3/17
  */
 public class GridItemDecoration extends RecyclerView.ItemDecoration {
-    private int mHorizontalSpacing, mVerticalSpacing;
+    private final int mHorizontalSpacing;
+    private final int mVerticalSpacing;
 
     public GridItemDecoration(int horizontalSpacing, int verticalSpacing) {
         mHorizontalSpacing = horizontalSpacing;

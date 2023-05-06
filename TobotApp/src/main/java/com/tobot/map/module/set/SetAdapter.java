@@ -1,5 +1,6 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ public class SetAdapter extends BaseRecyclerAdapter<SetBean> {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setSelect(int position) {
         if (mSelectPosition == position) {
             return;

@@ -1,5 +1,6 @@
 package com.tobot.map.module.task;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -59,6 +60,7 @@ public class TaskPointSelectAdapter extends BaseRecyclerAdapter<LocationBean> {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setSelectData(List<LocationBean> data) {
         mSelectList = data;
         notifyDataSetChanged();

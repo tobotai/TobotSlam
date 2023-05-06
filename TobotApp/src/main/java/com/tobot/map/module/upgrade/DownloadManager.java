@@ -26,8 +26,6 @@ import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.map.util.ToastUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Locale;
@@ -39,25 +37,42 @@ import retrofit2.Response;
  * @author houdeming
  * @date 2018/7/4
  */
-public class DownloadManager {
-    private static final int MSF_UPDATE_PROGRESS = 1;
-    private static final int MSF_DOWNLOAD_FAIL = 2;
-    private static final int MSF_DOWNLOAD_COMPLETE = 3;
+public class DownloadManager implements OnFileDownloadListener {
+    private static final int MSG_UPDATE_PROGRESS = 1;
+    private static final int MSG_DOWNLOAD_FAIL = 2;
+    private static final int MSG_DOWNLOAD_COMPLETE = 3;
     private static final int NOTIFY_ID = 1;
-    private Context mContext;
-    private MainHandler mMainHandler;
+    private final Context mContext;
+    private final MainHandler mMainHandler;
     @SuppressLint("StaticFieldLeak")
-    private static DownloadManager sInstance;
+    private static volatile DownloadManager sInstance;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
-    /**
-     * 定义个更新速率，避免更新通知栏过于频繁导致卡顿
-     */
-    private float rate = 0.0f;
 
     private DownloadManager(Context context) {
         mContext = context;
         mMainHandler = new MainHandler(new WeakReference<>(this));
+    }
+
+    @Override
+    public void onFileDownloadProgress(int progress) {
+        if (mMainHandler != null) {
+            mMainHandler.obtainMessage(MSG_UPDATE_PROGRESS, progress, 0).sendToTarget();
+        }
+    }
+
+    @Override
+    public void onFileDownloadFail(String msg) {
+        if (mMainHandler != null) {
+            mMainHandler.obtainMessage(MSG_DOWNLOAD_FAIL, msg).sendToTarget();
+        }
+    }
+
+    @Override
+    public void onFileDownloadFinish() {
+        if (mMainHandler != null) {
+            mMainHandler.sendEmptyMessage(MSG_DOWNLOAD_COMPLETE);
+        }
     }
 
     public static DownloadManager getInstance(Context context) {
@@ -90,19 +105,13 @@ public class DownloadManager {
     public void downLoadApk(String url) {
         Logger.i(BaseConstant.TAG, "url=" + url);
         setNotification();
-        HttpApi.downloadFile(url, new HttpResultCallback<Response<ResponseBody>>() {
-            @Override
-            public void onHttpRequestResult(Response<ResponseBody> data) {
-                if (data != null) {
-                    ThreadPoolManager.getInstance().execute(new FileRunnable(new WeakReference<>(data.body())));
-                    return;
-                }
+        FileDownload.getInstance().downLoad(mContext, url, getApkFile(), this);
+    }
 
-                if (mMainHandler != null) {
-                    mMainHandler.obtainMessage(MSF_DOWNLOAD_FAIL, mContext.getString(R.string.download_fail_tips)).sendToTarget();
-                }
-            }
-        });
+    public void destroy() {
+        if (mMainHandler != null) {
+            mMainHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -120,87 +129,8 @@ public class DownloadManager {
         mNotificationManager.notify(NOTIFY_ID, mBuilder.build());
     }
 
-    private class FileRunnable implements Runnable {
-        private ResponseBody mResponseBody;
-
-        private FileRunnable(@NonNull WeakReference<ResponseBody> reference) {
-            mResponseBody = reference.get();
-        }
-
-        @Override
-        public void run() {
-            if (mResponseBody == null) {
-                if (mMainHandler != null) {
-                    mMainHandler.obtainMessage(MSF_DOWNLOAD_FAIL, mContext.getString(R.string.download_fail_tips)).sendToTarget();
-                }
-                return;
-            }
-
-            Logger.i(BaseConstant.TAG, "writeFile()");
-            writeFile(mResponseBody);
-        }
-
-        private void writeFile(ResponseBody responseBody) {
-            InputStream inputStream = null;
-            byte[] buff = new byte[2048];
-            int len;
-            FileOutputStream fos = null;
-            try {
-                File file = getApkFile();
-                File dir = file.getParentFile();
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-
-                if (file.exists()) {
-                    file.delete();
-                }
-
-                inputStream = responseBody.byteStream();
-                long total = responseBody.contentLength();
-
-                fos = new FileOutputStream(file);
-                long sum = 0;
-                while ((len = inputStream.read(buff)) != -1) {
-                    fos.write(buff, 0, len);
-                    sum += len;
-                    int progress = (int) (sum * 1.0f / total * 100);
-                    if (rate != progress) {
-                        if (mMainHandler != null) {
-                            mMainHandler.obtainMessage(MSF_UPDATE_PROGRESS, progress, 0).sendToTarget();
-                        }
-                        rate = progress;
-                    }
-                }
-
-                fos.flush();
-                if (mMainHandler != null) {
-                    mMainHandler.sendEmptyMessage(MSF_DOWNLOAD_COMPLETE);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Logger.i(BaseConstant.TAG, "error=" + e.getMessage());
-                if (mMainHandler != null) {
-                    mMainHandler.obtainMessage(MSF_DOWNLOAD_FAIL, mContext.getString(R.string.permission_sd_card_open_tips)).sendToTarget();
-                }
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-
-                    if (fos != null) {
-                        fos.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     private static class MainHandler extends Handler {
-        private DownloadManager mManager;
+        private final DownloadManager mManager;
 
         private MainHandler(WeakReference<DownloadManager> reference) {
             super(Looper.getMainLooper());
@@ -210,24 +140,20 @@ public class DownloadManager {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case MSF_UPDATE_PROGRESS:
-                    if (mManager != null) {
+            if (mManager != null) {
+                switch (msg.what) {
+                    case MSG_UPDATE_PROGRESS:
                         mManager.updateProgress(msg.arg1);
-                    }
-                    break;
-                case MSF_DOWNLOAD_FAIL:
-                    if (mManager != null) {
+                        break;
+                    case MSG_DOWNLOAD_FAIL:
                         mManager.downloadFail((String) msg.obj);
-                    }
-                    break;
-                case MSF_DOWNLOAD_COMPLETE:
-                    if (mManager != null) {
+                        break;
+                    case MSG_DOWNLOAD_COMPLETE:
                         mManager.downloadComplete();
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -247,6 +173,7 @@ public class DownloadManager {
         mNotificationManager.cancel(NOTIFY_ID);
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private void downloadComplete() {
         Logger.i(BaseConstant.TAG, "downloadComplete()");
         Intent intent = installIntent(getApkFile());

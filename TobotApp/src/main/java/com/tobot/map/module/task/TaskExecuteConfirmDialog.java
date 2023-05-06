@@ -51,7 +51,7 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initView(View view) {
-        tvTitle = view.findViewById(R.id.tv_title);
+        tvTitle = view.findViewById(R.id.tv_head);
         tvTaskPoint = view.findViewById(R.id.tv_content);
         tvChargeSwitch = view.findViewById(R.id.tv_charge_switch);
         tvLoopCount = view.findViewById(R.id.tv_implement_count);
@@ -60,6 +60,7 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
         tvLoopCount.setText(getString(R.string.tv_implement_count, mLoopCount));
         tvChargeSwitch.setOnClickListener(this);
         tvLoop.setOnClickListener(this);
+        view.findViewById(R.id.tv_back).setOnClickListener(this);
         view.findViewById(R.id.btn_start_implement).setOnClickListener(this);
         wheelView.setDividerType(WheelView.DividerType.WRAP);
         wheelView.setLineSpacingMultiplier(LINE_SPACE);
@@ -109,9 +110,13 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
         tvLoopCount.setText(getString(R.string.tv_implement_count, mLoopCount));
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.tv_back:
+                dismiss();
+                break;
             case R.id.tv_loop_implement:
                 tvLoop.setSelected(!tvLoop.isSelected());
                 break;

@@ -1,5 +1,6 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -7,7 +8,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.DataHelper;
@@ -23,31 +24,50 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2021/08/25
  */
-public class RunParameterActivity extends BaseActivity {
+public class RunParameterActivity extends BaseBackActivity {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_chassis_radius)
     TextView tvChassisRadius;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_chassis_radius)
     EditText etChassisRadius;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_relocation_global)
     RadioButton rbRelocationGlobal;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_relocation_part)
     RadioButton rbRelocationPart;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_relocation_quality_min)
     TextView tvRelocationQualityMin;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_relocation_quality_min)
     EditText etRelocationQualityMin;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_relocation_quality_safe)
     TextView tvRelocationQualitySafe;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_relocation_quality_safe)
     EditText etRelocationQualitySafe;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.tv_relocation_area_radius)
+    TextView tvRelocationAreaRadius;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.et_relocation_area_radius)
+    EditText etRelocationAreaRadius;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_charge_start_distance)
     TextView tvChargeDistance;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_charge_start_distance)
     EditText etChargeDistance;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_charge_offset)
     TextView tvChargeOffset;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_charge_offset)
     EditText etChargeOffset;
 
@@ -62,6 +82,7 @@ public class RunParameterActivity extends BaseActivity {
         setChassisRadiusTips(DataHelper.getInstance().getChassisRadius(this));
         setRelocationQualityMinTips(SlamManager.getInstance().getRelocationQualityMin());
         setRelocationQualitySafeTips(SlamManager.getInstance().getRelocationQualitySafe());
+        setRelocationAreaRadiusTips(SlamManager.getInstance().getRelocationAreaRadius());
         setChargeStartDistanceTips(DataHelper.getInstance().getChargeDistance(this));
         setChargeOffsetTips(DataHelper.getInstance().getChargeOffset(this));
         if (DataHelper.getInstance().getRelocationType(this) == SlamCode.RELOCATION_GLOBAL) {
@@ -72,8 +93,9 @@ public class RunParameterActivity extends BaseActivity {
         rbRelocationPart.setChecked(true);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @OnClick({R.id.btn_set_chassis_radius, R.id.rb_relocation_global, R.id.rb_relocation_part, R.id.btn_set_relocation_quality_min, R.id.btn_set_relocation_quality_safe,
-            R.id.btn_charge_start_distance, R.id.btn_charge_offset})
+            R.id.btn_set_relocation_area_radius, R.id.btn_charge_start_distance, R.id.btn_charge_offset})
     public void onClickView(View v) {
         switch (v.getId()) {
             case R.id.btn_set_chassis_radius:
@@ -90,6 +112,9 @@ public class RunParameterActivity extends BaseActivity {
                 break;
             case R.id.btn_set_relocation_quality_safe:
                 setRelocationQualitySafe();
+                break;
+            case R.id.btn_set_relocation_area_radius:
+                setRelocationAreaRadius();
                 break;
             case R.id.btn_charge_start_distance:
                 setChargeStartDistance();
@@ -115,6 +140,10 @@ public class RunParameterActivity extends BaseActivity {
         tvRelocationQualitySafe.setText(getString(R.string.tv_relocation_quality_safe, value));
     }
 
+    private void setRelocationAreaRadiusTips(float value) {
+        tvRelocationAreaRadius.setText(getString(R.string.tv_relocation_area_radius, String.valueOf(value)));
+    }
+
     private void setChargeStartDistanceTips(float value) {
         tvChargeDistance.setText(getString(R.string.tv_charge_start_distance, String.valueOf(value)));
     }
@@ -134,6 +163,7 @@ public class RunParameterActivity extends BaseActivity {
         if (NumberUtils.isDoubleOrFloat(content)) {
             float value = Float.parseFloat(content);
             DataHelper.getInstance().setChassisRadius(this, value);
+            SlamManager.getInstance().setChassisRadius(value);
             setChassisRadiusTips(value);
             showToastTips(getString(R.string.set_success_tips));
             etChassisRadius.setText("");
@@ -173,6 +203,24 @@ public class RunParameterActivity extends BaseActivity {
             setRelocationQualitySafeTips(value);
             showToastTips(getString(R.string.set_success_tips));
             etRelocationQualitySafe.setText("");
+        }
+    }
+
+    private void setRelocationAreaRadius() {
+        String content = etRelocationAreaRadius.getText().toString().trim();
+        if (TextUtils.isEmpty(content)) {
+            showToastTips(getString(R.string.relocation_area_radius_empty_tips));
+            return;
+        }
+
+        SystemUtils.hideKeyboard(this);
+        if (NumberUtils.isDoubleOrFloat(content)) {
+            float value = Float.parseFloat(content);
+            DataHelper.getInstance().setRelocationAreaRadius(this, value);
+            SlamManager.getInstance().setRelocationAreaRadius(value);
+            setRelocationAreaRadiusTips(value);
+            showToastTips(getString(R.string.set_success_tips));
+            etRelocationAreaRadius.setText("");
         }
     }
 

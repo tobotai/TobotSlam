@@ -26,11 +26,8 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tv_low_battery"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
+                    style="@style/tv_content"
+                    android:text="@string/tv_low_battery" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,7 +47,7 @@
                         android:id="@+id/sb_battery"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sb_speed_height"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
+                        android:layout_marginLeft="@dimen/sb_speed_margin_left"
                         android:paddingLeft="@dimen/sb_speed_padding_left"
                         android:paddingRight="@dimen/sb_speed_padding_left"
                         app:bar_bgColor="@color/sb_speed_bg"
@@ -68,11 +65,8 @@
 
                 <TextView
                     android:id="@+id/tv_log_out_tips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
+                    style="@style/tv_content"
+                    android:layout_marginTop="@dimen/view_margin_top" />
 
                 <RadioGroup
                     android:layout_width="wrap_content"
@@ -103,67 +97,21 @@
                     style="@style/view_line"
                     android:layout_marginTop="@dimen/view_margin_top" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/tv_rotate_direction"
-                    android:textColor="@color/tv_content"
-                    android:textSize="@dimen/tv_content" />
-
-                <RadioGroup
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/rb_to_left"
-                        style="@style/rb_speed"
-                        android:checked="true"
-                        android:text="@string/to_left" />
-
-                    <RadioButton
-                        android:id="@+id/rb_to_right"
-                        style="@style/rb_speed"
-                        android:layout_marginLeft="@dimen/rb_wall_margin"
-                        android:text="@string/to_right" />
-                </RadioGroup>
-
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/rl_move"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/view_margin_top"
-                    android:orientation="horizontal">
+                    android:layout_height="@dimen/layout_item_height"
+                    android:background="@drawable/selector_item_bg"
+                    android:gravity="center_vertical">
 
-                    <EditText
-                        android:id="@+id/et_speed"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/et_height"
-                        android:layout_weight="3"
-                        android:background="@drawable/shape_edit_bg"
-                        android:gravity="center"
-                        android:hint="@string/et_rotate_speed_hint_tips"
-                        android:inputType="number"
-                        android:textColor="@color/et_tv"
-                        android:textSize="@dimen/et_tv" />
+                    <TextView
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_move" />
 
-                    <Button
-                        android:id="@+id/btn_send"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/btn_height"
-                        android:layout_marginLeft="@dimen/sb_speed_padding_left"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_btn_oval_bg"
-                        android:text="@string/btn_send"
-                        android:textColor="@color/tv_white"
-                        android:textSize="@dimen/btn_tv_size" />
-                </LinearLayout>
+                    <ImageView style="@style/iv_right_arrow" />
+                </RelativeLayout>
 
-                <View
-                    style="@style/view_line"
-                    android:layout_marginTop="@dimen/view_margin_top" />
+                <View style="@style/view_line" />
 
                 <RelativeLayout
                     android:id="@+id/rl_sensor_info"
@@ -173,44 +121,42 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/tv_sensor_info"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_sensor_info" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />
 
                 <RelativeLayout
-                    android:id="@+id/rl_get_sensor_detect_info"
+                    android:id="@+id/rl_record"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/layout_item_height"
                     android:background="@drawable/selector_item_bg"
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/get_sensor_detect_info"
-                        android:textColor="@drawable/selector_tv_item"
-                        android:textSize="@dimen/tv_content" />
+                        style="@style/tv_content_click"
+                        android:text="@string/tv_record" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_right_arrow" />
+                    <ImageView style="@style/iv_right_arrow" />
+                </RelativeLayout>
+
+                <View style="@style/view_line" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_file_read_write"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/layout_item_height"
+                    android:background="@drawable/selector_item_bg"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        style="@style/tv_content_click"
+                        android:text="@string/file_read_write" />
+
+                    <ImageView style="@style/iv_right_arrow" />
                 </RelativeLayout>
 
                 <View style="@style/view_line" />

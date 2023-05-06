@@ -1,24 +1,19 @@
 package com.tobot.map.module.set;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.slamtec.slamware.action.MoveDirection;
 import com.tobot.bar.base.BaseBar;
 import com.tobot.bar.seekbar.StripSeekBar;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.main.DataHelper;
-import com.tobot.map.module.set.firmware.GetSensorDetectActivity;
 import com.tobot.map.module.set.firmware.SensorInfoActivity;
-import com.tobot.map.util.SystemUtils;
-import com.tobot.map.util.ThreadPoolManager;
-import com.tobot.slam.SlamManager;
+import com.tobot.map.module.set.record.RecordActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -28,23 +23,25 @@ import butterknife.OnClick;
  * @date 2020/5/6
  */
 public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChangeListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_low_battery_tips)
     TextView tvCurrentLowBattery;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.sb_battery)
     StripSeekBar sbBattery;
-    @BindView(R.id.et_speed)
-    EditText etSpeed;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_log_out_tips)
     TextView tvLogTip;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_log_no)
     RadioButton rbLogNo;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_log_logcat)
     RadioButton rbLogLogcat;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.rb_log_adb)
     RadioButton rbLogAdb;
-    private static final int TAG_ROTATE = 1;
-    private int mBattery, mSpeedValue;
-    private MoveDirection mRotateDirection = MoveDirection.TURN_LEFT;
+    private int mBattery;
 
     public static TestFragment newInstance() {
         return new TestFragment();
@@ -82,19 +79,11 @@ public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChang
         showToastTips(getString(R.string.set_success_tips));
     }
 
-    @OnClick({R.id.rb_to_left, R.id.rb_to_right, R.id.btn_send, R.id.rb_log_no, R.id.rb_log_logcat, R.id.rb_log_adb,
-            R.id.rl_sensor_info, R.id.rl_get_sensor_detect_info})
+    @SuppressLint("NonConstantResourceId")
+    @OnClick({R.id.rb_log_no, R.id.rb_log_logcat, R.id.rb_log_adb, R.id.rl_move, R.id.rl_sensor_info,
+            R.id.rl_record, R.id.rl_file_read_write})
     public void onClickView(View view) {
         switch (view.getId()) {
-            case R.id.rb_to_left:
-                mRotateDirection = MoveDirection.TURN_LEFT;
-                break;
-            case R.id.rb_to_right:
-                mRotateDirection = MoveDirection.TURN_RIGHT;
-                break;
-            case R.id.btn_send:
-                send();
-                break;
             case R.id.rb_log_no:
                 setLogType(BaseConstant.LOG_NO);
                 break;
@@ -104,11 +93,17 @@ public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChang
             case R.id.rb_log_adb:
                 setLogType(BaseConstant.LOG_ADB);
                 break;
+            case R.id.rl_move:
+                startActivity(new Intent(getActivity(), MoveActivity.class));
+                break;
             case R.id.rl_sensor_info:
                 startActivity(new Intent(getActivity(), SensorInfoActivity.class));
                 break;
-            case R.id.rl_get_sensor_detect_info:
-                startActivity(new Intent(getActivity(), GetSensorDetectActivity.class));
+            case R.id.rl_record:
+                startActivity(new Intent(getActivity(), RecordActivity.class));
+                break;
+            case R.id.rl_file_read_write:
+                startActivity(new Intent(getActivity(), FileDebugActivity.class));
                 break;
             default:
                 break;
@@ -136,43 +131,10 @@ public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChang
         }
     }
 
-    private void send() {
-        SystemUtils.hideKeyboard(getActivity());
-        String speed = etSpeed.getText().toString().trim();
-        if (TextUtils.isEmpty(speed)) {
-            showToastTips(getString(R.string.rotate_speed_empty_tips));
-            return;
-        }
-
-        if (TextUtils.isDigitsOnly(speed)) {
-            mSpeedValue = Integer.parseInt(speed);
-            ThreadPoolManager.getInstance().execute(new TestRunnable(TAG_ROTATE));
-        }
-    }
-
     private void setLogType(int type) {
         DataHelper.getInstance().setLogType(getActivity(), type);
         if (type != BaseConstant.LOG_NO) {
             showToastTips(getString(R.string.log_select_tips));
-        }
-    }
-
-    private void rotate() {
-        SlamManager.getInstance().rotate(mSpeedValue, mRotateDirection);
-    }
-
-    private class TestRunnable implements Runnable {
-        private int mTag;
-
-        private TestRunnable(int tag) {
-            mTag = tag;
-        }
-
-        @Override
-        public void run() {
-            if (mTag == TAG_ROTATE) {
-                rotate();
-            }
         }
     }
 }

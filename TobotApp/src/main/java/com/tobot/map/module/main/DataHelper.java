@@ -7,7 +7,8 @@ import com.slamtec.slamware.robot.SensorType;
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
-import com.tobot.map.module.main.warning.WarningInfo;
+import com.tobot.map.entity.RecordInfo;
+import com.tobot.map.util.DateTool;
 import com.tobot.map.util.SharedPreferencesUtils;
 import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
@@ -16,6 +17,7 @@ import com.tobot.slam.data.LocationBean;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -25,19 +27,22 @@ import java.util.List;
  * @date 2018/8/18
  */
 public class DataHelper {
-    private static final String IP_SOCKET_KEY = "ip_socket_key";
     private static final String TRY_TIME_KEY = "try_time_key";
     private static final String LOG_KEY = "log_key";
     private static final String RELOCATION_TYPE_KEY = "relocation_type_key";
     private static final String CHASSIS_RADIUS_KEY = "chassis_radius_key";
     private static final String RELOCATION_MIN_KEY = "relocation_min_key";
     private static final String RELOCATION_SAFE_KEY = "relocation_safe_key";
+    private static final String RELOCATION_AREA_RADIUS_KEY = "relocation_area_radius_key";
     private static final String CHARGE_DISTANCE_KEY = "charge_distance_key";
     private static final String CHARGE_OFFSET_KEY = "charge_offset_key";
+    private static final String PRODUCT_MODEL_KEY = "product_model_key";
+    private static final String TOUCH_COUNT_KEY = "touch_count_key";
     private String mMapFile, mIp;
-    private int mLowBattery, mTryTime, mLogType, mRelocationQuality, mRelocationSafeValue, mRelocationType;
-    private List<WarningInfo> mWarningList;
-    private float mChassisRadius, mChargeDistance, mChargeOffset;
+    private int mTryTime, mLogType, mRelocationQuality, mRelocationSafeValue, mRelocationType, mProductModel, mTouchCount;
+    private int mLowBattery = BaseConstant.BATTERY_LOW_DEFAULT;
+    private List<RecordInfo> mWarningList;
+    private float mChassisRadius, mRelocationAreaRadius, mChargeDistance, mChargeOffset;
 
     private static class BaseDataHolder {
         private static final DataHelper INSTANCE = new DataHelper();
@@ -220,14 +225,6 @@ public class DataHelper {
         return "";
     }
 
-    public void setIpSocket(Context context, String ipSocket) {
-        SharedPreferencesUtils.getInstance(context).putString(IP_SOCKET_KEY, ipSocket);
-    }
-
-    public String getIpSocket(Context context) {
-        return SharedPreferencesUtils.getInstance(context).getString(IP_SOCKET_KEY, context.getString(R.string.ip_socket));
-    }
-
     public String getIp() {
         return mIp;
     }
@@ -250,7 +247,7 @@ public class DataHelper {
 
     public long getTryTimeMillis(Context context) {
         int time = getTryTime(context);
-        return time == 0 ? 0 : time * 60000;
+        return time == 0 ? 0 : time * 60000L;
     }
 
     public String getSensorTips(Context context, SensorType sensorType, int id) {
@@ -267,6 +264,17 @@ public class DataHelper {
         }
 
         return tips;
+    }
+
+    public boolean isSlamError(String error) {
+        String[] errorArray = {"Connection Time Out", "Connection Failed", "Connection Lost"};
+        for (String content : errorArray) {
+            if (error.contains(content)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void setLogType(Context context, int type) {
@@ -329,6 +337,18 @@ public class DataHelper {
         return mRelocationSafeValue;
     }
 
+    public void setRelocationAreaRadius(Context context, float value) {
+        mRelocationAreaRadius = value;
+        SharedPreferencesUtils.getInstance(context).putFloat(RELOCATION_AREA_RADIUS_KEY, value);
+    }
+
+    public float getRelocationAreaRadius(Context context) {
+        if (mRelocationAreaRadius == 0) {
+            mRelocationAreaRadius = SharedPreferencesUtils.getInstance(context).getFloat(RELOCATION_AREA_RADIUS_KEY, SlamCode.RELOCATION_AREA_RADIUS);
+        }
+        return mRelocationAreaRadius;
+    }
+
     public void setChargeDistance(Context context, float value) {
         mChargeDistance = value;
         SharedPreferencesUtils.getInstance(context).putFloat(CHARGE_DISTANCE_KEY, value);
@@ -353,36 +373,62 @@ public class DataHelper {
         return mChargeOffset;
     }
 
-    public void setWarningData(WarningInfo info) {
-        if (info != null) {
-            if (mWarningList == null) {
-                mWarningList = new ArrayList<>();
-            }
+    public void setProductModel(Context context, int value) {
+        mProductModel = value;
+        SharedPreferencesUtils.getInstance(context).putInt(PRODUCT_MODEL_KEY, value);
+    }
 
-            try {
-                if (!mWarningList.isEmpty()) {
-                    for (WarningInfo warningInfo : mWarningList) {
-                        if (TextUtils.equals(info.getType(), warningInfo.getType()) && info.getId() == warningInfo.getId()) {
-                            warningInfo.setCount(warningInfo.getCount() + 1);
-                            return;
-                        }
+    public int getProductModel(Context context) {
+        if (mProductModel == 0) {
+            mProductModel = SharedPreferencesUtils.getInstance(context).getInt(PRODUCT_MODEL_KEY, SlamCode.SLAM_TYPE_DEFINED);
+        }
+        return mProductModel;
+    }
+
+    public void setTouchCount(Context context, int count) {
+        mTouchCount = count;
+        SharedPreferencesUtils.getInstance(context).putInt(TOUCH_COUNT_KEY, count);
+    }
+
+    public int getTouchCount(Context context) {
+        if (mTouchCount == 0) {
+            mTouchCount = SharedPreferencesUtils.getInstance(context).getInt(TOUCH_COUNT_KEY, BaseConstant.TOUCH_COUNT_DEFAULT);
+        }
+        return mTouchCount;
+    }
+
+    public void setWarningData(int id, String content) {
+        RecordInfo info = RecordInfo.getRecordInfo();
+        info.setCode(id);
+        info.setContent(content);
+        info.setCount(1);
+        if (mWarningList == null) {
+            mWarningList = new ArrayList<>();
+        }
+
+        try {
+            if (!mWarningList.isEmpty()) {
+                for (RecordInfo warningInfo : mWarningList) {
+                    if (TextUtils.equals(info.getContent(), warningInfo.getContent()) && info.getCode() == warningInfo.getCode()) {
+                        warningInfo.setCount(warningInfo.getCount() + 1);
+                        return;
                     }
                 }
-
-                mWarningList.add(info);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
+            mWarningList.add(info);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public List<WarningInfo> getWarningList() {
+    public List<RecordInfo> getWarningList() {
         if (mWarningList != null && !mWarningList.isEmpty()) {
-            Collections.sort(mWarningList, new Comparator<WarningInfo>() {
+            Collections.sort(mWarningList, new Comparator<RecordInfo>() {
                 @Override
-                public int compare(WarningInfo o1, WarningInfo o2) {
+                public int compare(RecordInfo o1, RecordInfo o2) {
                     if (o1 != null && o2 != null) {
-                        return Integer.compare(o1.getId(), o2.getId());
+                        return Integer.compare(o1.getCode(), o2.getCode());
                     }
 
                     return 0;
@@ -398,5 +444,28 @@ public class DataHelper {
             mWarningList.clear();
         }
         mWarningList = null;
+    }
+
+    public void recordWarningList(Context context) {
+        // 先删除再添加
+        MyDBSource.getInstance(context).deleteAllRecordWarning();
+        MyDBSource.getInstance(context).insertRecordWarningList(getWarningList());
+    }
+
+    public void recordImportantInfo(Context context, String content) {
+        ThreadPoolManager.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                RecordInfo info = RecordInfo.getRecordInfo();
+                info.setTime(DateTool.getCurrentTimeDetail(Calendar.getInstance().getTime()));
+                info.setContent(content);
+                MyDBSource.getInstance(context).insertRecordInfo(info);
+                // 如果超过限定的数量则替换时间最久的数据
+                List<RecordInfo> infoList = MyDBSource.getInstance(context).queryRecordInfoList();
+                if (infoList != null && infoList.size() > BaseConstant.MAX_RECORD_COUNT) {
+                    MyDBSource.getInstance(context).deleteRecordInfo(infoList.get(0));
+                }
+            }
+        });
     }
 }

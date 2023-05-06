@@ -1,5 +1,6 @@
 package com.tobot.map.module.set.firmware;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -8,7 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tobot.map.R;
-import com.tobot.map.base.BaseActivity;
+import com.tobot.map.base.BaseBackActivity;
 import com.tobot.map.base.BaseRecyclerAdapter;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.entity.SetBean;
@@ -29,17 +30,23 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2021/03/09
  */
-public class SetSensorDataReportedActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<SetBean> {
+public class SetSensorDataReportedActivity extends BaseBackActivity implements BaseRecyclerAdapter.OnItemClickListener<SetBean> {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_head)
     TextView tvHead;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_num)
     EditText etNum;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_sensor_sonar)
     TextView tvSonar;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_sensor_cliff)
     TextView tvCliff;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_sensor_bumper)
     TextView tvBumper;
     private static final int TAG_SONAR = 0;
@@ -85,6 +92,7 @@ public class SetSensorDataReportedActivity extends BaseActivity implements BaseR
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @OnClick({R.id.rb_open, R.id.rb_close, R.id.btn_send})
     public void onClickView(View v) {
         switch (v.getId()) {
@@ -121,6 +129,11 @@ public class SetSensorDataReportedActivity extends BaseActivity implements BaseR
 
     private void send() {
         SystemUtils.hideKeyboard(this);
+        if (!SlamManager.getInstance().isConnected()) {
+            showToastTips(getString(R.string.slam_not_connect_tips));
+            return;
+        }
+
         String content = etNum.getText().toString().trim();
         // 执行全部
         if (TextUtils.isEmpty(content)) {
@@ -133,7 +146,15 @@ public class SetSensorDataReportedActivity extends BaseActivity implements BaseR
             return;
         }
 
-        ThreadPoolManager.getInstance().execute(new SetRunnable(mSelectId, Integer.parseInt(content)));
+        // 设置的id从0开始，但输入的值要从1开始，要与显示的编号一一对应
+        int num = Integer.parseInt(content);
+        num = num - 1;
+        if (num < 0) {
+            showToastTips(getString(R.string.set_sensor_result, false));
+            return;
+        }
+
+        ThreadPoolManager.getInstance().execute(new SetRunnable(mSelectId, num));
     }
 
     private void setSensorTips(int id, List<Integer> list) {
@@ -141,11 +162,9 @@ public class SetSensorDataReportedActivity extends BaseActivity implements BaseR
         if (list != null && !list.isEmpty()) {
             StringBuilder builder = new StringBuilder();
             for (int i = 0, size = list.size(); i < size; i++) {
-                if (size > 1) {
-                    builder.append(i);
-                    builder.append(BaseConstant.SENSOR_STATUS_SPLIT);
-                }
-
+                // 传感器id从1开始
+                builder.append(i + 1);
+                builder.append(BaseConstant.SENSOR_STATUS_SPLIT);
                 builder.append(getString(list.get(i) == 1 ? R.string.btn_open : R.string.btn_close));
                 if (i != size - 1) {
                     builder.append(BaseConstant.SPLIT);
@@ -177,8 +196,8 @@ public class SetSensorDataReportedActivity extends BaseActivity implements BaseR
     }
 
     private class SetRunnable implements Runnable {
-        private int mSelectId;
-        private int mNum;
+        private final int mSelectId;
+        private final int mNum;
 
         private SetRunnable(int selectId, int num) {
             mSelectId = selectId;

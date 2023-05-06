@@ -7,28 +7,16 @@
 
     <TextView
         android:id="@+id/tv_type"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textColor="@color/tv_white"
-        android:textSize="@dimen/tv_content" />
+        style="@style/tv_content_weight"
+        android:textColor="@color/tv_white" />
 
     <TextView
         android:id="@+id/tv_id"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textColor="@color/tv_white"
-        android:textSize="@dimen/tv_content" />
+        style="@style/tv_content_weight"
+        android:textColor="@color/tv_white" />
 
     <TextView
         android:id="@+id/tv_count"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textColor="@color/tv_white"
-        android:textSize="@dimen/tv_content" />
+        style="@style/tv_content_weight"
+        android:textColor="@color/tv_white" />
 </LinearLayout>

@@ -4,6 +4,16 @@
     android:layout_height="@dimen/head_height">
 
     <TextView
+        android:id="@+id/tv_back"
+        android:layout_width="@dimen/tv_back_width"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:drawableLeft="@drawable/ic_back"
+        android:paddingLeft="@dimen/ic_back_margin_left"
+        android:textColor="@color/tv_title"
+        android:textSize="@dimen/tv_back" />
+
+    <TextView
         android:id="@+id/tv_head"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

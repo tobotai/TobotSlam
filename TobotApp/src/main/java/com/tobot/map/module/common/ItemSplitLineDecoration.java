@@ -19,10 +19,10 @@ import com.tobot.map.R;
 public class ItemSplitLineDecoration extends RecyclerView.ItemDecoration {
     public static final int HORIZONTAL = LinearLayout.HORIZONTAL;
     public static final int VERTICAL = LinearLayout.VERTICAL;
-    private int mOrientation;
-    private boolean isLastDraw;
-    private Paint mPaint;
-    private int mSplitLineHeight;
+    private final int mOrientation;
+    private final boolean isLastDraw;
+    private final Paint mPaint;
+    private final int mSplitLineHeight;
 
     public ItemSplitLineDecoration(Context context, int orientation, boolean isLastDraw) {
         this(context, orientation, R.color.item_split_line, isLastDraw);

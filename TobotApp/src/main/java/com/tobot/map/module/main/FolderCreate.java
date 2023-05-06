@@ -31,6 +31,14 @@ class FolderCreate {
      * firmware
      */
     private static final String FOLDER_FIRMWARE = BaseConstant.DIRECTORY + "/" + BaseConstant.DIRECTORY_FIRMWARE_SECOND;
+    /**
+     * slam
+     */
+    private static final String FOLDER_SLAM = BaseConstant.DIRECTORY + "/" + BaseConstant.DIRECTORY_SLAM_SECOND;
+    /**
+     * test
+     */
+    private static final String FOLDER_TEST = BaseConstant.DIRECTORY + "/" + BaseConstant.DIRECTORY_TEST_SECOND;
 
     FolderCreate(final Context context) {
         ThreadPoolManager.getInstance().execute(new Runnable() {
@@ -40,6 +48,8 @@ class FolderCreate {
                 createFolder(FileUtils.getFolder(context, FOLDER_MAP));
                 createFolder(FileUtils.getFolder(context, FOLDER_LOG));
                 createFolder(FileUtils.getFolder(context, FOLDER_FIRMWARE));
+                createFolder(FileUtils.getFolder(context, FOLDER_SLAM));
+                createFolder(FileUtils.getFolder(context, FOLDER_TEST));
                 // 刷新log文件
                 refreshLogFile(context);
             }

@@ -17,7 +17,8 @@ import com.tobot.map.R;
  */
 public abstract class BasePopupWindow extends PopupWindow implements View.OnClickListener {
     protected Context mContext;
-    private int mPopupWidth, mPopupHeight;
+    private final int mPopupWidth;
+    private final int mPopupHeight;
     private int mX, mY;
 
     public BasePopupWindow(Context context) {

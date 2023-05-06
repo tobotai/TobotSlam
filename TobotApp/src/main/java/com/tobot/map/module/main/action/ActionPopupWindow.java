@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
  * @date 2020/3/15
  */
 public class ActionPopupWindow extends BasePopupWindow {
-    private OnChargeListener mOnChargeListener;
+    private final OnChargeListener mOnChargeListener;
 
     public ActionPopupWindow(Context context, OnChargeListener listener) {
         super(context);

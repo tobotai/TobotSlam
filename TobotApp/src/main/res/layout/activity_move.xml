@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_head" />
+
+    <com.tobot.map.module.common.HorizontalConflictScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/view_margin_top"
+            android:paddingBottom="@dimen/view_margin_top">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/view_set_margin_left_right"
+                android:layout_marginRight="@dimen/view_set_margin_left_right"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/tv_content"
+                    android:text="@string/tv_rotate_direction" />
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_to_left"
+                        style="@style/rb_speed"
+                        android:checked="true"
+                        android:text="@string/to_left" />
+
+                    <RadioButton
+                        android:id="@+id/rb_to_right"
+                        style="@style/rb_speed"
+                        android:layout_marginLeft="@dimen/rb_wall_margin"
+                        android:text="@string/to_right" />
+                </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_rotate_value"
+                        style="@style/ll_et_weight"
+                        android:hint="@string/et_rotate_speed_hint_tips"
+                        android:inputType="number" />
+
+                    <Button
+                        android:id="@+id/btn_send_rotate_value"
+                        style="@style/ll_btn_weight"
+                        android:text="@string/btn_send" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+
+                <TextView
+                    style="@style/tv_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:text="@string/tv_move_navigate_distance" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_navigate_distance"
+                        style="@style/ll_et_weight"
+                        android:digits="@string/et_float_num_format"
+                        android:hint="@string/et_navigate_distance_hint_tips"
+                        android:inputType="number|numberDecimal" />
+
+                    <Button
+                        android:id="@+id/btn_send_navigate_distance"
+                        style="@style/ll_btn_weight"
+                        android:text="@string/btn_send" />
+                </LinearLayout>
+
+                <View
+                    style="@style/view_line"
+                    android:layout_marginTop="@dimen/view_margin_top" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.tobot.map.module.common.HorizontalConflictScrollView>
+</LinearLayout>

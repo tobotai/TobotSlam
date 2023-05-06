@@ -10,7 +10,7 @@ import android.widget.Toast;
  * @date 2020/2/24
  */
 public class ToastUtils {
-    private static ToastUtils sInstance;
+    private static volatile ToastUtils sInstance;
     private static Toast mToast;
 
     @SuppressLint("ShowToast")

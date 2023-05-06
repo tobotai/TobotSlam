@@ -5,7 +5,7 @@ package com.tobot.map.event;
  * @date 2019/10/23
  */
 public class ConnectSlamEvent {
-    private String ip;
+    private final String ip;
 
     public ConnectSlamEvent(String ip) {
         this.ip = ip;

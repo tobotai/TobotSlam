@@ -23,6 +23,8 @@ public class BaseConstant {
     public static final String DIRECTORY_APK_SECOND = "upgrade";
     public static final String DIRECTORY_LOG_SECOND = "log";
     public static final String DIRECTORY_FIRMWARE_SECOND = "firmware";
+    public static final String DIRECTORY_SLAM_SECOND = "slam";
+    public static final String DIRECTORY_TEST_SECOND = "test";
     public static final String APK_NAME = "TobotSlam.apk";
     /**
      * 地图文件格式
@@ -50,6 +52,10 @@ public class BaseConstant {
         return FileUtils.getFolder(context, DIRECTORY.concat(File.separator).concat(DIRECTORY_FIRMWARE_SECOND));
     }
 
+    public static String getSlamFirmwareDirectory(Context context) {
+        return FileUtils.getFolder(context, DIRECTORY.concat(File.separator).concat(DIRECTORY_SLAM_SECOND));
+    }
+
     @SuppressLint("SimpleDateFormat")
     public static String getLogFileName(Context context) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
@@ -66,12 +72,12 @@ public class BaseConstant {
         return mapName.concat(FILE_MAP_NAME_SUFFIX);
     }
 
-    public static String getMapFilePath(Context context, String mapFile) {
-        return getMapDirectory(context).concat(File.separator).concat(mapFile);
-    }
-
     public static String getMapNamePath(Context context, String mapName) {
         return getMapDirectory(context).concat(File.separator).concat(mapName).concat(FILE_MAP_NAME_SUFFIX);
+    }
+
+    public static String getMapFilePath(Context context, String mapFile) {
+        return getMapDirectory(context).concat(File.separator).concat(mapFile);
     }
 
     public static final String DATA_KEY = "data_key";
@@ -88,8 +94,16 @@ public class BaseConstant {
      * 最大电量
      */
     public static final float BATTERY_MAX = 100.0f;
+    /**
+     * 低电提示
+     */
+    public static final int BATTERY_LOW = 20;
+    /**
+     * 默认低电值
+     */
+    public static final int BATTERY_LOW_DEFAULT = 10;
 
-    public static final float TRY_TIME_MAX = 30.0f;
+    public static final float TRY_TIME_MAX = 100.0f;
     public static final int TRY_TIME_DEFAULT = 5;
 
     /**
@@ -120,4 +134,8 @@ public class BaseConstant {
     public static final String SENSOR_STATUS_SPLIT = ":";
 
     public static boolean isSpeedFast;
+
+    public static final int MAX_RECORD_COUNT = 300;
+
+    public static final int TOUCH_COUNT_DEFAULT = 1;
 }

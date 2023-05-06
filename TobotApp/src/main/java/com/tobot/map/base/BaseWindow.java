@@ -14,9 +14,9 @@ import android.view.WindowManager.LayoutParams;
  */
 public abstract class BaseWindow {
     protected Context mContext;
-    private LayoutInflater mInflater;
-    private WindowManager mWindowManager;
-    private LayoutParams mLayoutParams;
+    private final LayoutInflater mInflater;
+    private final WindowManager mWindowManager;
+    private final LayoutParams mLayoutParams;
     private View mView;
 
     public BaseWindow(Context context) {
