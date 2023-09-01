@@ -27,10 +27,6 @@ public class FileDownload {
     private Context mContext;
     private File mPathFile;
     private OnFileDownloadListener mOnFileDownloadListener;
-    /**
-     * 避免更新过于频繁导致卡顿
-     */
-    private float rate = 0.0f;
 
     private static class FileDownloadHolder {
         @SuppressLint("StaticFieldLeak")
@@ -53,7 +49,7 @@ public class FileDownload {
                     return;
                 }
 
-                callbackDownloadResult(false, mContext.getString(R.string.download_fail_tips));
+                callbackDownloadResult(false, mContext.getString(R.string.download_fail));
             }
         });
     }
@@ -86,7 +82,7 @@ public class FileDownload {
         public void run() {
             Logger.i(BaseConstant.TAG, "download write thread");
             if (mResponseBody == null) {
-                callbackDownloadResult(false, mContext.getString(R.string.download_fail_tips));
+                callbackDownloadResult(false, mContext.getString(R.string.download_fail));
                 return;
             }
 
@@ -113,14 +109,16 @@ public class FileDownload {
                 inputStream = responseBody.byteStream();
                 long total = responseBody.contentLength();
                 fos = new FileOutputStream(file);
+                // 避免更新过于频繁导致卡顿
+                int lastProgress = -1;
                 long sum = 0;
                 while ((len = inputStream.read(buff)) != -1) {
                     fos.write(buff, 0, len);
                     sum += len;
                     int progress = (int) (sum * 1.0f / total * 100);
-                    if (rate != progress) {
+                    if (lastProgress != progress) {
+                        lastProgress = progress;
                         callbackProgress(progress);
-                        rate = progress;
                     }
                 }
 

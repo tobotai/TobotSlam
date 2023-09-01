@@ -12,6 +12,7 @@ import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.util.NumberUtils;
 import com.tobot.map.util.SystemUtils;
+import com.tobot.map.util.ThreadPoolManager;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnResultListener;
 
@@ -51,7 +52,7 @@ public class MoveActivity extends BaseBackActivity implements OnResultListener<B
     }
 
     @SuppressLint("NonConstantResourceId")
-    @OnClick({R.id.rb_to_left, R.id.rb_to_right, R.id.btn_send_rotate_value, R.id.btn_send_navigate_distance})
+    @OnClick({R.id.rb_to_left, R.id.rb_to_right, R.id.btn_send_rotate_value, R.id.btn_send_navigate_distance, R.id.btn_stop})
     public void onClickView(View view) {
         switch (view.getId()) {
             case R.id.rb_to_left:
@@ -65,6 +66,9 @@ public class MoveActivity extends BaseBackActivity implements OnResultListener<B
                 break;
             case R.id.btn_send_navigate_distance:
                 sendNavigate();
+                break;
+            case R.id.btn_stop:
+                ThreadPoolManager.getInstance().execute(new CancelRunnable());
                 break;
             default:
                 break;
@@ -110,6 +114,14 @@ public class MoveActivity extends BaseBackActivity implements OnResultListener<B
             Logger.i(BaseConstant.TAG, "navigate distance=" + distance);
             isNavigate = true;
             SlamManager.getInstance().moveToDistance(distance, this);
+        }
+    }
+
+    private static class CancelRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            SlamManager.getInstance().cancelAction();
         }
     }
 }

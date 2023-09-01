@@ -112,8 +112,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     @SuppressLint("NonConstantResourceId")
-    @OnClick({R.id.rl_navigate_option, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.rl_navigate_parameter,
-            R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high})
+    @OnClick({R.id.rl_navigate_option, R.id.rl_set_sensor_status, R.id.rl_firmware_upgrade, R.id.rl_navigate_parameter, R.id.rb_speed_low, R.id.rb_speed_medium, R.id.rb_speed_high})
     public void onClickView(View v) {
         switch (v.getId()) {
             case R.id.rb_speed_low:
@@ -188,6 +187,7 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
                 sbRotateSpeed.setProgress(value / BaseConstant.MAX_ROTATE_SPEED);
             }
 
+            value = NumberUtils.getOneDigitFloat(value);
             mSpeed = value;
             tvCurrentRotateSpeed.setText(getString(R.string.tv_current_rotate_speed_tips, value));
         }
@@ -276,6 +276,6 @@ public class ConfigFragment extends BaseFragment implements BaseBar.OnSeekBarCha
     }
 
     private void handleSpeedSetResult(boolean isSuccess) {
-        showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
+        showToastTips(isSuccess ? getString(R.string.set_success) : getString(R.string.set_fail));
     }
 }

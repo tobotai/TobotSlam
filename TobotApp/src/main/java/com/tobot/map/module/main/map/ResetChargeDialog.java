@@ -68,7 +68,7 @@ public class ResetChargeDialog extends BaseDialog implements View.OnClickListene
                     }
                 }
 
-                showTips(getString(data ? R.string.reset_success_tips : R.string.reset_fail_tips), true);
+                showTips(getString(data ? R.string.reset_success : R.string.reset_fail), true);
             }
         });
     }

@@ -10,8 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.slamtec.slamware.geometry.PointF;
@@ -25,11 +23,8 @@ import com.tobot.map.module.common.TipsDialog;
 import com.tobot.map.module.log.Logger;
 import com.tobot.map.module.main.action.ActionPopupWindow;
 import com.tobot.map.module.main.action.Charge;
-import com.tobot.map.module.main.edit.AddLineView;
-import com.tobot.map.module.main.edit.EditLineView;
-import com.tobot.map.module.main.edit.EditPopupWindow;
-import com.tobot.map.module.main.edit.OnEditListener;
-import com.tobot.map.module.main.edit.RubberEditView;
+import com.tobot.map.module.main.action.OnChargeResultListener;
+import com.tobot.map.module.main.edit.EditMapActivity;
 import com.tobot.map.module.main.map.AddPointViewDialog;
 import com.tobot.map.module.main.map.MapPopupWindow;
 import com.tobot.map.module.main.map.Navigate;
@@ -38,7 +33,6 @@ import com.tobot.map.module.set.SetActivity;
 import com.tobot.map.module.task.Task;
 import com.tobot.map.module.task.TaskActivity;
 import com.tobot.slam.SlamManager;
-import com.tobot.slam.agent.SlamCode;
 import com.tobot.slam.agent.listener.OnActionListener;
 import com.tobot.slam.agent.listener.OnSlamExceptionListener;
 import com.tobot.slam.data.LocationBean;
@@ -54,7 +48,7 @@ import butterknife.OnClick;
  * @author houdeming
  * @date 2019/10/18
  */
-public class MainActivity extends BaseActivity implements MapView.OnMapListener, AddPointViewDialog.OnPointListener, OnEditListener, ActionPopupWindow.OnChargeListener, OnSlamExceptionListener, OnActionListener, OnDialogBackEventListener, TipsDialog.OnConfirmListener, ReconnectSlamThread.OnReconnectResultListener {
+public class MainActivity extends BaseActivity implements MapView.OnMapListener, AddPointViewDialog.OnPointListener, ActionPopupWindow.OnChargeListener, OnChargeResultListener, OnSlamExceptionListener, OnActionListener, OnDialogBackEventListener, TipsDialog.OnConfirmListener, ReconnectSlamThread.OnReconnectResultListener, HealthMonitor.OnHealthListener {
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.map_view)
     MapView mapView;
@@ -80,41 +74,26 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @BindView(R.id.tv_count)
     TextView tvCount;
     @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.ll_control)
-    LinearLayout llControl;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.iv_set)
-    ImageView ivSet;
-    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.tv_navigate)
     TextView tvNavigate;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.view_edit_line)
-    EditLineView editLineView;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.view_rubber_edit)
-    RubberEditView rubberEditView;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.view_add_line)
-    AddLineView addLineView;
     private static final int CODE_SET = 1;
     private static final int CODE_TASK = 2;
     private MapHelper mMapHelper;
     private Navigate mNavigate;
     private Task mTask;
-    private ActionPopupWindow mActionPopupWindow;
     private MapPopupWindow mMapPopupWindow;
-    private EditPopupWindow mEditPopupWindow;
-    private int mLowBatteryStatus, mLocationQuality, mLostCount;
-    private boolean isHandleMove, isShowTips, isUpdateMap, isDisconnect, isShowRelocationTips, isLowBatteryTips;
+    private ActionPopupWindow mActionPopupWindow;
+    private TipsPopupWindow mTipsPopupWindow;
+    private int mLocationQuality, mLostCount;
+    private boolean isHandleMove, isShowTips, isDisconnect;
     private Charge mCharge;
-    private static final int LOW_BATTERY = 1;
     private TipsDialog mTipsDialog;
     private SensorWarningDialog mSensorWarningDialog;
     private List<LocationBean> mLocationList;
     private long mLostTime;
     private String mLostError;
     private ReconnectSlamThread mReconnectSlamThread;
+    private HealthMonitor mHealthMonitor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +139,9 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                 // 地图界面上的位置点提示
                 mapView.addLocationLabel(true, MyDBSource.getInstance(this).queryLocationList());
                 // 切换后要更新一下地图界面
-                updateMap();
+                if (mMapHelper != null) {
+                    mMapHelper.editMap();
+                }
                 return;
             }
 
@@ -180,17 +161,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     @Override
     public void onBackPressed() {
-        // 如果当前是编辑墙的话，不处理返回键
-        if (editLineView.getVisibility() == View.VISIBLE) {
-            removeEditLineView();
-            return;
-        }
-
-        if (rubberEditView.getVisibility() == View.VISIBLE) {
-            removeRubberView();
-            return;
-        }
-
         if (isClosePopupWindow()) {
             return;
         }
@@ -202,17 +172,20 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     public void onDialogBackEvent() {
         if (isShowTips) {
             isShowTips = false;
-            handleTvStopClick();
+            handleTvStopClick(true);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // 切换过界面才会再去刷新地图
-        if (isUpdateMap && mMapHelper != null) {
-            isUpdateMap = false;
+        if (mMapHelper != null) {
             mMapHelper.startUpdateMap();
+        }
+
+        if (mHealthMonitor == null) {
+            mHealthMonitor = new HealthMonitor(this, this);
+            mHealthMonitor.startMonitor();
         }
     }
 
@@ -227,9 +200,9 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             mTipsDialog = null;
         }
 
-        isUpdateMap = true;
-        if (mMapHelper != null) {
-            mMapHelper.stopUpdateMap();
+        if (mHealthMonitor != null) {
+            mHealthMonitor.stopMonitor();
+            mHealthMonitor = null;
         }
 
         // 记录传感器信息
@@ -249,6 +222,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         }
 
         isClosePopupWindow();
+        showTipsPopupWindow(false, "");
         stopService(new Intent(getApplicationContext(), MapService.class));
     }
 
@@ -267,11 +241,8 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (isHandleMove) {
             PointF pointF = mapView.widgetCoordinateToMapCoordinate(event.getX(), event.getY());
             mapView.setClickTips(pointF);
-            if (pointF != null) {
-                LocationBean bean = new LocationBean();
-                bean.setX(pointF.getX());
-                bean.setY(pointF.getY());
-                onMoveTo(bean);
+            if (pointF != null && mNavigate != null) {
+                mNavigate.moveTo(pointF.getX(), pointF.getY());
             }
         }
     }
@@ -279,29 +250,41 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     @Override
     public void onSensorStatus(SensorType sensorType, int id, boolean isTrigger) {
         if (isTrigger && sensorType != null) {
-            // 记录警告信息
             DataHelper.getInstance().setWarningData(id, sensorType.toString());
-            showTipsDialog(DataHelper.getInstance().getSensorTips(this, sensorType, id));
         }
     }
 
     @Override
     public void onHealthInfo(int code, String info) {
-        // 如果电机异常的话，就停止运动
-        if (code == SlamCode.CODE_MOTOR_ERROR) {
-            handleTvStopClick();
+    }
+
+    @Override
+    public void onHealth(boolean isFatal, List<String> data) {
+        if (isFatal) {
+            handleTvStopClick(true);
         }
 
-        DataHelper.getInstance().setWarningData(code, info);
-        DataHelper.getInstance().recordImportantInfo(this, info);
-//        showTipsDialog(info);
+        if (data.isEmpty()) {
+            showTipsPopupWindowAsync(false, "");
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0, size = data.size(); i < size; i++) {
+            String str = data.get(i);
+            builder.append(str);
+            if (i != size - 1) {
+                builder.append("\n");
+            }
+        }
+        showTipsPopupWindowAsync(true, builder.toString());
     }
 
     @Override
     public void onRelocationArea(RectF area) {
         Logger.i(BaseConstant.TAG, "onRelocationArea()");
         if (mMapPopupWindow != null) {
-            mMapPopupWindow.relocationPart(area);
+            mMapPopupWindow.relocatePart(area);
         }
     }
 
@@ -328,31 +311,17 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     @Override
-    public void onEditClick(int type) {
-        llControl.setVisibility(View.GONE);
-        ivSet.setVisibility(View.GONE);
-        if (type == OnEditListener.TYPE_RUBBER) {
-            rubberEditView.init(mapView, this);
-            return;
-        }
-
-        editLineView.init(type, mapView, addLineView, this);
-    }
-
-    @Override
-    public void onEditClose() {
-        if (editLineView.getVisibility() == View.VISIBLE) {
-            removeEditLineView();
-            return;
-        }
-
-        removeRubberView();
-    }
-
-    @Override
     public void onCharge() {
+        handleTvStopClick(false);
         if (mCharge != null) {
-            mCharge.goCharge();
+            mCharge.goCharge(this);
+        }
+    }
+
+    @Override
+    public void onChargeResult(boolean isSuccess) {
+        if (mMapHelper != null) {
+            mMapHelper.chargeResult(isSuccess);
         }
     }
 
@@ -394,7 +363,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                             @Override
                             public void run() {
                                 if (!isFinish) {
-                                    showLoadTipsDialog(getString(R.string.tv_reconnect_ing), null);
+                                    showLoadTipsDialog(getString(R.string.reconnect_ing), null);
                                 }
                             }
                         });
@@ -454,7 +423,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
                 handleTvEditClick();
                 break;
             case R.id.tv_stop:
-                handleTvStopClick();
+                handleTvStopClick(true);
                 break;
             case R.id.tv_task:
                 startActivityForResult(new Intent(this, TaskActivity.class), CODE_TASK);
@@ -478,7 +447,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     private void handleOperationFailed() {
         if (!isFinish) {
-            showToastTips(getString(R.string.operate_error_tips));
+            showToastTips(getString(R.string.operate_fail));
         }
     }
 
@@ -499,60 +468,55 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         }
     }
 
-    public void updateStatus(int battery, boolean isCharge, String chargeMode, int locationQuality, String status) {
-        if (isFinish) {
-            return;
+    public void updateStatus(String mappingStatus, int battery, boolean isCharge, String chargeMode, int locationQuality, String status) {
+        if (!isFinish) {
+            mLocationQuality = locationQuality;
+            String chargeStatus = getString(isCharge ? R.string.tv_charge_true : R.string.tv_charge_false);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvStatus.setText(getString(R.string.tv_status_show, mappingStatus, locationQuality, chargeStatus, chargeMode, battery, status));
+                }
+            });
         }
-
-        mLocationQuality = locationQuality;
-        String chargeStatus = getString(isCharge ? R.string.tv_charge_true : R.string.tv_charge_false);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tvStatus.setText(getString(R.string.tv_status_show, locationQuality, chargeStatus, chargeMode, battery, status));
-                handleLowBattery(battery, isCharge);
-            }
-        });
     }
 
     public void clearMapResult(boolean isSuccess) {
         if (isSuccess) {
             mapView.clearMap();
-            updateMap();
+            if (mMapHelper != null) {
+                mMapHelper.editMap();
+            }
         }
     }
 
     public void setRssi(int rssiId, String tips) {
-        if (isFinish) {
-            return;
+        if (!isFinish) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvRssi.setText(getString(R.string.tv_signal_tips, rssiId, tips));
+                }
+            });
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tvRssi.setText(getString(R.string.tv_signal_tips, rssiId, tips));
-            }
-        });
     }
 
     public void showTipsDialog(String tips) {
-        if (isFinish || TextUtils.isEmpty(tips)) {
-            return;
-        }
+        if (!isFinish && !TextUtils.isEmpty(tips)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (isTipsDialogShow()) {
+                        mTipsDialog.setContent(tips);
+                        return;
+                    }
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isTipsDialogShow()) {
-                    mTipsDialog.setContent(tips);
-                    return;
+                    mTipsDialog = TipsDialog.newInstance(tips);
+                    mTipsDialog.setOnConfirmListener(MainActivity.this);
+                    mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
                 }
-
-                mTipsDialog = TipsDialog.newInstance(tips);
-                mTipsDialog.setOnConfirmListener(MainActivity.this);
-                mTipsDialog.show(getSupportFragmentManager(), "TIPS_DIALOG");
-            }
-        });
+            });
+        }
     }
 
     public void setTaskCount(String content) {
@@ -566,40 +530,34 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
     public void setRelocationPart(boolean isRelocationPart) {
         mapView.setRelocationPart(isRelocationPart);
-        // 只提示1次
-        if (isRelocationPart && !isShowRelocationTips) {
-            isShowRelocationTips = true;
-            showTipsDialog(getString(R.string.tv_relocation_part_tips));
+        if (isRelocationPart) {
+            showTipsDialog(getString(R.string.tv_relocate_part_tips));
         }
     }
 
     public void showRelocateTips() {
-        if (isFinish) {
-            return;
+        if (!isFinish) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showLoadTipsDialog(getString(R.string.relocate_ing), null);
+                    DataHelper.getInstance().recordImportantInfo(MainActivity.this, "relocate ing");
+                }
+            });
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showLoadTipsDialog(getString(R.string.relocation_map_tips), null);
-                DataHelper.getInstance().recordImportantInfo(MainActivity.this, "relocate ing");
-            }
-        });
     }
 
     public void handleRelocateResult(boolean isRelocateSuccess) {
-        if (isFinish) {
-            return;
+        if (!isFinish) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    closeLoadTipsDialog();
+                    showToastTips(getString(isRelocateSuccess ? R.string.relocate_success : R.string.relocate_fail));
+                    DataHelper.getInstance().recordImportantInfo(MainActivity.this, "relocate " + (isRelocateSuccess ? "success" : "fail"));
+                }
+            });
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                closeLoadTipsDialog();
-                showToastTips(getString(isRelocateSuccess ? R.string.relocation_map_success : R.string.relocation_map_fail));
-                DataHelper.getInstance().recordImportantInfo(MainActivity.this, "relocate " + (isRelocateSuccess ? "success" : "fail"));
-            }
-        });
     }
 
     public void handleMoveFail() {
@@ -613,38 +571,25 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         }
     }
 
-    public void updateMap() {
-        if (mMapHelper != null) {
-            mMapHelper.updateMap();
+    public void handleLowBattery(boolean isLowBattery) {
+        Logger.i(BaseConstant.TAG, "isLowBattery=" + isLowBattery);
+        if (isLowBattery) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    onCharge();
+                }
+            });
         }
     }
 
-    private void handleLowBattery(int battery, boolean isCharge) {
-        // 电量不可能为0
-        if (battery <= 0) {
-            return;
-        }
-
-        if (battery <= DataHelper.getInstance().getLowBattery()) {
-            if (!isCharge && mLowBatteryStatus != LOW_BATTERY) {
-                mLowBatteryStatus = LOW_BATTERY;
-                handleTvStopClick();
-                DataHelper.getInstance().recordImportantInfo(this, "low battery=" + battery);
-                onCharge();
+    public void showTipsPopupWindowAsync(boolean isShow, String content) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showTipsPopupWindow(isShow, content);
             }
-            return;
-        }
-
-        mLowBatteryStatus = 0;
-        if (battery <= BaseConstant.BATTERY_LOW) {
-            if (!isCharge && !isLowBatteryTips) {
-                isLowBatteryTips = true;
-                showTipsDialog(getString(R.string.low_battery_tips, battery));
-            }
-            return;
-        }
-
-        isLowBatteryTips = false;
+        });
     }
 
     private void handleTvMapClick() {
@@ -674,19 +619,14 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     }
 
     private void handleTvEditClick() {
-        if (mEditPopupWindow == null) {
-            mEditPopupWindow = new EditPopupWindow(this, this);
+        if (mMapHelper != null) {
+            mMapHelper.stopUpdateMap();
         }
 
-        if (mEditPopupWindow.isShowing()) {
-            mEditPopupWindow.dismiss();
-            return;
-        }
-
-        mEditPopupWindow.show(tvEdit);
+        startActivity(new Intent(this, EditMapActivity.class));
     }
 
-    private void handleTvStopClick() {
+    private void handleTvStopClick(boolean isCancelAction) {
         setRelocationPart(false);
         if (mTask != null) {
             mTask.stop();
@@ -694,33 +634,37 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
             setTaskCount("");
         }
 
-        if (mMapHelper != null) {
+        mapView.setClickTips(null);
+        if (isCancelAction && mMapHelper != null) {
             mMapHelper.cancelAction();
         }
     }
 
     private void handleTvNavigateClick() {
         // 只有选中了导航才可以点击屏幕移动，避免误操作
-        if (tvNavigate.isSelected()) {
-            tvNavigate.setSelected(false);
-            isHandleMove = false;
+        boolean isSelected = tvNavigate.isSelected();
+        tvNavigate.setSelected(!isSelected);
+        isHandleMove = !isSelected;
+    }
+
+    private void showTipsPopupWindow(boolean isShow, String content) {
+        if (isShow) {
+            if (mTipsPopupWindow == null) {
+                mTipsPopupWindow = new TipsPopupWindow(this);
+                mTipsPopupWindow.show(tvAction, content);
+                return;
+            }
+
+            mTipsPopupWindow.setTips(content);
             return;
         }
 
-        tvNavigate.setSelected(true);
-        isHandleMove = true;
-    }
-
-    private void removeEditLineView() {
-        editLineView.remove();
-        llControl.setVisibility(View.VISIBLE);
-        ivSet.setVisibility(View.VISIBLE);
-    }
-
-    private void removeRubberView() {
-        rubberEditView.remove();
-        llControl.setVisibility(View.VISIBLE);
-        ivSet.setVisibility(View.VISIBLE);
+        if (mTipsPopupWindow != null) {
+            if (mTipsPopupWindow.isShowing()) {
+                mTipsPopupWindow.dismiss();
+            }
+            mTipsPopupWindow = null;
+        }
     }
 
     private boolean isClosePopupWindow() {
@@ -732,11 +676,6 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
 
         if (mActionPopupWindow != null && mActionPopupWindow.isShowing()) {
             mActionPopupWindow.dismiss();
-            isFlag = true;
-        }
-
-        if (mEditPopupWindow != null && mEditPopupWindow.isShowing()) {
-            mEditPopupWindow.dismiss();
             isFlag = true;
         }
 

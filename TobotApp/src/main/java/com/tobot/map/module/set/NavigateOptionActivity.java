@@ -271,7 +271,7 @@ public class NavigateOptionActivity extends BaseBackActivity implements BaseBar.
                     if (!isSuccess) {
                         tvLocationSwitch.setSelected(!isLocation);
                     }
-                    showToastTips(getString(isSuccess ? R.string.set_success_tips : R.string.set_fail_tips));
+                    showToastTips(getString(isSuccess ? R.string.set_success : R.string.set_fail));
                 }
             });
         }
@@ -286,7 +286,7 @@ public class NavigateOptionActivity extends BaseBackActivity implements BaseBar.
                         tvSpeedMultiplier.setSelected(!isFast);
                     }
                     BaseConstant.isSpeedFast = tvSpeedMultiplier.isSelected();
-                    showToastTips(isSuccess ? getString(R.string.set_success_tips) : getString(R.string.set_fail_tips));
+                    showToastTips(isSuccess ? getString(R.string.set_success) : getString(R.string.set_fail));
                 }
             });
         }

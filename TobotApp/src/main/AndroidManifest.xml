@@ -66,6 +66,12 @@
             android:screenOrientation="landscape" />
 
         <activity
+            android:name=".module.main.edit.EditMapActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
+        <activity
             android:name=".module.set.SetActivity"
             android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
             android:launchMode="standard"

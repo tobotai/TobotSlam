@@ -84,7 +84,7 @@ public class SensorWarningDialog extends BaseDialog implements View.OnClickListe
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ToastUtils.getInstance(getContext()).show(data ? R.string.clear_success_tips : R.string.clear_fail_tips);
+                    ToastUtils.getInstance(getContext()).show(data ? R.string.clear_success : R.string.clear_fail);
                 }
             });
         }

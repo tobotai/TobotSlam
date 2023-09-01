@@ -51,7 +51,7 @@
         android:layout_height="@dimen/layout_item_height"
         android:background="@drawable/selector_item_bg"
         android:gravity="center"
-        android:text="@string/tv_relocation"
+        android:text="@string/tv_relocate"
         android:textColor="@color/tv_white"
         android:textSize="@dimen/tv_content" />
 

@@ -23,5 +23,7 @@ public class Charge extends AbstractMove {
         if (!isChargeSuccess) {
             handleMoveFail(true);
         }
+
+        callbackChargeResult(isChargeSuccess);
     }
 }

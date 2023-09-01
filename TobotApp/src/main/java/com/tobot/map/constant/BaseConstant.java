@@ -58,13 +58,15 @@ public class BaseConstant {
 
     @SuppressLint("SimpleDateFormat")
     public static String getLogFileName(Context context) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        // android11以上版本创建文件名不能包含特殊字符 \/:*?"<>|
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH_mm_ss");
         return simpleDateFormat.format(new Date()) + ".log";
     }
 
     @SuppressLint("SimpleDateFormat")
     public static String getAdbLogFileName(Context context) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        // android11以上版本创建文件名不能包含特殊字符 \/:*?"<>|
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH_mm_ss");
         return simpleDateFormat.format(new Date()) + "_adb" + ".log";
     }
 
@@ -95,13 +97,9 @@ public class BaseConstant {
      */
     public static final float BATTERY_MAX = 100.0f;
     /**
-     * 低电提示
-     */
-    public static final int BATTERY_LOW = 20;
-    /**
      * 默认低电值
      */
-    public static final int BATTERY_LOW_DEFAULT = 10;
+    public static final int BATTERY_LOW = 20;
 
     public static final float TRY_TIME_MAX = 100.0f;
     public static final int TRY_TIME_DEFAULT = 5;
@@ -137,5 +135,5 @@ public class BaseConstant {
 
     public static final int MAX_RECORD_COUNT = 300;
 
-    public static final int TOUCH_COUNT_DEFAULT = 1;
+    public static final int TOUCH_COUNT_DEFAULT = 0;
 }

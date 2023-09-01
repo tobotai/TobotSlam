@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="base_values">0dp</dimen>
+    <integer name="base_values">0</integer>
     <dimen name="view_margin_top">10dp</dimen>
     <dimen name="view_margin_left_right">60dp</dimen>
     <dimen name="view_margin_bottom">30dp</dimen>
+    <dimen name="view_add_margin_top">45dp</dimen>
     <dimen name="ic_back_margin_left">15dp</dimen>
     <dimen name="head_height">50dp</dimen>
     <dimen name="head_tv_size">20sp</dimen>
@@ -31,7 +32,6 @@
     <dimen name="shape_btn_corners">4dp</dimen>
     <dimen name="btn_connect_margin_top">30dp</dimen>
     <dimen name="sta_connect_margin_right">30dp</dimen>
-    <dimen name="view_mode_margin_top">20dp</dimen>
     <dimen name="layout_margin_top">30dp</dimen>
     <dimen name="ip_connect_history_size">140dp</dimen>
     <dimen name="item_split_line_height">1dp</dimen>
@@ -45,8 +45,6 @@
     <dimen name="tv_mode_tips">14sp</dimen>
     <dimen name="iv_map_margin">20dp</dimen>
     <dimen name="shape_btn_map_refresh_size">50dp</dimen>
-    <dimen name="rocker_view_size">130dp</dimen>
-    <dimen name="rocker_radius">22dp</dimen>
     <integer name="dialog_anim_time">10</integer>
     <dimen name="dialog_add_point_view_width">300dp</dimen>
     <dimen name="btn_padding_left_right">6dp</dimen>
@@ -79,4 +77,17 @@
     <dimen name="tv_contact_line_space">15dp</dimen>
     <dimen name="tv_version_line_space">6dp</dimen>
     <dimen name="tv_location_margin_left">10dp</dimen>
+    <dimen name="iv_qr_code_size">160dp</dimen>
+    <dimen name="directionView_size">120dp</dimen>
+    <integer name="directionView_sideStrokeWidth">2</integer>
+    <integer name="directionView_rockerStrokeWidth">2</integer>
+    <bool name="directionView_rockerStyleFill">false</bool>
+    <integer name="directionView_rockerRadius">60</integer>
+    <integer name="directionView_rockerMargin">10</integer>
+    <integer name="directionView_arrowStrokeWidth">4</integer>
+    <integer name="directionView_arrowMargin">20</integer>
+    <integer name="directionView_arrowOffset">10</integer>
+    <integer name="directionView_arrowHeight">8</integer>
+    <dimen name="shape_drag_stroke_width">2dp</dimen>
+    <dimen name="view_drag_size">36dp</dimen>
 </resources>

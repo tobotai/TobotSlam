@@ -236,7 +236,7 @@ public class LocationEditActivity extends BaseBackActivity implements View.OnCli
         if (NumberUtils.isDoubleOrFloat(heightStr)) {
             mHeightHalf = Float.parseFloat(heightStr) / 2.0f;
         }
-        showToastTips(getString(R.string.set_success_tips));
+        showToastTips(getString(R.string.set_success));
     }
 
     private void confirm() {

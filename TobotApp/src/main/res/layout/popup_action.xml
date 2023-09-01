@@ -6,16 +6,27 @@
     android:background="@drawable/shape_popup_bg"
     android:orientation="vertical">
 
-    <com.tobot.map.module.main.action.RockerView
-        android:id="@+id/view_rocker"
-        android:layout_width="@dimen/rocker_view_size"
-        android:layout_height="@dimen/rocker_view_size"
+    <com.tobot.map.module.main.action.DirectionView
+        android:id="@+id/view_direction"
+        android:layout_width="@dimen/directionView_size"
+        android:layout_height="@dimen/directionView_size"
         android:layout_marginLeft="@dimen/popup_margin_left_right"
         android:layout_marginTop="@dimen/popup_margin_left_right"
         android:layout_marginRight="@dimen/popup_margin_left_right"
-        kongqw:areaBackground="@drawable/img_rocker_view_bg"
-        kongqw:rockerBackground="@color/rocker_bg"
-        kongqw:rockerRadius="@dimen/rocker_radius" />
+        kongqw:directionArrowColor="@color/directionView_arrowColor"
+        kongqw:directionArrowHeight="@integer/directionView_arrowHeight"
+        kongqw:directionArrowMargin="@integer/directionView_arrowMargin"
+        kongqw:directionArrowOffset="@integer/directionView_arrowOffset"
+        kongqw:directionArrowPressedColor="@color/directionView_arrowPressedColor"
+        kongqw:directionArrowStrokeWidth="@integer/directionView_arrowStrokeWidth"
+        kongqw:directionBg="@color/directionView_bg"
+        kongqw:directionRockerBg="@color/directionView_rockerBg"
+        kongqw:directionRockerMargin="@integer/directionView_rockerMargin"
+        kongqw:directionRockerRadius="@integer/directionView_rockerRadius"
+        kongqw:directionRockerStrokeWidth="@integer/directionView_rockerStrokeWidth"
+        kongqw:directionRockerStyleFill="@bool/directionView_rockerStyleFill"
+        kongqw:directionSideColor="@color/directionView_sideColor"
+        kongqw:directionSideStrokeWidth="@integer/directionView_sideStrokeWidth" />
 
     <View
         style="@style/popup_view_line"

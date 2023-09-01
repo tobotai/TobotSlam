@@ -36,7 +36,7 @@
         android:layout_below="@id/tv_status"
         android:layout_marginRight="@dimen/view_margin_top"
         android:layout_toLeftOf="@id/tv_pose_show"
-        android:textColor="@color/tv_rssi_tips"
+        android:textColor="@color/tv_pose_show"
         android:textSize="@dimen/tv_mode_tips" />
 
     <TextView
@@ -46,7 +46,7 @@
         android:layout_below="@id/tv_pose_show"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/view_margin_top"
-        android:textColor="@color/tv_rssi_tips"
+        android:textColor="@color/tv_pose_show"
         android:textSize="@dimen/tv_mode_tips" />
 
     <ImageView
@@ -120,28 +120,4 @@
             android:layout_marginLeft="@dimen/iv_map_margin"
             android:text="@string/tv_edit" />
     </LinearLayout>
-
-    <com.tobot.map.module.main.edit.EditLineView
-        android:id="@+id/view_edit_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/view_margin_top"
-        android:visibility="gone" />
-
-    <com.tobot.map.module.main.edit.RubberEditView
-        android:id="@+id/view_rubber_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/view_margin_top"
-        android:visibility="gone" />
-
-    <com.tobot.map.module.main.edit.AddLineView
-        android:id="@+id/view_add_line"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
 </RelativeLayout>

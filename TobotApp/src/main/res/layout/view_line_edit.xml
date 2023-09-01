@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn_circle_bg"
-        android:gravity="center"
-        android:text="@string/tv_back"
-        android:textColor="@drawable/selector_tv_stop"
-        android:textSize="@dimen/tv_content" />
-
     <RadioGroup
         android:id="@+id/rg_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/rb_wall_margin"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+        <RadioButton
+            android:id="@+id/rb_back"
+            style="@style/rb_map_operate"
+            android:text="@string/tv_back" />
 
         <RadioButton
             android:id="@+id/rb_add_line"
             style="@style/rb_map_operate"
+            android:layout_marginLeft="@dimen/rb_wall_margin"
             android:text="@string/tv_add_line" />
+
+        <RadioButton
+            android:id="@+id/rb_confirm_line"
+            style="@style/rb_map_operate"
+            android:layout_marginLeft="@dimen/rb_wall_margin"
+            android:text="@string/tv_confirm_line" />
 
         <RadioButton
             android:id="@+id/rb_remove_line"

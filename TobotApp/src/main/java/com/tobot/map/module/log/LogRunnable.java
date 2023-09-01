@@ -49,30 +49,36 @@ public class LogRunnable implements Runnable {
             return;
         }
 
-        File dir = new File(mFileFolder);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        List<String> commandList = new ArrayList<>();
-        commandList.add("logcat");
-        commandList.add("-f");
-        commandList.add(mFileFolder + "/" + mFileName);
-        commandList.add("-v");
-        commandList.add("time");
-        commandList.add(mTag + ":I");
-        // 过滤所有的错误信息
-        commandList.add("System.err:W");
-        // 过滤所有的错误信息
-        commandList.add("System.out:I");
-        // 运行报错
-        commandList.add("AndroidRuntime:E");
-        // 过滤指定TAG的信息
-        commandList.add(mTag + ":V");
-        commandList.add(mTag + ":D");
-        commandList.add("*:S");
-
         try {
+            File dir = new File(mFileFolder);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String filePath = mFileFolder.concat(File.separator).concat(mFileName);
+            Logger.i(BaseConstant.TAG, "filePath=" + filePath);
+            File file = new File(filePath);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            List<String> commandList = new ArrayList<>();
+            commandList.add("logcat");
+            commandList.add("-f");
+            commandList.add(filePath);
+            commandList.add("-v");
+            commandList.add("time");
+            commandList.add(mTag + ":I");
+            // 过滤所有的错误信息
+            commandList.add("System.err:W");
+            // 过滤所有的错误信息
+            commandList.add("System.out:I");
+            // 运行报错
+            commandList.add("AndroidRuntime:E");
+            // 过滤指定TAG的信息
+            commandList.add(mTag + ":V");
+            commandList.add(mTag + ":D");
+            commandList.add("*:S");
             Logger.i(BaseConstant.TAG, "adbLog execute");
             mProcess = Runtime.getRuntime().exec(commandList.toArray(new String[0]));
         } catch (Exception e) {

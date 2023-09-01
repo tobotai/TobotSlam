@@ -3,7 +3,6 @@ package com.tobot.map.module.main;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.slamtec.slamware.robot.SensorType;
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
@@ -27,6 +26,7 @@ import java.util.List;
  * @date 2018/8/18
  */
 public class DataHelper {
+    private static final String LOW_BATTERY_KEY = "low_battery_key";
     private static final String TRY_TIME_KEY = "try_time_key";
     private static final String LOG_KEY = "log_key";
     private static final String RELOCATION_TYPE_KEY = "relocation_type_key";
@@ -39,10 +39,10 @@ public class DataHelper {
     private static final String PRODUCT_MODEL_KEY = "product_model_key";
     private static final String TOUCH_COUNT_KEY = "touch_count_key";
     private String mMapFile, mIp;
-    private int mTryTime, mLogType, mRelocationQuality, mRelocationSafeValue, mRelocationType, mProductModel, mTouchCount;
-    private int mLowBattery = BaseConstant.BATTERY_LOW_DEFAULT;
+    private int mLowBattery, mTryTime, mLogType, mRelocationQuality, mRelocationSafeValue, mRelocationType, mProductModel, mTouchCount;
     private List<RecordInfo> mWarningList;
     private float mChassisRadius, mRelocationAreaRadius, mChargeDistance, mChargeOffset;
+    private boolean isLastLowBattery;
 
     private static class BaseDataHolder {
         private static final DataHelper INSTANCE = new DataHelper();
@@ -192,12 +192,24 @@ public class DataHelper {
         return data;
     }
 
-    public void setLowBattery(int battery) {
-        mLowBattery = battery;
+    public void setLowBattery(Context context, int value) {
+        mLowBattery = value;
+        SharedPreferencesUtils.getInstance(context).putInt(LOW_BATTERY_KEY, value);
     }
 
-    public int getLowBattery() {
+    public int getLowBattery(Context context) {
+        if (mLowBattery == 0) {
+            mLowBattery = SharedPreferencesUtils.getInstance(context).getInt(LOW_BATTERY_KEY, BaseConstant.BATTERY_LOW);
+        }
         return mLowBattery;
+    }
+
+    public void setLowBattery(boolean isLowBattery) {
+        isLastLowBattery = isLowBattery;
+    }
+
+    public boolean isLowBattery() {
+        return isLastLowBattery;
     }
 
     public String getTaskDetailTips(Context context, List<LocationBean> locationBeanList) {
@@ -248,22 +260,6 @@ public class DataHelper {
     public long getTryTimeMillis(Context context) {
         int time = getTryTime(context);
         return time == 0 ? 0 : time * 60000L;
-    }
-
-    public String getSensorTips(Context context, SensorType sensorType, int id) {
-        String tips = "";
-        switch (sensorType) {
-            case Bumper:
-                tips = context.getString(R.string.sensor_bumper_trigger);
-                break;
-            case Cliff:
-                tips = context.getString(R.string.sensor_cliff_trigger, id);
-                break;
-            default:
-                break;
-        }
-
-        return tips;
     }
 
     public boolean isSlamError(String error) {
@@ -368,7 +364,7 @@ public class DataHelper {
 
     public float getChargeOffset(Context context) {
         if (mChargeOffset == 0) {
-            mChargeOffset = SharedPreferencesUtils.getInstance(context).getFloat(CHARGE_OFFSET_KEY, SlamCode.CHARGE_OFFSET_Y);
+            mChargeOffset = SharedPreferencesUtils.getInstance(context).getFloat(CHARGE_OFFSET_KEY, 0f);
         }
         return mChargeOffset;
     }

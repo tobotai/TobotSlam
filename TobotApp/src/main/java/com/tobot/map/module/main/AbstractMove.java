@@ -6,6 +6,7 @@ import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.module.common.MoveData;
 import com.tobot.map.module.log.Logger;
+import com.tobot.map.module.main.action.OnChargeResultListener;
 import com.tobot.slam.SlamManager;
 import com.tobot.slam.agent.listener.OnChargeListener;
 import com.tobot.slam.agent.listener.OnNavigateListener;
@@ -20,6 +21,7 @@ import java.lang.ref.WeakReference;
 public abstract class AbstractMove implements OnNavigateListener, OnChargeListener {
     protected Context mContext;
     protected MainActivity mActivity;
+    private OnChargeResultListener mOnChargeResultListener;
 
     public AbstractMove(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference) {
         mContext = contextWeakReference.get();
@@ -98,7 +100,8 @@ public abstract class AbstractMove implements OnNavigateListener, OnChargeListen
         }
     }
 
-    public void goCharge() {
+    public void goCharge(OnChargeResultListener listener) {
+        mOnChargeResultListener = listener;
         // 回充要遇障绕行
         long tryTime = DataHelper.getInstance().getTryTimeMillis(mContext);
         SlamManager.getInstance().goHome(DataHelper.getInstance().getChargeDistance(mContext), DataHelper.getInstance().getChargeOffset(mContext), tryTime, this);
@@ -129,6 +132,16 @@ public abstract class AbstractMove implements OnNavigateListener, OnChargeListen
 
         if (mActivity != null) {
             mActivity.handleMoveFail();
+        }
+    }
+
+    protected void callbackChargeResult(boolean isSuccess) {
+        if (mOnChargeResultListener != null) {
+            try {
+                mOnChargeResultListener.onChargeResult(isSuccess);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

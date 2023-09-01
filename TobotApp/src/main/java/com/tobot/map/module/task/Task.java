@@ -72,7 +72,7 @@ public class Task extends AbstractMove implements OnSystemStopListener {
 
             if (mMoveStatus == MOVE_STATUS_CHARGE) {
                 mMoveStatus = MOVE_STATUS_IDLE;
-                goCharge();
+                goCharge(null);
             }
         }
     }
@@ -108,7 +108,7 @@ public class Task extends AbstractMove implements OnSystemStopListener {
             }
 
             if (isAddCharge) {
-                goCharge();
+                goCharge(null);
                 return;
             }
 

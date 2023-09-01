@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.slamtec.slamware.action.ActionStatus;
 import com.slamtec.slamware.robot.ArtifactUsage;
+import com.slamtec.slamware.robot.Map;
 import com.slamtec.slamware.robot.Pose;
 import com.tobot.map.R;
 import com.tobot.map.constant.BaseConstant;
@@ -22,29 +23,28 @@ import java.lang.ref.WeakReference;
  */
 class MapHelper {
     private final Context mContext;
-    private MapThread mMapThread;
-    private MapDataThread mMapDataThread;
     private final MainActivity mActivity;
     private final MapView mMapView;
-    private boolean isStart, isFirstRefresh, isLastCharge, isInit;
-    private int mRefreshCount, mQuality;
+    private boolean isInit, isStart, isLastCharge, isLastLowBattery, isLastMapUpdate, isSetMapCenter;
+    private MapThread mMapThread;
     /**
      * 避免开机电量为0不显示的问题
      */
-    private int mBattery = -100;
-    private ActionStatus mActionStatus;
+    private int mLastBattery = -1;
+    private int mLastQuality;
+    private ActionStatus mLastActionStatus;
     private float mLastX, mLastY;
     /**
      * 360度的弧度是6.28，只要比360度大就行
      */
     private float mLastYaw = 10f;
+    private Map mMap;
 
     MapHelper(WeakReference<Context> contextWeakReference, WeakReference<MainActivity> activityWeakReference, WeakReference<MapView> mapViewWeakReference) {
         mContext = contextWeakReference.get();
         mActivity = activityWeakReference.get();
         mMapView = mapViewWeakReference.get();
         isInit = true;
-        startUpdateMap();
     }
 
     void destroy() {
@@ -56,45 +56,35 @@ class MapHelper {
         ThreadPoolManager.getInstance().execute(new CancelRunnable());
     }
 
-    void updateMap() {
-        isFirstRefresh = true;
-        mRefreshCount = 0;
-        if (mMapDataThread != null) {
-            mMapDataThread.interrupt();
-        }
-    }
-
     void startUpdateMap() {
-        isFirstRefresh = true;
-        mRefreshCount = 0;
+        mLastBattery = -1;
         isStart = true;
         if (mMapThread == null) {
             mMapThread = new MapThread();
             mMapThread.start();
         }
-
-        if (mMapDataThread == null) {
-            mMapDataThread = new MapDataThread();
-            mMapDataThread.start();
-        }
     }
 
     void stopUpdateMap() {
-        isFirstRefresh = false;
+        mMap = null;
         isStart = false;
         if (mMapThread != null) {
             mMapThread.interrupt();
             mMapThread = null;
         }
+    }
 
-        if (mMapDataThread != null) {
-            mMapDataThread.interrupt();
-            mMapDataThread = null;
+    void chargeResult(boolean isSuccess) {
+        // 避免充电不成功的情况
+        if (!isSuccess) {
+            isLastLowBattery = false;
         }
+    }
 
-        if (mMapView != null) {
-            mMapView.setMapUpdate(false, true);
-        }
+    void editMap() {
+        // 重新更新刷新地图
+        mMap = null;
+        isSetMapCenter = true;
     }
 
     private class MapThread extends Thread {
@@ -104,7 +94,6 @@ class MapHelper {
             handleControlPanelSoftwareVersion();
             int count = 0;
             int mRssid = 1;
-
             while (isStart) {
                 if (mActivity == null || mMapView == null) {
                     return;
@@ -112,6 +101,14 @@ class MapHelper {
 
                 try {
                     if ((count % 10) == 0) {
+                        if (mMap == null || SlamManager.getInstance().isMapUpdate()) {
+                            mMap = SlamManager.getInstance().getMap();
+                            mMapView.setMap(mMap);
+                            if (isSetMapCenter) {
+                                isSetMapCenter = false;
+                                mMapView.setCentred();
+                            }
+                        }
                         // 更新机器人当前姿态
                         Pose pose = SlamManager.getInstance().getPose();
                         mMapView.setRobotPose(pose);
@@ -160,8 +157,11 @@ class MapHelper {
                     }
 
                     if (isStart) {
-                        Thread.sleep(33);
                         count++;
+                        if (count > 60000) {
+                            count = 0;
+                        }
+                        sleep(33);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -172,10 +172,10 @@ class MapHelper {
 
         private void updatePoseShow(Pose pose) {
             if (pose != null) {
-                float accuracy = 1000.0f;
-                float x = (float) (Math.round(pose.getX() * accuracy) / accuracy);
-                float y = (float) (Math.round(pose.getY() * accuracy) / accuracy);
-                float yaw = (float) (Math.round(pose.getYaw() * accuracy) / accuracy);
+                float accuracy = 100.0f;
+                float x = Math.round(pose.getX() * accuracy) / accuracy;
+                float y = Math.round(pose.getY() * accuracy) / accuracy;
+                float yaw = Math.round(pose.getYaw() * accuracy) / accuracy;
                 if (x - mLastX != 0 || y - mLastY != 0 || yaw - mLastYaw != 0) {
                     mLastX = x;
                     mLastY = y;
@@ -191,17 +191,22 @@ class MapHelper {
             int locationQuality = SlamManager.getInstance().getLocalizationQuality();
             // 获取机器人信息
             ActionStatus actionStatus = SlamManager.getInstance().getRemainingActionStatus();
-            if (mBattery != battery || isLastCharge != isCharge || mQuality != locationQuality || mActionStatus != actionStatus) {
-                mBattery = battery;
+            boolean isMapUpdate = SlamManager.getInstance().isMapUpdate();
+            if (mLastBattery != battery || isLastCharge != isCharge || mLastQuality != locationQuality || mLastActionStatus != actionStatus || isLastMapUpdate != isMapUpdate) {
+                mLastBattery = battery;
                 isLastCharge = isCharge;
-                mQuality = locationQuality;
-                mActionStatus = actionStatus;
+                mLastQuality = locationQuality;
+                mLastActionStatus = actionStatus;
+                isLastMapUpdate = isMapUpdate;
                 boolean isDockingStatus = SlamManager.getInstance().isDockingStatus();
                 boolean isDirectCharge = SlamManager.getInstance().isDirectCharge();
                 String chargeMode = getChargeMode(isDockingStatus, isDirectCharge);
                 String status = actionStatus != null ? actionStatus.toString() : mContext.getString(R.string.unknown);
-                mActivity.updateStatus(battery, isCharge, chargeMode, locationQuality, status);
+                String mappingStatus = mContext.getString(isMapUpdate ? R.string.mapping_true : R.string.mapping_false);
+                mActivity.updateStatus(mappingStatus, battery, isCharge, chargeMode, locationQuality, status);
             }
+
+            handleLowBattery(battery, isCharge);
         }
 
         private String getIdTips(int id) {
@@ -230,6 +235,37 @@ class MapHelper {
             return "";
         }
 
+        private void handleLowBattery(int battery, boolean isCharge) {
+            if (battery <= 0) {
+                return;
+            }
+
+            boolean isLowBattery = battery <= DataHelper.getInstance().getLowBattery(mContext);
+            DataHelper.getInstance().setLowBattery(isLowBattery);
+            if (isLowBattery) {
+                if (!isCharge && !isLastLowBattery) {
+                    // 避免急停、刹车按下的情况
+                    if (SlamManager.getInstance().isSystemStop()) {
+                        return;
+                    }
+
+                    isLastLowBattery = true;
+                    DataHelper.getInstance().recordImportantInfo(mContext, "low battery=" + battery);
+                    if (mActivity != null) {
+                        mActivity.handleLowBattery(true);
+                    }
+                }
+                return;
+            }
+
+            if (isLastLowBattery) {
+                isLastLowBattery = false;
+                if (mActivity != null) {
+                    mActivity.handleLowBattery(false);
+                }
+            }
+        }
+
         private void handleControlPanelSoftwareVersion() {
             // 只发送一遍
             if (isInit) {
@@ -239,57 +275,6 @@ class MapHelper {
                 String errorVersion = "1.0";
                 if (TextUtils.equals(errorVersion, version) && mActivity != null) {
                     mActivity.showTipsDialog(mContext.getString(R.string.control_software_version_not_match));
-                }
-            }
-        }
-    }
-
-    private class MapDataThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            int refreshCount = 3;
-            boolean isSetMap = false;
-            long delayTime;
-
-            while (isStart) {
-                if (mMapView == null) {
-                    return;
-                }
-
-                try {
-                    // 更新地图
-                    boolean isMapUpdate = SlamManager.getInstance().isMapUpdate();
-                    if (isFirstRefresh || isMapUpdate) {
-                        if (isMapUpdate) {
-                            delayTime = 500;
-                        } else {
-                            delayTime = 1000;
-                            mRefreshCount++;
-                            if (mRefreshCount > refreshCount) {
-                                mRefreshCount = 0;
-                                isFirstRefresh = false;
-                            }
-                        }
-
-                        isSetMap = false;
-                        mMapView.setMap(SlamManager.getInstance().getMap());
-                    } else {
-                        delayTime = 6000;
-                        if (!isSetMap) {
-                            isSetMap = true;
-                            mMapView.setMapUpdate(false, false);
-                        }
-                    }
-
-                    if (isStart) {
-                        Thread.sleep(delayTime);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (!isStart) {
-                        return;
-                    }
                 }
             }
         }

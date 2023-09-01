@@ -124,7 +124,7 @@ public class AboutAppFragment extends BaseFragment implements UpgradeTipsDialog.
                 return;
             }
 
-            showLoadTipsDialog(getString(R.string.tv_check_version_tips));
+            showLoadTipsDialog(getString(R.string.check_ing));
             isActiveCheckUpgrade = true;
             EventBus.getDefault().post(new CheckEvent());
             return;

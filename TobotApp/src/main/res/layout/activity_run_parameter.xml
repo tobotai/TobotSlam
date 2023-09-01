@@ -62,7 +62,7 @@
                 <TextView
                     style="@style/tv_content"
                     android:layout_marginTop="@dimen/tips_margin_top"
-                    android:text="@string/tv_relocation" />
+                    android:text="@string/tv_relocate" />
 
                 <RadioGroup
                     android:layout_width="wrap_content"
@@ -73,13 +73,13 @@
                     <RadioButton
                         android:id="@+id/rb_relocation_global"
                         style="@style/rb_speed"
-                        android:text="@string/relocation_global" />
+                        android:text="@string/relocate_global" />
 
                     <RadioButton
                         android:id="@+id/rb_relocation_part"
                         style="@style/rb_speed"
                         android:layout_marginLeft="@dimen/rb_wall_margin"
-                        android:text="@string/relocation_part" />
+                        android:text="@string/relocate_part" />
                 </RadioGroup>
 
                 <View
@@ -90,7 +90,7 @@
                     android:id="@+id/tv_relocation_quality_min"
                     style="@style/tv_content"
                     android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/tv_relocation_quality_min" />
+                    android:text="@string/tv_relocate_quality_min" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                     <EditText
                         android:id="@+id/et_relocation_quality_min"
                         style="@style/ll_et_weight"
-                        android:hint="@string/et_relocation_quality_hint"
+                        android:hint="@string/et_relocate_quality_hint"
                         android:inputType="number" />
 
                     <Button
@@ -112,7 +112,7 @@
 
                 <TextView
                     style="@style/tv_match_tips"
-                    android:text="@string/tv_relocation_quality_min_tips" />
+                    android:text="@string/tv_relocate_quality_min_tips" />
 
                 <View
                     style="@style/view_line"
@@ -122,7 +122,7 @@
                     android:id="@+id/tv_relocation_quality_safe"
                     style="@style/tv_content"
                     android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/tv_relocation_quality_safe" />
+                    android:text="@string/tv_relocate_quality_safe" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -133,7 +133,7 @@
                     <EditText
                         android:id="@+id/et_relocation_quality_safe"
                         style="@style/ll_et_weight"
-                        android:hint="@string/et_relocation_quality_hint"
+                        android:hint="@string/et_relocate_quality_hint"
                         android:inputType="number" />
 
                     <Button
@@ -144,7 +144,7 @@
 
                 <TextView
                     style="@style/tv_match_tips"
-                    android:text="@string/tv_relocation_quality_safe_tips" />
+                    android:text="@string/tv_relocate_quality_safe_tips" />
 
                 <View
                     style="@style/view_line"
@@ -154,7 +154,7 @@
                     android:id="@+id/tv_relocation_area_radius"
                     style="@style/tv_content"
                     android:layout_marginTop="@dimen/view_margin_top"
-                    android:text="@string/tv_relocation_area_radius" />
+                    android:text="@string/tv_relocate_area_radius" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -166,7 +166,7 @@
                         android:id="@+id/et_relocation_area_radius"
                         style="@style/ll_et_weight"
                         android:digits="@string/et_float_num_format"
-                        android:hint="@string/et_relocation_area_radius_hint"
+                        android:hint="@string/et_relocate_area_radius_hint"
                         android:inputType="number|numberDecimal" />
 
                     <Button
@@ -177,7 +177,7 @@
 
                 <TextView
                     style="@style/tv_match_tips"
-                    android:text="@string/tv_relocation_area_radius_tips" />
+                    android:text="@string/tv_relocate_area_radius_tips" />
 
                 <View
                     style="@style/view_line"

@@ -19,7 +19,7 @@
         android:layout_width="@dimen/ip_connect_history_size"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/view_mode_margin_top"
+        android:layout_marginTop="@dimen/view_margin_top"
         android:layout_marginRight="@dimen/view_margin_left_right"
         android:orientation="vertical">
 
@@ -41,27 +41,49 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/view_margin_left_right"
-        android:layout_marginTop="@dimen/view_mode_margin_top"
+        android:layout_marginTop="@dimen/view_margin_top"
         android:layout_marginRight="@dimen/sta_connect_margin_right"
         android:layout_toLeftOf="@id/ll_connect_history"
         android:orientation="vertical">
 
         <TextView
-            style="@style/tv_connect_tips"
-            android:text="@string/tv_chassis_connect_tips" />
+            android:id="@+id/tv_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/tv_content"
+            android:textSize="@dimen/tv_content" />
 
-        <EditText
-            android:id="@+id/et_ip_input"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/et_height"
-            android:layout_marginTop="@dimen/et_margin_top"
-            android:background="@drawable/shape_edit_bg"
-            android:gravity="center"
-            android:hint="@string/et_ip_hint_tips"
-            android:inputType="phone"
-            android:text="@string/ip_chassis"
-            android:textColor="@color/et_tv"
-            android:textSize="@dimen/et_tv" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin_top"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_ip"
+                android:textColor="@color/tv_content"
+                android:textSize="@dimen/tv_content" />
+
+            <EditText
+                android:id="@+id/et_ip_input"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/et_height"
+                android:layout_marginLeft="@dimen/et_margin_top"
+                android:background="@drawable/shape_edit_bg"
+                android:gravity="center"
+                android:hint="@string/et_ip_hint_tips"
+                android:inputType="phone"
+                android:text="@string/ip_chassis"
+                android:textColor="@color/et_tv"
+                android:textSize="@dimen/et_tv" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/tv_connect_tips"
+            android:layout_marginTop="@dimen/tips_margin_top"
+            android:text="@string/tv_chassis_connect_tips" />
 
         <Button
             android:id="@+id/btn_sta_connect"

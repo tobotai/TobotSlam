@@ -43,7 +43,7 @@ public class ReconnectSlamThread extends Thread {
                 }
 
                 tryCount++;
-                Thread.sleep(TIME_CONNECT);
+                sleep(TIME_CONNECT);
             } catch (Exception e) {
                 e.printStackTrace();
                 return;

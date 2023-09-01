@@ -126,7 +126,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     public void onConfirm(boolean isConfirm) {
         if (isConfirm) {
             if (mTipsStatus == MAP_SWITCH) {
-                showLoadTipsDialog(getString(R.string.map_load_tips));
+                showLoadTipsDialog(getString(R.string.load_ing));
                 DataHelper.getInstance().setCurrentMapFile(mMapFile);
                 SlamManager.getInstance().loadMapAsync(BaseConstant.getMapFilePath(getActivity(), mMapFile), new OnFinishListener<List<LocationBean>>() {
                     @Override
@@ -235,7 +235,7 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
     private void handleMapLoadResult(boolean isSuccess) {
         closeLoadTipsDialog();
         if (isSuccess) {
-            showToastTips(getString(R.string.map_load_success_tips));
+            showToastTips(getString(R.string.load_success));
             Activity activity = getActivity();
             if (activity != null) {
                 activity.setResult(Activity.RESULT_OK);
@@ -244,6 +244,6 @@ public class MapListFragment extends BaseFragment implements DataHelper.MapReque
             return;
         }
 
-        showToastTips(getString(R.string.map_load_fail_tips));
+        showToastTips(getString(R.string.load_fail));
     }
 }

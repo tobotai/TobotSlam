@@ -2,6 +2,7 @@ package com.tobot.map.util;
 
 import android.text.TextUtils;
 
+import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 /**
@@ -133,5 +134,17 @@ public class NumberUtils {
         }
 
         return false;
+    }
+
+    /**
+     * 四舍五入保留一位小数
+     *
+     * @param value
+     * @return
+     */
+    public static float getOneDigitFloat(float value) {
+        DecimalFormat format = new DecimalFormat("#.#");
+        String result = format.format(value);
+        return Float.parseFloat(result);
     }
 }

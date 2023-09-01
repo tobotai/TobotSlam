@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.tobot.map.R;
 import com.tobot.map.base.BaseActivity;
@@ -31,6 +32,7 @@ import com.tobot.map.module.main.MapService;
 import com.tobot.map.module.set.SetActivity;
 import com.tobot.map.module.upgrade.UpgradeTipsDialog;
 import com.tobot.map.util.AppUtils;
+import com.tobot.map.util.NetworkUtils;
 import com.tobot.map.util.SystemUtils;
 import com.tobot.slam.SlamManager;
 
@@ -48,6 +50,9 @@ import butterknife.OnClick;
  * @date 2019/10/18
  */
 public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter.OnItemClickListener<String>, UpgradeTipsDialog.OnUpgradeListener {
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.tv_wifi)
+    TextView tvWifi;
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.et_ip_input)
     EditText etIp;
@@ -70,19 +75,20 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
     protected void init() {
         Logger.i(BaseConstant.TAG, "version=" + AppUtils.getVersion(this, getPackageName()));
         SystemUtils.requestDisplayInfo(this);
-        Logger.i(BaseConstant.TAG, "valueSize=" + getResources().getDimension(R.dimen.base_values));
+        Logger.i(BaseConstant.TAG, "valueSize=" + getResources().getInteger(R.integer.base_values));
         BaseConstant.isSpeedFast = false;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new ItemSplitLineDecoration(this, ItemSplitLineDecoration.VERTICAL, true));
         mAdapter = new ConnectIpAdapter(this, R.layout.recycler_item_ip);
         mAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(mAdapter);
+        String wifiName = NetworkUtils.getWifiName(this);
+        tvWifi.setText(getString(R.string.tv_wifi, TextUtils.isEmpty(wifiName) ? getString(R.string.unknown) : wifiName));
         List<String> dataList = MyDBSource.getInstance(this).queryIpList();
         mIpList = dataList;
         if (dataList != null && !dataList.isEmpty()) {
             mAdapter.setData(dataList);
         }
-        DataHelper.getInstance().setLowBattery(BaseConstant.BATTERY_LOW_DEFAULT);
         // 默认没有查看过任何地图
         DataHelper.getInstance().setCurrentMapFile("");
         SlamManager.getInstance().setRelocationQualityMin(DataHelper.getInstance().getRelocationQualityMin(this));
@@ -132,6 +138,11 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
     public void onPause() {
         super.onPause();
         isPause = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         closeLoadTipsDialog();
         if (isUpgradeTipsDialogShow()) {
             mUpgradeTipsDialog.dismiss();
@@ -222,7 +233,7 @@ public class ConnectActivity extends BaseActivity implements BaseRecyclerAdapter
     private void connect(String ip) {
         mIp = ip;
         SystemUtils.hideKeyboard(this);
-        showLoadTipsDialog(getString(R.string.tv_connect_ing), null);
+        showLoadTipsDialog(getString(R.string.connect_ing), null);
         EventBus.getDefault().post(new ConnectSlamEvent(ip));
     }
 

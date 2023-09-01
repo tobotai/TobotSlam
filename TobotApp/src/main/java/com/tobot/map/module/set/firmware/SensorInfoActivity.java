@@ -156,7 +156,7 @@ public class SensorInfoActivity extends BaseBackActivity implements BaseBar.OnSe
     @Override
     public void onSeekBarStop(View view, float progress) {
         setProgress(progress, true);
-        showToastTips(getString(R.string.set_success_tips));
+        showToastTips(getString(R.string.set_success));
     }
 
     @Override
@@ -430,7 +430,7 @@ public class SensorInfoActivity extends BaseBackActivity implements BaseBar.OnSe
                         list = SlamManager.getInstance().getDefinedSensorDetectInfo(IdType.SONAR);
                         mMainHandler.obtainMessage(MSG_SENSOR_INFO, TAG_SONAR, 0, getContent(IdType.SONAR, list)).sendToTarget();
                         if (isSelectAll && isStart) {
-                            Thread.sleep(getDelayTime());
+                            sleep(getDelayTime());
                         }
                     }
 
@@ -442,7 +442,7 @@ public class SensorInfoActivity extends BaseBackActivity implements BaseBar.OnSe
                         list = SlamManager.getInstance().getDefinedSensorDetectInfo(IdType.CLIFF);
                         mMainHandler.obtainMessage(MSG_SENSOR_INFO, TAG_CLIFF, 0, getContent(IdType.CLIFF, list)).sendToTarget();
                         if (isSelectAll && isStart) {
-                            Thread.sleep(getDelayTime());
+                            sleep(getDelayTime());
                         }
                     }
 
@@ -454,7 +454,7 @@ public class SensorInfoActivity extends BaseBackActivity implements BaseBar.OnSe
                         list = SlamManager.getInstance().getDefinedSensorDetectInfo(IdType.BUMPER);
                         mMainHandler.obtainMessage(MSG_SENSOR_INFO, TAG_BUMPER, 0, getContent(IdType.BUMPER, list)).sendToTarget();
                         if (isSelectAll && isStart) {
-                            Thread.sleep(getDelayTime());
+                            sleep(getDelayTime());
                         }
                     }
 
@@ -468,7 +468,7 @@ public class SensorInfoActivity extends BaseBackActivity implements BaseBar.OnSe
                     }
 
                     if (isStart) {
-                        Thread.sleep(getDelayTime());
+                        sleep(getDelayTime());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

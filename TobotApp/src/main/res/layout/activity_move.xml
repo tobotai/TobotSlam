@@ -99,6 +99,20 @@
                 <View
                     style="@style/view_line"
                     android:layout_marginTop="@dimen/view_margin_top" />
+
+                <Button
+                    android:id="@+id/btn_stop"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/btn_over_height"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:background="@drawable/selector_btn_over_delete_bg"
+                    android:paddingLeft="@dimen/btn_over_content_padding_left"
+                    android:paddingRight="@dimen/btn_over_content_padding_left"
+                    android:text="@string/tv_stop"
+                    android:textColor="@color/tv_white"
+                    android:textSize="@dimen/btn_tv_size" />
             </LinearLayout>
         </LinearLayout>
     </com.tobot.map.module.common.HorizontalConflictScrollView>

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import com.tobot.map.BuildConfig;
 import com.tobot.map.R;
 import com.tobot.map.base.BaseFragment;
 import com.tobot.map.constant.BaseConstant;
@@ -54,6 +55,7 @@ public class DownloadFragment extends BaseFragment implements OnFileDownloadList
 
     @Override
     protected void init() {
+        etUrl.setText(BuildConfig.FILE_DOWNLOAD_BASE_URL);
     }
 
     @Override

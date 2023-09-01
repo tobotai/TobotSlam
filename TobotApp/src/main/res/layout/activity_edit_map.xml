@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MissingDefaultResource">
+
+    <com.tobot.slam.view.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_back"
+        android:layout_width="@dimen/tv_back_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:drawableLeft="@drawable/ic_back"
+        android:paddingLeft="@dimen/ic_back_margin_left"
+        android:textSize="@dimen/tv_back" />
+
+    <LinearLayout
+        android:id="@+id/ll_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_virtual_wall"
+            style="@style/rb_map_operate"
+            android:text="@string/tv_virtual_wall" />
+
+        <TextView
+            android:id="@+id/tv_virtual_track"
+            style="@style/rb_map_operate"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/iv_map_margin"
+            android:text="@string/tv_virtual_track" />
+
+        <TextView
+            android:id="@+id/tv_rubber"
+            style="@style/rb_map_operate"
+            android:layout_marginLeft="@dimen/iv_map_margin"
+            android:text="@string/tv_rubber" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_pixel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/view_margin_left_right"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_left_right"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_current_pixel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/tv_pose_show"
+            android:textSize="@dimen/tv_content" />
+
+        <com.tobot.bar.seekbar.StripSeekBar
+            android:id="@+id/sb_pixel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sb_speed_height"
+            android:layout_marginLeft="@dimen/rb_padding"
+            android:paddingLeft="@dimen/sb_speed_padding_left"
+            android:paddingRight="@dimen/sb_speed_padding_left"
+            app:bar_bgColor="@color/sb_speed_bg"
+            app:bar_centerColor="@color/sb_speed_center"
+            app:bar_circleColor="@color/sb_speed_circle"
+            app:bar_endColor="@color/sb_speed_end"
+            app:bar_height="@dimen/sb_speed_bar_height"
+            app:bar_startColor="@color/sb_speed_start"
+            app:bar_textShow="false" />
+    </LinearLayout>
+
+    <com.tobot.map.module.main.edit.EditLineView
+        android:id="@+id/view_edit_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:visibility="gone" />
+
+    <com.tobot.map.module.main.edit.RubberEditView
+        android:id="@+id/view_rubber_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:visibility="gone" />
+
+    <com.tobot.map.module.main.edit.AddLineView
+        android:id="@+id/view_add_line"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/view_add_margin_top"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_point1"
+        style="@style/view_drag"
+        android:layout_marginTop="@dimen/view_add_margin_top"
+        android:text="@string/tv_1" />
+
+    <TextView
+        android:id="@+id/tv_point2"
+        style="@style/view_drag"
+        android:layout_below="@id/tv_point1"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:text="@string/tv_2" />
+</RelativeLayout>

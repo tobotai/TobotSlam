@@ -77,13 +77,19 @@ class FolderCreate {
                 // log文件保存只保留最近7天的
                 String time = DateTool.getDesignatedTime(-7);
                 Logger.i(BaseConstant.TAG, "time=" + time);
+                String sign = "-";
                 for (File file : fileArray) {
+                    boolean isDelete = true;
                     String name = file.getName();
-                    name = name.substring(0, name.lastIndexOf("-"));
-                    if (DateTool.isBeforeDate(name, time)) {
+                    if (name.contains(sign)) {
+                        name = name.substring(0, name.lastIndexOf(sign));
+                        isDelete = DateTool.isBeforeDate(name, time);
+                    }
+
+                    if (isDelete) {
                         String path = file.getAbsolutePath();
                         Logger.i(BaseConstant.TAG, "delete path=" + path);
-                        FileUtils.deleteFile(file.getAbsolutePath());
+                        FileUtils.deleteFile(path);
                     }
                 }
             }

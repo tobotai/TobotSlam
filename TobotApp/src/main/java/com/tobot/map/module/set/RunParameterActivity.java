@@ -133,15 +133,15 @@ public class RunParameterActivity extends BaseBackActivity {
     }
 
     private void setRelocationQualityMinTips(int value) {
-        tvRelocationQualityMin.setText(getString(R.string.tv_relocation_quality_min, value));
+        tvRelocationQualityMin.setText(getString(R.string.tv_relocate_quality_min, value));
     }
 
     private void setRelocationQualitySafeTips(int value) {
-        tvRelocationQualitySafe.setText(getString(R.string.tv_relocation_quality_safe, value));
+        tvRelocationQualitySafe.setText(getString(R.string.tv_relocate_quality_safe, value));
     }
 
     private void setRelocationAreaRadiusTips(float value) {
-        tvRelocationAreaRadius.setText(getString(R.string.tv_relocation_area_radius, String.valueOf(value)));
+        tvRelocationAreaRadius.setText(getString(R.string.tv_relocate_area_radius, String.valueOf(value)));
     }
 
     private void setChargeStartDistanceTips(float value) {
@@ -165,7 +165,7 @@ public class RunParameterActivity extends BaseBackActivity {
             DataHelper.getInstance().setChassisRadius(this, value);
             SlamManager.getInstance().setChassisRadius(value);
             setChassisRadiusTips(value);
-            showToastTips(getString(R.string.set_success_tips));
+            showToastTips(getString(R.string.set_success));
             etChassisRadius.setText("");
         }
     }
@@ -173,7 +173,7 @@ public class RunParameterActivity extends BaseBackActivity {
     private void setRelocationQualityMin() {
         String content = etRelocationQualityMin.getText().toString().trim();
         if (TextUtils.isEmpty(content)) {
-            showToastTips(getString(R.string.relocation_quality_empty_tips));
+            showToastTips(getString(R.string.relocate_quality_empty_tips));
             return;
         }
 
@@ -183,7 +183,7 @@ public class RunParameterActivity extends BaseBackActivity {
             DataHelper.getInstance().setRelocationQualityMin(this, value);
             SlamManager.getInstance().setRelocationQualityMin(value);
             setRelocationQualityMinTips(value);
-            showToastTips(getString(R.string.set_success_tips));
+            showToastTips(getString(R.string.set_success));
             etRelocationQualityMin.setText("");
         }
     }
@@ -191,7 +191,7 @@ public class RunParameterActivity extends BaseBackActivity {
     private void setRelocationQualitySafe() {
         String content = etRelocationQualitySafe.getText().toString().trim();
         if (TextUtils.isEmpty(content)) {
-            showToastTips(getString(R.string.relocation_quality_empty_tips));
+            showToastTips(getString(R.string.relocate_quality_empty_tips));
             return;
         }
 
@@ -201,7 +201,7 @@ public class RunParameterActivity extends BaseBackActivity {
             DataHelper.getInstance().setRelocationQualitySafe(this, value);
             SlamManager.getInstance().setRelocationQualitySafe(value);
             setRelocationQualitySafeTips(value);
-            showToastTips(getString(R.string.set_success_tips));
+            showToastTips(getString(R.string.set_success));
             etRelocationQualitySafe.setText("");
         }
     }
@@ -209,7 +209,7 @@ public class RunParameterActivity extends BaseBackActivity {
     private void setRelocationAreaRadius() {
         String content = etRelocationAreaRadius.getText().toString().trim();
         if (TextUtils.isEmpty(content)) {
-            showToastTips(getString(R.string.relocation_area_radius_empty_tips));
+            showToastTips(getString(R.string.relocate_area_radius_empty_tips));
             return;
         }
 
@@ -219,7 +219,7 @@ public class RunParameterActivity extends BaseBackActivity {
             DataHelper.getInstance().setRelocationAreaRadius(this, value);
             SlamManager.getInstance().setRelocationAreaRadius(value);
             setRelocationAreaRadiusTips(value);
-            showToastTips(getString(R.string.set_success_tips));
+            showToastTips(getString(R.string.set_success));
             etRelocationAreaRadius.setText("");
         }
     }
@@ -236,7 +236,7 @@ public class RunParameterActivity extends BaseBackActivity {
             float value = Float.parseFloat(content);
             DataHelper.getInstance().setChargeDistance(this, value);
             setChargeStartDistanceTips(value);
-            showToastTips(getString(R.string.set_success_tips));
+            showToastTips(getString(R.string.set_success));
             etChargeDistance.setText("");
         }
     }
@@ -253,7 +253,7 @@ public class RunParameterActivity extends BaseBackActivity {
             float value = Float.parseFloat(content);
             DataHelper.getInstance().setChargeOffset(this, value);
             setChargeOffsetTips(value);
-            showToastTips(getString(R.string.set_success_tips));
+            showToastTips(getString(R.string.set_success));
             etChargeOffset.setText("");
         }
     }

@@ -38,7 +38,7 @@ public class ConnectSlamThread extends Thread {
     public void run() {
         while (isStart) {
             try {
-                Thread.sleep(TIME_CONNECT);
+                sleep(TIME_CONNECT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 return;

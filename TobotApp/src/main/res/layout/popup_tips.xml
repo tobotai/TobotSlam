@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_popup_bg"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingLeft="@dimen/layout_margin_top"
+        android:paddingTop="@dimen/popup_margin_bottom"
+        android:paddingRight="@dimen/layout_margin_top"
+        android:paddingBottom="@dimen/popup_margin_bottom"
+        android:textColor="@color/tv_white"
+        android:textSize="@dimen/tv_content" />
+</LinearLayout>

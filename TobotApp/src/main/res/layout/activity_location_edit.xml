@@ -67,7 +67,7 @@
                     <RadioButton
                         android:id="@+id/rb_relocation"
                         style="@style/rb_speed"
-                        android:text="@string/tv_relocation" />
+                        android:text="@string/tv_relocate" />
 
                     <RadioButton
                         android:id="@+id/rb_arrive_not_rotate"
@@ -122,7 +122,7 @@
                         android:background="@drawable/shape_edit_bg"
                         android:digits="@string/et_float_num_format"
                         android:gravity="center"
-                        android:hint="@string/et_relocation_area_width"
+                        android:hint="@string/et_relocate_area_width"
                         android:inputType="number|numberDecimal"
                         android:textColor="@color/et_tv"
                         android:textColorHint="@color/et_hint"
@@ -138,7 +138,7 @@
                         android:background="@drawable/shape_edit_bg"
                         android:digits="@string/et_float_num_format"
                         android:gravity="center"
-                        android:hint="@string/et_relocation_area_height"
+                        android:hint="@string/et_relocate_area_height"
                         android:inputType="number|numberDecimal"
                         android:textColor="@color/et_tv"
                         android:textColorHint="@color/et_hint"
@@ -149,7 +149,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/tips_margin_top"
-                    android:text="@string/tv_relocation_area_tips"
+                    android:text="@string/tv_relocate_area_tips"
                     android:textColor="@color/tv_tips"
                     android:textSize="@dimen/tv_tips" />
             </LinearLayout>

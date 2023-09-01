@@ -1,12 +1,16 @@
 package com.tobot.map.util;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 
 import com.tobot.map.constant.BaseConstant;
@@ -92,6 +96,16 @@ public class NetworkUtils {
         return -100;
     }
 
+    public static String getWifiName(Context context) {
+        String wifiName = getConnectWifiName(context);
+        // 部分手机获取到的WiFi是unknown ssid
+        if (TextUtils.isEmpty(wifiName) || "unknown ssid".equalsIgnoreCase(wifiName)) {
+            wifiName = getConnectWifiName2(context);
+        }
+
+        return wifiName;
+    }
+
     /**
      * 获取连接的WiFi的名称
      *
@@ -118,7 +132,41 @@ public class NetworkUtils {
             }
         }
 
-        return null;
+        return "";
+    }
+
+    /**
+     * 获取连接的WiFi的名称（部分手机获取到的WiFi是unknown ssid，可以通过此方法获取正确的名称）
+     *
+     * @param context
+     * @return
+     */
+    public static String getConnectWifiName2(Context context) {
+        if (context != null) {
+            try {
+                WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if (manager != null) {
+                    WifiInfo wifiInfo = manager.getConnectionInfo();
+                    String name = wifiInfo.getSSID();
+                    int networkId = wifiInfo.getNetworkId();
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        List<WifiConfiguration> configuredNetworks = manager.getConfiguredNetworks();
+                        for (WifiConfiguration wifiConfiguration : configuredNetworks) {
+                            if (wifiConfiguration.networkId == networkId) {
+                                name = wifiConfiguration.SSID;
+                            }
+                        }
+
+                        // 获取的ssid带双引号
+                        return name.replace("\"", "");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "";
     }
 
     @SuppressLint("HardwareIds")

@@ -14,7 +14,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/tv_tips</item>
-        <item name="android:textSize">@dimen/tv_content</item>
+        <item name="android:textSize">@dimen/tv_tips</item>
     </style>
 
     <style name="btn_connect" parent="@style/Widget.AppCompat.Button.Borderless">
@@ -50,9 +50,9 @@
     <style name="btn_location_style" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/btn_item_height</item>
-        <item name="android:background">@drawable/selector_btn_stroke_bg</item>
+        <item name="android:background">@drawable/selector_btn_location_dialog_bg</item>
         <item name="android:textSize">@dimen/tv_tips</item>
-        <item name="android:textColor">@drawable/selector_tv_location</item>
+        <item name="android:textColor">@color/tv_white</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:minWidth">0dp</item>
         <item name="android:paddingLeft">@dimen/btn_padding_left_right</item>
@@ -224,5 +224,18 @@
         <item name="android:layout_marginTop">@dimen/tips_margin_top</item>
         <item name="android:textColor">@color/tv_tips</item>
         <item name="android:textSize">@dimen/tv_tips</item>
+    </style>
+
+    <style name="view_drag">
+        <item name="android:layout_width">@dimen/view_drag_size</item>
+        <item name="android:layout_height">@dimen/view_drag_size</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginRight">@dimen/view_margin_top</item>
+        <item name="android:background">@drawable/shape_drag_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:textSize">@dimen/tv_title</item>
+        <item name="android:textColor">@color/shape_btn_circle_normal</item>
     </style>
 </resources>

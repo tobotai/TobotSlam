@@ -26,11 +26,10 @@ public class Navigate extends AbstractMove {
         }
     }
 
-    public void moveTo(float x, float y, float yaw) {
+    public void moveTo(float x, float y) {
         LocationBean bean = new LocationBean();
         bean.setX(x);
         bean.setY(y);
-        bean.setYaw(yaw);
         moveTo(bean);
     }
 }

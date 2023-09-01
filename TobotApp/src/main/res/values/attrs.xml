@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RockerView">
-        <attr name="areaBackground" format="color|reference" />
-        <attr name="rockerBackground" format="color|reference" />
-        <attr name="rockerRadius" format="dimension|reference" />
+    <declare-styleable name="DirectionView">
+        <attr name="directionSideStrokeWidth" format="integer|reference" />
+        <attr name="directionSideColor" format="color|reference" />
+        <attr name="directionBg" format="color|reference" />
+        <attr name="directionRockerStrokeWidth" format="integer|reference" />
+        <attr name="directionRockerStyleFill" format="boolean|reference" />
+        <attr name="directionRockerRadius" format="integer|reference" />
+        <attr name="directionRockerBg" format="color|reference" />
+        <attr name="directionRockerMargin" format="integer|reference" />
+        <attr name="directionArrowStrokeWidth" format="integer|reference" />
+        <attr name="directionArrowColor" format="color|reference" />
+        <attr name="directionArrowPressedColor" format="color|reference" />
+        <attr name="directionArrowMargin" format="integer|reference" />
+        <attr name="directionArrowOffset" format="integer|reference" />
+        <attr name="directionArrowHeight" format="integer|reference" />
     </declare-styleable>
 </resources>

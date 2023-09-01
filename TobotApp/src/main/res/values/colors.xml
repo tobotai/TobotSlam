@@ -14,6 +14,8 @@
     <color name="layout_item_pressed_bg">#3788FB</color>
     <color name="shape_btn_normal">#3788FB</color>
     <color name="shape_btn_pressed">#2F6EC9</color>
+    <color name="btn_delete_normal">#FF0000</color>
+    <color name="btn_delete_pressed">#D80A0A</color>
     <color name="shape_btn_debug_normal">#00FF00</color>
     <color name="item_split_line">#EDEDED</color>
     <color name="popup_line_color">#98989F</color>
@@ -21,7 +23,6 @@
     <color name="shape_dialog_bg">#3788FB</color>
     <color name="shape_dialog_load_bg">#80000000</color>
     <color name="tab_set_bg">#EDEDED</color>
-    <color name="rocker_bg">#FFFFFF</color>
     <color name="shape_confirm_normal">#2E3545</color>
     <color name="shape_confirm_pressed">#242A36</color>
     <color name="shape_cancel_bg_normal">#5E5E5E</color>
@@ -38,6 +39,10 @@
     <color name="wheelView_textColorOut">#EDEDED</color>
     <color name="wheelView_textColorCenter">#FFFFFF</color>
     <color name="wheelView_dividerColor">#EDEDED</color>
-    <color name="tv_rssi_tips">#FFFF00</color>
     <color name="shape_btn_circle_normal">#FE7700</color>
+    <color name="directionView_sideColor">#FFFFFF</color>
+    <color name="directionView_bg">#00000000</color>
+    <color name="directionView_rockerBg">#FFFFFF</color>
+    <color name="directionView_arrowColor">#FFFFFF</color>
+    <color name="directionView_arrowPressedColor">#3788FB</color>
 </resources>

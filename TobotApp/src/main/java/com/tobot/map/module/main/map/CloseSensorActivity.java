@@ -169,7 +169,7 @@ public class CloseSensorActivity extends BaseBackActivity implements View.OnClic
             mLocationBean.setEndY(isSet ? mLocationBean.getY() - heightHalf : 0);
         }
 
-        showToastTips(getString(R.string.set_success_tips));
+        showToastTips(getString(R.string.set_success));
         Intent data = new Intent();
         data.putExtra(BaseConstant.DATA_KEY, mLocationBean);
         setResult(Activity.RESULT_OK, data);

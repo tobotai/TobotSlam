@@ -3,6 +3,7 @@ package com.tobot.map.module.upgrade;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -48,6 +49,7 @@ public class DownloadManager implements OnFileDownloadListener {
     private static volatile DownloadManager sInstance;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
+    private Notification.Builder mHighBuilder;
 
     private DownloadManager(Context context) {
         mContext = context;
@@ -118,15 +120,23 @@ public class DownloadManager implements OnFileDownloadListener {
     private void setNotification() {
         // 显示状态栏下载通知
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setContentTitle(mContext.getString(R.string.tv_apk_download_begin))
-                .setContentText(mContext.getString(R.string.tv_apk_content_tips))
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher))
-                .setOngoing(true)
-                .setAutoCancel(true)
-                .setWhen(System.currentTimeMillis());
-        mNotificationManager.notify(NOTIFY_ID, mBuilder.build());
+        String channelId = "channel1";
+        Notification notification;
+        if (isHighSdkVersion()) {
+            String description = "upgrade";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(channelId, description, importance);
+            mNotificationManager.createNotificationChannel(channel);
+            mHighBuilder = new Notification.Builder(mContext);
+            mHighBuilder.setChannelId(channelId).setCategory(Notification.CATEGORY_MESSAGE).setContentTitle(mContext.getString(R.string.tv_apk_download_begin)).setContentText(mContext.getString(R.string.tv_apk_content_tips)).setSmallIcon(R.drawable.ic_launcher).setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher)).setOngoing(true).setAutoCancel(true).setWhen(System.currentTimeMillis());
+            notification = mHighBuilder.build();
+        } else {
+            mBuilder = new NotificationCompat.Builder(mContext);
+            mBuilder.setChannelId(channelId).setContentTitle(mContext.getString(R.string.tv_apk_download_begin)).setContentText(mContext.getString(R.string.tv_apk_content_tips)).setSmallIcon(R.drawable.ic_launcher).setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher)).setOngoing(true).setAutoCancel(true).setWhen(System.currentTimeMillis());
+            notification = mBuilder.build();
+        }
+
+        mNotificationManager.notify(NOTIFY_ID, notification);
     }
 
     private static class MainHandler extends Handler {
@@ -159,11 +169,15 @@ public class DownloadManager implements OnFileDownloadListener {
     }
 
     private void updateProgress(int progress) {
-        mBuilder.setContentTitle(mContext.getString(R.string.tv_apk_download_tips))
-                .setContentText(String.format(Locale.CHINESE, "%d%%", progress))
-                .setProgress(100, progress, false)
-                .setWhen(System.currentTimeMillis());
-        Notification notification = mBuilder.build();
+        Notification notification;
+        if (isHighSdkVersion()) {
+            mHighBuilder.setContentTitle(mContext.getString(R.string.tv_apk_download_tips)).setContentText(String.format(Locale.CHINESE, "%d%%", progress)).setProgress(100, progress, false).setWhen(System.currentTimeMillis());
+            notification = mHighBuilder.build();
+        } else {
+            mBuilder.setContentTitle(mContext.getString(R.string.tv_apk_download_tips)).setContentText(String.format(Locale.CHINESE, "%d%%", progress)).setProgress(100, progress, false).setWhen(System.currentTimeMillis());
+            notification = mBuilder.build();
+        }
+
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         mNotificationManager.notify(NOTIFY_ID, notification);
     }
@@ -195,14 +209,21 @@ public class DownloadManager implements OnFileDownloadListener {
         }
 
         PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(pIntent)
-                .setContentTitle(mContext.getString(R.string.app_name))
-                .setContentText(mContext.getString(R.string.tv_apk_download_complete))
-                .setProgress(0, 0, false)
-                .setDefaults(Notification.DEFAULT_ALL);
-        Notification notification2 = mBuilder.build();
-        notification2.flags = Notification.FLAG_AUTO_CANCEL;
-        mNotificationManager.notify(NOTIFY_ID, notification2);
+        Notification notification;
+        if (isHighSdkVersion()) {
+            mHighBuilder.setContentIntent(pIntent).setContentTitle(mContext.getString(R.string.app_name)).setContentText(mContext.getString(R.string.tv_apk_download_complete)).setProgress(0, 0, false).setDefaults(Notification.DEFAULT_ALL);
+            notification = mHighBuilder.build();
+        } else {
+            mBuilder.setContentIntent(pIntent).setContentTitle(mContext.getString(R.string.app_name)).setContentText(mContext.getString(R.string.tv_apk_download_complete)).setProgress(0, 0, false).setDefaults(Notification.DEFAULT_ALL);
+            notification = mBuilder.build();
+        }
+
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        mNotificationManager.notify(NOTIFY_ID, notification);
+    }
+
+    private boolean isHighSdkVersion() {
+        return Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O;
     }
 
     private File getApkFile() {

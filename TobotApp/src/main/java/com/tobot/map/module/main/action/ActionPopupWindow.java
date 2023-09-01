@@ -29,9 +29,9 @@ public class ActionPopupWindow extends BasePopupWindow {
 
     @Override
     public void initView(View view) {
-        RockerView rockerView = view.findViewById(R.id.view_rocker);
+        DirectionView directionView = view.findViewById(R.id.view_direction);
         view.findViewById(R.id.tv_go_charge).setOnClickListener(this);
-        new RockerControlHelper(new WeakReference<>(rockerView));
+        new DirectionControlHelper(new WeakReference<>(directionView));
     }
 
     @Override

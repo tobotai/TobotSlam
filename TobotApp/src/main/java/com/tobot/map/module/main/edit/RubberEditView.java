@@ -20,6 +20,7 @@ import com.tobot.slam.view.MapView;
 public class RubberEditView extends LinearLayout implements View.OnClickListener {
     private final RadioGroup radioGroup;
     private MapView mMapView;
+    private int mPixelWidth, mLastCheckedId;
     private OnEditListener mOnEditListener;
 
     public RubberEditView(Context context) {
@@ -33,19 +34,18 @@ public class RubberEditView extends LinearLayout implements View.OnClickListener
     public RubberEditView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View view = LayoutInflater.from(context).inflate(R.layout.view_rubber_edit, this);
-        view.findViewById(R.id.tv_back).setOnClickListener(this);
         radioGroup = view.findViewById(R.id.rg_wipe);
+        view.findViewById(R.id.rb_back).setOnClickListener(this);
         view.findViewById(R.id.rb_wipe_white).setOnClickListener(this);
         view.findViewById(R.id.rb_wipe_grey).setOnClickListener(this);
         view.findViewById(R.id.rb_wipe_black).setOnClickListener(this);
-        view.findViewById(R.id.rb_wipe_cancel).setOnClickListener(this);
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_back:
+            case R.id.rb_back:
                 if (mOnEditListener != null) {
                     mOnEditListener.onEditClose();
                 }
@@ -59,35 +59,52 @@ public class RubberEditView extends LinearLayout implements View.OnClickListener
             case R.id.rb_wipe_black:
                 setRubberMode(Rubber.RUBBER_BLACK);
                 break;
-            case R.id.rb_wipe_cancel:
-                if (mMapView != null) {
-                    mMapView.closeRubber();
-                }
-                break;
             default:
                 break;
         }
     }
 
-    public void init(MapView mapView, OnEditListener listener) {
+    public void init(MapView mapView, int pixelWidth, OnEditListener listener) {
         mMapView = mapView;
+        mPixelWidth = pixelWidth;
         mOnEditListener = listener;
+        mLastCheckedId = -1;
         radioGroup.clearCheck();
         setVisibility(VISIBLE);
         // 使用橡皮擦的时候，关闭更新地图
         SlamManager.getInstance().setMapUpdateAsync(false, null);
     }
 
-    public void remove() {
+    public void remove(boolean isGone) {
         if (mMapView != null) {
             mMapView.closeRubber();
         }
-        setVisibility(GONE);
+
+        if (isGone) {
+            setVisibility(GONE);
+        }
+    }
+
+    public void updatePixelWidth(int value) {
+        mPixelWidth = value;
+        if (mMapView != null) {
+            mMapView.setPixelWidth(value);
+        }
     }
 
     private void setRubberMode(Rubber rubber) {
+        int checkedId = radioGroup.getCheckedRadioButtonId();
+        // 如果已经选中的话则取消选中
+        if (mLastCheckedId == checkedId) {
+            mLastCheckedId = -1;
+            radioGroup.clearCheck();
+            remove(false);
+            return;
+        }
+
+        mLastCheckedId = checkedId;
         if (mMapView != null) {
-            mMapView.setRubberMode(rubber);
+            mMapView.setRubberMode(rubber, mPixelWidth);
         }
     }
 }

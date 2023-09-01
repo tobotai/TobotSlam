@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="base_values">370</integer>
+    <dimen name="tv_mode_tips">14sp</dimen>
+    <dimen name="directionView_size">120dp</dimen>
+    <integer name="directionView_sideStrokeWidth">3</integer>
+    <integer name="directionView_rockerStrokeWidth">3</integer>
+    <integer name="directionView_rockerRadius">60</integer>
+    <integer name="directionView_rockerMargin">10</integer>
+    <integer name="directionView_arrowStrokeWidth">5</integer>
+    <integer name="directionView_arrowMargin">20</integer>
+    <integer name="directionView_arrowOffset">12</integer>
+    <integer name="directionView_arrowHeight">10</integer>
+</resources>

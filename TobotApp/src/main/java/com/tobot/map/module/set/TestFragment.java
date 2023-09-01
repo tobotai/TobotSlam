@@ -55,7 +55,7 @@ public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChang
     @Override
     protected void init() {
         sbBattery.setOnSeekBarChangeListener(this);
-        int battery = DataHelper.getInstance().getLowBattery();
+        int battery = DataHelper.getInstance().getLowBattery(getActivity());
         tvCurrentLowBattery.setText(getString(R.string.tv_current_low_battery_tips, battery));
         // 设置battery的进度
         sbBattery.setProgress(battery / BaseConstant.BATTERY_MAX);
@@ -75,8 +75,8 @@ public class TestFragment extends BaseFragment implements BaseBar.OnSeekBarChang
     @Override
     public void onSeekBarStop(View view, float progress) {
         setProgress(progress);
-        DataHelper.getInstance().setLowBattery(mBattery);
-        showToastTips(getString(R.string.set_success_tips));
+        DataHelper.getInstance().setLowBattery(getActivity(), mBattery);
+        showToastTips(getString(R.string.set_success));
     }
 
     @SuppressLint("NonConstantResourceId")

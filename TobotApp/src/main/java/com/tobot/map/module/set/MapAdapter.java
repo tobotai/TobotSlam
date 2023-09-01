@@ -33,11 +33,9 @@ public class MapAdapter extends BaseRecyclerAdapter<String> {
             if (TextUtils.equals(data, mMap)) {
                 tvName.setText(mContext.getString(R.string.tv_bind_now, data));
                 tvName.setSelected(true);
-                btnLoad.setVisibility(View.GONE);
             } else {
                 tvName.setText(data);
                 tvName.setSelected(false);
-                btnLoad.setVisibility(View.VISIBLE);
             }
 
             btnLoad.setOnClickListener(new View.OnClickListener() {
