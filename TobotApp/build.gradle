@@ -9,8 +9,8 @@ android {
         applicationId "com.tobot.map"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 83
-        versionName "4.0.5"
+        versionCode 84
+        versionName "4.0.6"
         // dex突破65535的限制
         multiDexEnabled true
         // 自定义配置信息
