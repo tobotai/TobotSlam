@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tobot.map.R;
@@ -16,6 +16,7 @@ import com.tobot.map.constant.BaseConstant;
 import com.tobot.map.db.MyDBSource;
 import com.tobot.map.entity.RouteBean;
 import com.tobot.map.module.common.GridItemDecoration;
+import com.tobot.map.module.main.DataHelper;
 import com.tobot.map.util.ToastUtils;
 import com.tobot.slam.data.LocationBean;
 
@@ -34,18 +35,15 @@ public class TaskPointSelectActivity extends BaseBackActivity implements BaseRec
     @BindView(R.id.tv_head)
     TextView tvHead;
     @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.tv_select_all)
-    TextView tvSelectAll;
+    @BindView(R.id.tv_select_tips)
+    TextView tvSelectTips;
     @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.btn_confirm)
-    Button btnConfirm;
+    @BindView(R.id.rl_bottom)
+    RelativeLayout rlBottom;
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.recycler_point)
     RecyclerView recyclerView;
     private static final int SPAN_COUNT = 6;
-    private TaskPointSelectAdapter mAdapter;
-    private List<LocationBean> mAllData;
-    private int mAllSize;
     private final List<LocationBean> mSelectList = new ArrayList<>();
     private TaskSaveDialog mTaskSaveDialog;
 
@@ -60,12 +58,11 @@ public class TaskPointSelectActivity extends BaseBackActivity implements BaseRec
         recyclerView.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT));
         int space = getResources().getDimensionPixelSize(R.dimen.item_split_size);
         recyclerView.addItemDecoration(new GridItemDecoration(space, space));
-        mAdapter = new TaskPointSelectAdapter(this, R.layout.recycler_item_point);
-        mAdapter.setOnItemClickListener(this);
-        recyclerView.setAdapter(mAdapter);
-        mAllData = getIntent().getParcelableArrayListExtra(BaseConstant.DATA_KEY);
-        mAdapter.setData(mAllData);
-        mAllSize = mAllData != null ? mAllData.size() : 0;
+        TaskPointSelectAdapter adapter = new TaskPointSelectAdapter(this, R.layout.recycler_item_point);
+        adapter.setOnItemClickListener(this);
+        recyclerView.setAdapter(adapter);
+        List<LocationBean> dataList = getIntent().getParcelableArrayListExtra(BaseConstant.DATA_KEY);
+        adapter.setData(dataList);
     }
 
     @Override
@@ -76,27 +73,12 @@ public class TaskPointSelectActivity extends BaseBackActivity implements BaseRec
 
     @Override
     public void onItemClick(int position, LocationBean data) {
-        if (mSelectList.contains(data)) {
-            mSelectList.remove(data);
-            if (mSelectList.isEmpty()) {
-                btnConfirm.setEnabled(false);
-            }
-            // 取消全选
-            if (tvSelectAll.isSelected()) {
-                setSelect(false);
-            }
-        } else {
-            mSelectList.add(data);
-            if (!btnConfirm.isEnabled()) {
-                btnConfirm.setEnabled(true);
-            }
-            // 设置全选
-            if (mSelectList.size() == mAllSize) {
-                setSelect(true);
-            }
+        mSelectList.add(data);
+        tvSelectTips.setText(DataHelper.getInstance().getSelectDetailTips(mSelectList));
+        if (tvSelectTips.getVisibility() != View.VISIBLE) {
+            tvSelectTips.setVisibility(View.VISIBLE);
+            rlBottom.setVisibility(View.VISIBLE);
         }
-
-        mAdapter.setSelectData(mSelectList);
     }
 
     @Override
@@ -117,32 +99,33 @@ public class TaskPointSelectActivity extends BaseBackActivity implements BaseRec
         ToastUtils.getInstance(this).show(R.string.task_name_exist_tips);
     }
 
-    @OnClick({R.id.tv_select_all, R.id.btn_confirm})
+    @SuppressLint("NonConstantResourceId")
+    @OnClick({R.id.btn_confirm, R.id.btn_remove_point})
     public void onClickView(View view) {
-        int id = view.getId();
-        if (id == R.id.tv_select_all) {
-            mSelectList.clear();
-            if (tvSelectAll.isSelected()) {
-                tvSelectAll.setSelected(false);
-            } else {
-                tvSelectAll.setSelected(true);
-                mSelectList.addAll(mAllData);
-            }
-            boolean isSelect = tvSelectAll.isSelected();
-            setSelect(isSelect);
-            btnConfirm.setEnabled(isSelect);
-            mAdapter.setSelectData(mSelectList);
-            return;
-        }
-
-        if (id == R.id.btn_confirm) {
-            showTaskSaveDialog(getString(R.string.tv_save_task), getString(R.string.tv_task_tips), getString(R.string.et_hint_task_tips));
+        switch (view.getId()) {
+            case R.id.btn_confirm:
+                showTaskSaveDialog(getString(R.string.tv_save_task), getString(R.string.tv_task_tips), getString(R.string.et_hint_task_tips));
+                break;
+            case R.id.btn_remove_point:
+                removePoint();
+                break;
+            default:
+                break;
         }
     }
 
-    private void setSelect(boolean isSelect) {
-        tvSelectAll.setSelected(isSelect);
-        tvSelectAll.setText(isSelect ? getString(R.string.tv_select_all_cancel) : getString(R.string.tv_select_all));
+    private void removePoint() {
+        int index = mSelectList.size() - 1;
+        if (index >= 0) {
+            mSelectList.remove(index);
+        }
+
+        tvSelectTips.setText(DataHelper.getInstance().getSelectDetailTips(mSelectList));
+        // 移除完的话隐藏显示
+        if (index == 0) {
+            tvSelectTips.setVisibility(View.GONE);
+            rlBottom.setVisibility(View.GONE);
+        }
     }
 
     private void showTaskSaveDialog(String title, String contentTips, String hint) {

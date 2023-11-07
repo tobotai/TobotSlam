@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.tobot.slam.view.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_back"
+        android:layout_width="@dimen/tv_back_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:drawableLeft="@drawable/ic_back"
+        android:paddingLeft="@dimen/ic_back_margin_left"
+        android:textSize="@dimen/tv_back" />
+
+    <TextView
+        android:id="@+id/tv_pose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:textColor="@color/tv_pose_show"
+        android:textSize="@dimen/tv_mode_tips"
+        tools:ignore="RelativeOverlap" />
+
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:layout_toLeftOf="@id/tv_pose"
+        android:textColor="@color/tv_pose_show"
+        android:textSize="@dimen/tv_mode_tips"
+        tools:ignore="RelativeOverlap" />
+
+    <TextView
+        android:id="@+id/tv_location"
+        style="@style/rb_map_operate"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:text="@string/tv_location" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_turn_left"
+            style="@style/rb_map_operate"
+            android:text="@string/tv_turn_left" />
+
+        <TextView
+            android:id="@+id/tv_turn_right"
+            style="@style/rb_map_operate"
+            android:layout_marginLeft="@dimen/iv_map_margin"
+            android:text="@string/tv_turn_right" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_point1"
+        style="@style/view_drag"
+        android:layout_marginTop="@dimen/layout_margin_top"
+        android:text="@string/tv_p"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_point2"
+        style="@style/view_drag"
+        android:layout_below="@id/tv_point1"
+        android:layout_marginTop="@dimen/view_margin_top"
+        android:text="@string/tv_r"
+        android:visibility="visible" />
+</RelativeLayout>

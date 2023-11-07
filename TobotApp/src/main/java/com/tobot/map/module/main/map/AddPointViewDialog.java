@@ -37,6 +37,7 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     private LocationBean mLocationBean;
     private Pose mPose;
     private List<LocationBean> mLocationList;
+    private boolean isManualAdd;
 
     public static AddPointViewDialog newInstance() {
         return new AddPointViewDialog();
@@ -100,9 +101,12 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_add_current_point) {
-            mPose = null;
-            // 请求当前pose
-            ThreadPoolManager.getInstance().execute(new PoseRunnable());
+            if (!isManualAdd) {
+                mPose = null;
+                // 请求当前pose
+                ThreadPoolManager.getInstance().execute(new PoseRunnable());
+            }
+
             showNameInputDialog(getString(R.string.tv_title_add_location), getString(R.string.name_rule_tips), getString(R.string.et_hint_location_tips));
             return;
         }
@@ -132,7 +136,9 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
 
         if (mPose == null) {
             ToastUtils.getInstance(getActivity()).show(R.string.pose_get_fail_tips);
-            ThreadPoolManager.getInstance().execute(new PoseRunnable());
+            if (!isManualAdd) {
+                ThreadPoolManager.getInstance().execute(new PoseRunnable());
+            }
             return;
         }
 
@@ -190,6 +196,11 @@ public class AddPointViewDialog extends BaseAnimDialog implements View.OnClickLi
 
     public void setOnPointListener(OnPointListener listener) {
         mOnPointListener = listener;
+    }
+
+    public void setPose(Pose pose) {
+        mPose = pose;
+        isManualAdd = true;
     }
 
     private void showLocationData(List<LocationBean> data) {

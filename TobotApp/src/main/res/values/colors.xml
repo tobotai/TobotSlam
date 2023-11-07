@@ -8,7 +8,6 @@
     <color name="tv_content">#000000</color>
     <color name="tv_tips">#8A8A8A</color>
     <color name="tv_white">#FFFFFF</color>
-    <color name="tv_warn_tips">#FF0000</color>
     <color name="et_tv">#515151</color>
     <color name="et_hint">#8A8A8A</color>
     <color name="layout_item_pressed_bg">#3788FB</color>
@@ -39,7 +38,6 @@
     <color name="wheelView_textColorOut">#EDEDED</color>
     <color name="wheelView_textColorCenter">#FFFFFF</color>
     <color name="wheelView_dividerColor">#EDEDED</color>
-    <color name="shape_btn_circle_normal">#FE7700</color>
     <color name="directionView_sideColor">#FFFFFF</color>
     <color name="directionView_bg">#00000000</color>
     <color name="directionView_rockerBg">#FFFFFF</color>

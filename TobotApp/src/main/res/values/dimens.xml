@@ -55,7 +55,7 @@
     <dimen name="dialog_tips_margin_top">20dp</dimen>
     <dimen name="dialog_btn_margin_top">20dp</dimen>
     <dimen name="iv_drawable_padding">8dp</dimen>
-    <dimen name="popup_margin_bottom">10dp</dimen>
+    <dimen name="popup_margin_bottom">6dp</dimen>
     <dimen name="popup_margin_left_right">10dp</dimen>
     <dimen name="pb_size">34dp</dimen>
     <dimen name="rb_wall_margin">20dp</dimen>

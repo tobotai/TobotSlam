@@ -65,7 +65,7 @@ class EditMapHelper {
 
                     if ((count % 20) == 0) {
                         // 获取虚拟墙
-                        mMapView.setLines(ArtifactUsage.ArtifactUsageVirutalWall, SlamManager.getInstance().getLines(ArtifactUsage.ArtifactUsageVirutalWall));
+                        mMapView.setLines(ArtifactUsage.ArtifactUsageVirtualWall, SlamManager.getInstance().getLines(ArtifactUsage.ArtifactUsageVirtualWall));
                         // 获取轨道
                         mMapView.setLines(ArtifactUsage.ArtifactUsageVirtualTrack, SlamManager.getInstance().getLines(ArtifactUsage.ArtifactUsageVirtualTrack));
                     }

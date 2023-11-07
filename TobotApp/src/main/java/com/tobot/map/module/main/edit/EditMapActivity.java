@@ -186,10 +186,12 @@ public class EditMapActivity extends BaseActivity implements MapView.OnMapListen
         switch (view.getId()) {
             case R.id.tv_point1:
                 isHandle = true;
+                tvPoint1.setText("");
                 mPointStart = new PointF(x, y);
                 break;
             case R.id.tv_point2:
                 isHandle = true;
+                tvPoint2.setText("");
                 mPointEnd = new PointF(x, y);
                 break;
             default:
@@ -241,7 +243,7 @@ public class EditMapActivity extends BaseActivity implements MapView.OnMapListen
             return;
         }
 
-        ArtifactUsage artifactUsage = type == TYPE_VIRTUAL_WALL ? ArtifactUsage.ArtifactUsageVirutalWall : ArtifactUsage.ArtifactUsageVirtualTrack;
+        ArtifactUsage artifactUsage = type == TYPE_VIRTUAL_WALL ? ArtifactUsage.ArtifactUsageVirtualWall : ArtifactUsage.ArtifactUsageVirtualTrack;
         editLineView.init(mapView, addLineView, artifactUsage, this);
         setDragPointShow(true, false);
     }

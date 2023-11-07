@@ -155,6 +155,12 @@
             android:launchMode="standard"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".module.main.map.ManualAddLocationActivity"
+            android:configChanges="locale|layoutDirection|orientation|keyboard|keyboardHidden|screenSize|mcc|mnc|screenLayout|touchscreen|navigation|fontScale|uiMode|smallestScreenSize"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+
         <service android:name=".module.main.MapService" />
 
         <provider

@@ -58,6 +58,18 @@
     <View style="@style/popup_view_line" />
 
     <TextView
+        android:id="@+id/tv_manual_add_location"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_item_height"
+        android:background="@drawable/selector_item_bg"
+        android:gravity="center"
+        android:text="@string/tv_manual_add_location"
+        android:textColor="@color/tv_white"
+        android:textSize="@dimen/tv_content" />
+
+    <View style="@style/popup_view_line" />
+
+    <TextView
         android:id="@+id/tv_clear_map"
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_item_height"

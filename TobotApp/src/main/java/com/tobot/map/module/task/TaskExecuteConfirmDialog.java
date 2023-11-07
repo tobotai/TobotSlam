@@ -117,17 +117,14 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
             case R.id.tv_back:
                 dismiss();
                 break;
+            case R.id.tv_charge_switch:
+                chargeSwitch();
+                break;
             case R.id.tv_loop_implement:
                 tvLoop.setSelected(!tvLoop.isSelected());
                 break;
             case R.id.btn_start_implement:
-                dismiss();
-                if (mOnExecuteListener != null) {
-                    mOnExecuteListener.onExecute(mLocationList, tvChargeSwitch.isSelected(), tvLoop.isSelected() ? BaseConstant.LOOP_INFINITE : mLoopCount);
-                }
-                break;
-            case R.id.tv_charge_switch:
-                tvChargeSwitch.setSelected(!tvChargeSwitch.isSelected());
+                startImplement();
                 break;
             default:
                 break;
@@ -136,6 +133,22 @@ public class TaskExecuteConfirmDialog extends BaseDialog implements View.OnClick
 
     public void setOnExecuteListener(OnExecuteListener listener) {
         mOnExecuteListener = listener;
+    }
+
+    private void chargeSwitch() {
+        tvChargeSwitch.setSelected(!tvChargeSwitch.isSelected());
+        String content = DataHelper.getInstance().getTaskDetailTips(getActivity(), mLocationList);
+        if (tvChargeSwitch.isSelected()) {
+            content = content.concat(BaseConstant.ARROW_SIGN).concat(getString(R.string.charge_point));
+        }
+        tvTaskPoint.setText(getString(R.string.tv_task_point_tips, content));
+    }
+
+    private void startImplement() {
+        dismiss();
+        if (mOnExecuteListener != null) {
+            mOnExecuteListener.onExecute(mLocationList, tvChargeSwitch.isSelected(), tvLoop.isSelected() ? BaseConstant.LOOP_INFINITE : mLoopCount);
+        }
     }
 
     public interface OnExecuteListener {

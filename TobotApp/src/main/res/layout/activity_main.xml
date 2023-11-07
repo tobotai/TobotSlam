@@ -50,15 +50,6 @@
         android:textSize="@dimen/tv_mode_tips" />
 
     <ImageView
-        android:id="@+id/iv_warning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_status"
-        android:layout_marginRight="@dimen/view_margin_top"
-        android:layout_toLeftOf="@id/tv_rssi"
-        android:src="@drawable/ic_warning" />
-
-    <ImageView
         android:id="@+id/iv_set"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,7 +57,19 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/view_margin_top"
         android:layout_marginBottom="@dimen/view_margin_top"
+        android:background="@drawable/selector_btn_warp_circle_bg"
         android:src="@drawable/ic_map_set" />
+
+    <ImageView
+        android:id="@+id/iv_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/view_margin_top"
+        android:layout_marginBottom="@dimen/view_margin_top"
+        android:layout_toLeftOf="@id/iv_set"
+        android:background="@drawable/selector_btn_warp_circle_bg"
+        android:src="@drawable/ic_warning" />
 
     <LinearLayout
         android:layout_width="wrap_content"

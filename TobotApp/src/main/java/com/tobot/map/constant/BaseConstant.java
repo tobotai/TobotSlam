@@ -136,4 +136,6 @@ public class BaseConstant {
     public static final int MAX_RECORD_COUNT = 300;
 
     public static final int TOUCH_COUNT_DEFAULT = 0;
+
+    public static final String ARROW_SIGN = "→";
 }

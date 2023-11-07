@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/tv_execute_task_tips"
-        android:textColor="@color/tv_warn_tips"
+        android:textColor="@color/tv_tips"
         android:textSize="@dimen/tv_mode_tips"
         android:visibility="gone" />
 

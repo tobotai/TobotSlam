@@ -63,6 +63,7 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
         view.findViewById(R.id.tv_add_point).setOnClickListener(this);
         view.findViewById(R.id.tv_reset_charge).setOnClickListener(this);
         view.findViewById(R.id.tv_relocation).setOnClickListener(this);
+        view.findViewById(R.id.tv_manual_add_location).setOnClickListener(this);
         view.findViewById(R.id.tv_clear_map).setOnClickListener(this);
         view.findViewById(R.id.tv_save_map).setOnClickListener(this);
     }
@@ -116,6 +117,10 @@ public class MapPopupWindow extends BasePopupWindow implements PopupWindow.OnDis
                 }
 
                 relocateGlobal();
+                break;
+            case R.id.tv_manual_add_location:
+                dismiss();
+                mActivity.manualAddLocation();
                 break;
             case R.id.tv_clear_map:
                 dismiss();

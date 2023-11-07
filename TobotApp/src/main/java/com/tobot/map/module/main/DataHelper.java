@@ -215,7 +215,7 @@ public class DataHelper {
     public String getTaskDetailTips(Context context, List<LocationBean> locationBeanList) {
         if (locationBeanList != null && !locationBeanList.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            String interval = "→";
+            String interval = BaseConstant.ARROW_SIGN;
             for (int i = 0, size = locationBeanList.size(); i < size; i++) {
                 LocationBean bean = locationBeanList.get(i);
                 String name = bean.getLocationNameChina();
@@ -226,6 +226,24 @@ public class DataHelper {
                     builder.append(context.getString(R.string.tv_task_point, bean.getLocationNumber(), name));
                 }
 
+                if (i < size - 1) {
+                    builder.append(interval);
+                }
+            }
+
+            return builder.toString();
+        }
+
+        return "";
+    }
+
+    public String getSelectDetailTips(List<LocationBean> locationBeanList) {
+        if (locationBeanList != null && !locationBeanList.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            String interval = BaseConstant.ARROW_SIGN;
+            for (int i = 0, size = locationBeanList.size(); i < size; i++) {
+                LocationBean bean = locationBeanList.get(i);
+                builder.append(bean.getLocationNumber());
                 if (i < size - 1) {
                     builder.append(interval);
                 }

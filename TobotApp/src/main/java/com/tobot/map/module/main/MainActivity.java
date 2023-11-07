@@ -26,6 +26,7 @@ import com.tobot.map.module.main.action.Charge;
 import com.tobot.map.module.main.action.OnChargeResultListener;
 import com.tobot.map.module.main.edit.EditMapActivity;
 import com.tobot.map.module.main.map.AddPointViewDialog;
+import com.tobot.map.module.main.map.ManualAddLocationActivity;
 import com.tobot.map.module.main.map.MapPopupWindow;
 import com.tobot.map.module.main.map.Navigate;
 import com.tobot.map.module.main.warning.SensorWarningDialog;
@@ -78,6 +79,7 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
     TextView tvNavigate;
     private static final int CODE_SET = 1;
     private static final int CODE_TASK = 2;
+    private static final int CODE_ADD_LOCATION = 3;
     private MapHelper mMapHelper;
     private Navigate mNavigate;
     private Task mTask;
@@ -130,6 +132,11 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         Logger.i(BaseConstant.TAG, "MainActivity requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (resultCode == BaseConstant.CODE_EXIT) {
             finish();
+            return;
+        }
+
+        if (requestCode == CODE_ADD_LOCATION) {
+            mapView.addLocationLabel(true, MyDBSource.getInstance(this).queryLocationList());
             return;
         }
 
@@ -455,6 +462,10 @@ public class MainActivity extends BaseActivity implements MapView.OnMapListener,
         if (!isFinish) {
             showToastTips(tips);
         }
+    }
+
+    public void manualAddLocation() {
+        startActivityForResult(new Intent(this, ManualAddLocationActivity.class), CODE_ADD_LOCATION);
     }
 
     public void updatePoseShow(float x, float y, float yaw) {

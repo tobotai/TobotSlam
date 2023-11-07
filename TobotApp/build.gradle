@@ -9,8 +9,8 @@ android {
         applicationId "com.tobot.map"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 84
-        versionName "4.0.6"
+        versionCode 87
+        versionName "4.0.9"
         // dex突破65535的限制
         multiDexEnabled true
         // 自定义配置信息
@@ -88,5 +88,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation files('libs/TobotNet-1.2.4.jar')
-    implementation files('libs/TobotSlam-2.12.2.jar')
+    implementation files('libs/TobotSlam-2.12.5.jar')
 }

@@ -104,7 +104,7 @@
         <item name="android:gravity">center</item>
         <item name="android:button">@null</item>
         <item name="android:background">@drawable/selector_btn_circle_bg</item>
-        <item name="android:textColor">@drawable/selector_tv_stop</item>
+        <item name="android:textColor">@color/tv_white</item>
         <item name="android:textSize">@dimen/tv_content</item>
     </style>
 
@@ -236,6 +236,6 @@
         <item name="android:textStyle">bold</item>
         <item name="android:visibility">gone</item>
         <item name="android:textSize">@dimen/tv_title</item>
-        <item name="android:textColor">@color/shape_btn_circle_normal</item>
+        <item name="android:textColor">@color/tv_white</item>
     </style>
 </resources>
