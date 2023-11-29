@@ -30,19 +30,32 @@ public class ThreadPoolManager {
 
     public void execute(Runnable runnable) {
         if (runnable != null && mThreadPool != null) {
-            mThreadPool.execute(runnable);
+            // 在某些情况下，线程池可能无法接受新的任务，并抛出RejectedExecutionException异常
+            try {
+                mThreadPool.execute(runnable);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void cancel(Runnable runnable) {
         if (runnable != null && mThreadPool != null && !mThreadPool.isShutdown() && !mThreadPool.isTerminated()) {
-            mThreadPool.remove(runnable);
+            try {
+                mThreadPool.remove(runnable);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void cancelAll() {
         if (mThreadPool != null && !mThreadPool.isShutdown() && !mThreadPool.isTerminated()) {
-            mThreadPool.getQueue().clear();
+            try {
+                mThreadPool.getQueue().clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
